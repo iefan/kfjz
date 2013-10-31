@@ -7,7 +7,6 @@ from django.contrib.auth.forms import ReadOnlyPasswordHashField
 
 from models import MyUser
 
-
 class UserCreationForm(forms.ModelForm):
     """A form for creating new users. Includes all the required
     fields, plus a repeated password."""
@@ -16,7 +15,7 @@ class UserCreationForm(forms.ModelForm):
 
     class Meta:
         model = MyUser
-        fields = ('unitsn', 'email', 'unitname', 'unitgroup')
+        fields = ('unitsn', 'unitname', 'unitgroup')
 
     def clean_password2(self):
         # Check that the two password entries match
@@ -41,7 +40,9 @@ class UserChangeForm(forms.ModelForm):
     password hash display field.
     """
     password = ReadOnlyPasswordHashField()
+    # ============reset password==============
     # password = forms.CharField(label='Password', widget=forms.PasswordInput)
+    # ============reset password==============
 
     class Meta:
         model = MyUser
@@ -54,6 +55,7 @@ class UserChangeForm(forms.ModelForm):
         # password = self.cleaned_data.get("password")
         # return password
 
+    # ============reset password==============     
     # def save(self, commit=True):
     #     # Save the provided password in hashed format
     #     user = super(UserChangeForm, self).save(commit=False)
@@ -62,7 +64,7 @@ class UserChangeForm(forms.ModelForm):
     #     if commit:
     #         user.save()
     #     return user
-
+    # ============reset password==============     
 
 class MyUserAdmin(UserAdmin):
     # The forms to add and change user instances
@@ -72,12 +74,12 @@ class MyUserAdmin(UserAdmin):
     # The fields to be used in displaying the User model.
     # These override the definitions on the base UserAdmin
     # that reference specific fields on auth.User.
-    list_display = ('unitsn', 'unitname', 'email', 'unitgroup','is_admin')
+    list_display = ('unitsn', 'unitname', 'unitgroup','is_admin')
     list_filter = ('is_admin',)
     fieldsets = (
         (None, {'fields': ('unitsn', 'unitname', 'unitgroup', 'password')}),
-        ('附加信息', {'fields': ('email',)}),
-        ('是属管理员', {'fields': ('is_admin',)}),
+        # ('附加信息', {'fields': ('email',)}),
+        ('是否管理员', {'fields': ('is_admin',)}),
         ('最后登录日期', {'fields': ('last_login',)}),
     )
     # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin

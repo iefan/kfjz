@@ -6,7 +6,7 @@ from django.contrib.auth.models import (
 
 
 class MyUserManager(BaseUserManager):
-    def create_user(self, unitsn, email, unitname, unitgroup, password=None):
+    def create_user(self, unitsn, unitname, unitgroup, password=None):
         """
         Creates and saves a User with the given email, unitsn, unitname.
         """
@@ -16,7 +16,7 @@ class MyUserManager(BaseUserManager):
 
         user = self.model(
             unitsn = unitsn,
-            email=MyUserManager.normalize_email(email),
+            # email=MyUserManager.normalize_email(email),
             unitname=unitname,
             unitgroup = unitgroup,
         )
@@ -25,13 +25,13 @@ class MyUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, unitsn, email, unitname, unitgroup, password):
+    def create_superuser(self, unitsn, unitname, unitgroup, password):
         """
         Creates and saves a superuser with the given email, date of
         birth and password.
         """
         user = self.create_user(unitsn, 
-            email,
+            # email,
             password=password,
             unitname=unitname,
             unitgroup = unitgroup,
@@ -43,7 +43,7 @@ class MyUserManager(BaseUserManager):
 
 class MyUser(AbstractBaseUser):
     unitsn = models.CharField(verbose_name='单位编码', max_length=30, unique=True, db_index=True)
-    email = models.EmailField(verbose_name='电子邮箱', max_length=255, unique=True,)
+    # email = models.EmailField(verbose_name='电子邮箱', max_length=255, unique=True,)
     unitname = models.CharField(max_length=100, verbose_name="单位名称")
     UNITGROUP_CHOICES = (
         ('0', '市残联'),
@@ -58,10 +58,10 @@ class MyUser(AbstractBaseUser):
     objects = MyUserManager()
 
     USERNAME_FIELD = 'unitsn'
-    REQUIRED_FIELDS = ['unitname', 'unitgroup','email']
+    REQUIRED_FIELDS = ['unitname', 'unitgroup']
 
     def get_full_name(self):
-        # The user is identified by their email address
+        # The user is identified by unitsn
         return self.unitsn
 
     def get_short_name(self):
@@ -70,6 +70,11 @@ class MyUser(AbstractBaseUser):
 
     def __unicode__(self):
         return self.unitsn
+
+    class Meta:        
+        verbose_name = "用户信息"  
+        verbose_name_plural = "用户信息"  
+        # app_label = u"信息管理"
 
     def has_perm(self, perm, obj=None):
         "Does the user have a specific permission?"
