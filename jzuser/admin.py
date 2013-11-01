@@ -15,7 +15,7 @@ class UserCreationForm(forms.ModelForm):
 
     class Meta:
         model = MyUser
-        fields = ('unitsn', 'unitname', 'unitgroup')
+        fields = ('unitsn', 'unitname', 'unitgroup', 'operatorname',)
 
     def clean_password2(self):
         # Check that the two password entries match
@@ -78,7 +78,7 @@ class MyUserAdmin(UserAdmin):
     list_filter = ('is_admin',)
     fieldsets = (
         (None, {'fields': ('unitsn', 'unitname', 'unitgroup', 'password')}),
-        # ('附加信息', {'fields': ('email',)}),
+        ('附加信息', {'fields': ('operatorname',)}),
         ('是否管理员', {'fields': ('is_admin',)}),
         ('最后登录日期', {'fields': ('last_login',)}),
     )
@@ -87,7 +87,7 @@ class MyUserAdmin(UserAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('unitsn', 'unitname', 'unitgroup', 'password1', 'password2')}
+            'fields': ('unitsn', 'unitname', 'unitgroup', 'operatorname','password1', 'password2')}
         ),
     )
     search_fields = ('unitsn', 'unitname','unitgroup', )

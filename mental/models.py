@@ -16,6 +16,7 @@ class MentalModel(models.Model):
     guardrelation = models.CharField(choices=jzr.RELASHIP_CHOICES, blank=True, null=True,max_length=10, verbose_name="监护关系", default="父亲")
     phone       = models.CharField(max_length=20, verbose_name="联系电话",blank=True, null=True,)
     regtime     = models.DateField(verbose_name="建档时间",blank=True, null=True,)
+    operatorname= models.CharField(max_length=30, verbose_name='操作人员', blank=True, null=True,)
 
     class Meta:
         ordering = ['county',]
@@ -26,3 +27,36 @@ class MentalModel(models.Model):
     def __unicode__(self):
         return u"%s %s %s %s %s %s" % (self.name, self.county, self.dislevel, \
             self.economic, self.iscity, self.certtime,)
+
+class ApprovalModel(models.Model):
+    approvalsn  = models.CharField(max_length=30, verbose_name="审批编号", unique=True,) # NEED AUTO GENERATE
+    ppid        = models.CharField(max_length=30, verbose_name="身份证号")
+    insurance   = models.CharField(max_length=30,verbose_name="医保类别", choices=jzr.INSU_CHOICES, default="城乡医保",)
+    cert1_ppid  = models.CharField(max_length=30,verbose_name="身份证明", choices=jzr.CERT1_CHOICES,default="身份证")       
+    cert2_diag  = models.CharField(max_length=30,verbose_name="疾病证明", choices=jzr.CERT2_CHOICES, default="精神残疾证")
+    cert3_poor  = models.CharField(max_length=30,verbose_name="贫困证明", choices=jzr.CERT3_CHOICES,default="低保证")
+    hospital    = models.CharField(max_length=30,verbose_name="医疗机构", choices=jzr.HOSPITAL_CHOICES, default="市四本部",)
+    period      = models.CharField(max_length=30,verbose_name="救助疗程", choices=jzr.PERIOD_CHOICES, default="急性",)
+    foodallow   = models.BooleanField(verbose_name="伙食补助",)
+    savetimes   = models.IntegerField(verbose_name="救助次数")
+    savecontinue= models.CharField(max_length=30,verbose_name="续院类型", blank=True, null=True,choices=jzr.CONTINUE_CHOICES,)
+    notifystart = models.DateField(verbose_name="有效起始时间")
+    notifyend   = models.DateField(verbose_name="有效终止时间")
+    commitdate  = models.DateField(verbose_name="提交申核时间")
+    isapproval  = models.CharField(max_length=30,verbose_name="残疾审核", choices=jzr.ISAPPROVAL_CHOICES, default="待审",)
+    approvaldate= models.DateField(verbose_name="审核时间")
+    saveok      = models.CharField(max_length=30,verbose_name="救助确认", choices=jzr.SAVEOK_CHOICES, blank=True,null=True,)
+    iscal       = models.CharField(max_length=30,verbose_name="是否结算", choices=jzr.ISCAL_CHOICES, blank=True,null=True,)
+    caldate     = models.DateField(verbose_name="结算时间")
+    moneyhospital = models.FloatField(verbose_name="医疗费用")  #经结算应救助的金额=救助天数*救助标准
+    moneyfood   = models.FloatField(verbose_name="伙食费用")    #=补助天数*补助标准
+    moneyfrom   = models.FloatField(verbose_name="民政补助")    #医疗费救助金额大于1000元的显示1000
+    
+    class Meta:
+        # ordering = ['ppid',]
+        verbose_name = "审批信息"  
+        verbose_name_plural = "审批信息"  
+        # app_label = u"信息管理"
+
+    def __unicode__(self):
+        return u"%s " % (self.approvalsn, )

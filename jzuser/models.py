@@ -6,7 +6,7 @@ from django.contrib.auth.models import (
 
 
 class MyUserManager(BaseUserManager):
-    def create_user(self, unitsn, unitname, unitgroup, password=None):
+    def create_user(self, unitsn, unitname, unitgroup, operatorname,password=None):
         """
         Creates and saves a User with the given email, unitsn, unitname.
         """
@@ -19,13 +19,14 @@ class MyUserManager(BaseUserManager):
             # email=MyUserManager.normalize_email(email),
             unitname=unitname,
             unitgroup = unitgroup,
+            operatorname = operatorname,
         )
 
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, unitsn, unitname, unitgroup, password):
+    def create_superuser(self, unitsn, unitname, unitgroup, operatorname,password):
         """
         Creates and saves a superuser with the given email, date of
         birth and password.
@@ -35,6 +36,7 @@ class MyUserManager(BaseUserManager):
             password=password,
             unitname=unitname,
             unitgroup = unitgroup,
+            operatorname = operatorname,
         )
         user.is_admin = True
         user.save(using=self._db)
@@ -51,6 +53,7 @@ class MyUser(AbstractBaseUser):
         ('2', '医院'),
     )
     unitgroup = models.CharField(max_length=30, choices=UNITGROUP_CHOICES, verbose_name="单位类别")
+    operatorname = models.CharField(max_length=30, verbose_name="操作人员")
     # unitname = models.DateField()
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
@@ -58,7 +61,7 @@ class MyUser(AbstractBaseUser):
     objects = MyUserManager()
 
     USERNAME_FIELD = 'unitsn'
-    REQUIRED_FIELDS = ['unitname', 'unitgroup']
+    REQUIRED_FIELDS = ['unitname', 'unitgroup', 'operatorname']
 
     def get_full_name(self):
         # The user is identified by unitsn
