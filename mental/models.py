@@ -29,29 +29,50 @@ class MentalModel(models.Model):
             self.economic, self.iscity, self.certtime,)
 
 class ApprovalModel(models.Model):
-    approvalsn  = models.CharField(max_length=30, verbose_name="审批编号", unique=True,) # NEED AUTO GENERATE
-    ppid        = models.CharField(max_length=30, verbose_name="身份证号")
-    insurance   = models.CharField(max_length=30,verbose_name="医保类别", choices=jzr.INSU_CHOICES, default="城乡医保",)
-    cert1_ppid  = models.CharField(max_length=30,verbose_name="身份证明", choices=jzr.CERT1_CHOICES,default="身份证")       
-    cert2_diag  = models.CharField(max_length=30,verbose_name="疾病证明", choices=jzr.CERT2_CHOICES, default="精神残疾证")
-    cert3_poor  = models.CharField(max_length=30,verbose_name="贫困证明", choices=jzr.CERT3_CHOICES,default="低保证")
-    hospital    = models.CharField(max_length=30,verbose_name="医疗机构", choices=jzr.HOSPITAL_CHOICES, default="市四本部",)
-    period      = models.CharField(max_length=30,verbose_name="救助疗程", choices=jzr.PERIOD_CHOICES, default="急性",)
-    foodallow   = models.BooleanField(verbose_name="伙食补助",)
-    savetimes   = models.IntegerField(verbose_name="救助次数")
-    savecontinue= models.CharField(max_length=30,verbose_name="续院类型", blank=True, null=True,choices=jzr.CONTINUE_CHOICES,)
-    notifystart = models.DateField(verbose_name="有效起始时间")
-    notifyend   = models.DateField(verbose_name="有效终止时间")
-    commitdate  = models.DateField(verbose_name="提交申核时间")
-    isapproval  = models.CharField(max_length=30,verbose_name="残疾审核", choices=jzr.ISAPPROVAL_CHOICES, default="待审",)
-    approvaldate= models.DateField(verbose_name="审核时间")
-    saveok      = models.CharField(max_length=30,verbose_name="救助确认", choices=jzr.SAVEOK_CHOICES, blank=True,null=True,)
-    iscal       = models.CharField(max_length=30,verbose_name="是否结算", choices=jzr.ISCAL_CHOICES, blank=True,null=True,)
-    caldate     = models.DateField(verbose_name="结算时间")
-    moneyhospital = models.FloatField(verbose_name="医疗费用")  #经结算应救助的金额=救助天数*救助标准
-    moneyfood   = models.FloatField(verbose_name="伙食费用")    #=补助天数*补助标准
-    moneyfrom   = models.FloatField(verbose_name="民政补助")    #医疗费救助金额大于1000元的显示1000
-    
+    approvalsn      = models.CharField(max_length=30, verbose_name="审批编号", unique=True,) # NEED AUTO GENERATE
+    ppid            = models.CharField(max_length=30, verbose_name="身份证号")
+    insurance       = models.CharField(max_length=30,verbose_name="医保类别", choices=jzr.INSU_CHOICES, default="城乡医保",)
+    cert1_ppid      = models.CharField(max_length=30,verbose_name="身份证明", choices=jzr.CERT1_CHOICES,default="身份证")       
+    cert2_diag      = models.CharField(max_length=30,verbose_name="疾病证明", choices=jzr.CERT2_CHOICES, default="精神残疾证")
+    cert3_poor      = models.CharField(max_length=30,verbose_name="贫困证明", choices=jzr.CERT3_CHOICES,default="低保证")
+    hospital        = models.CharField(max_length=30,verbose_name="医疗机构", choices=jzr.HOSPITAL_CHOICES, default="市四本部",)
+    period          = models.CharField(max_length=30,verbose_name="救助疗程", choices=jzr.PERIOD_CHOICES, default="急性",)
+    foodallow       = models.CharField(max_length=30,verbose_name="伙食补助", choices=jzr.YESNO_CHOICE, default="否")
+    savetimes       = models.IntegerField(verbose_name="救助次数", default=0)
+    savecontinue    = models.CharField(max_length=30,verbose_name="续院类型", blank=True, null=True,choices=jzr.CONTINUE_CHOICES,)
+    notifystart     = models.DateField(verbose_name="有效起始时间")
+    notifyend       = models.DateField(verbose_name="有效终止时间")
+    commitdate      = models.DateField(verbose_name="提交申核时间")
+    isapproval      = models.CharField(max_length=30,verbose_name="残联审核", choices=jzr.ISAPPROVAL_CHOICES, default="待审",)
+    approvaldate    = models.DateField(verbose_name="审核时间", blank=True, null=True,)
+    approvalman     = models.CharField(max_length=30, verbose_name="审核人员", blank=True, null=True,)
+    saveok          = models.CharField(max_length=30,verbose_name="救助确认", choices=jzr.SAVEOK_CHOICES, blank=True,null=True,)
+    iscal           = models.CharField(max_length=30,verbose_name="是否结算", choices=jzr.ISCAL_CHOICES, blank=True,null=True,)
+    moneyhospital   = models.FloatField(verbose_name="医疗救助费用", blank=True, null=True,)  #经结算应救助的金额=救助天数*救助标准
+    moneyfood       = models.FloatField(verbose_name="伙食费用", blank=True, null=True,)    #=补助天数*补助标准
+    moneyfrom       = models.FloatField(verbose_name="民政补助", blank=True, null=True,)    #医疗费救助金额大于1000元的显示1000
+    isenterfile     = models.CharField(max_length=30,verbose_name="是否归档", choices=jzr.YESNO_CHOICE, default="否")
+    enterfileman    = models.CharField(max_length=30, verbose_name="归档管理员", blank=True, null=True,)
+
+    # hospital write
+    indate          = models.DateField(verbose_name="住院时间", blank=True, null=True,)
+    outdate         = models.DateField(verbose_name="出院时间", blank=True, null=True,)
+    dayshosp        = models.IntegerField(verbose_name="住院天数", blank=True, null=True,)  #auto calc
+    dayssave        = models.IntegerField(verbose_name="救助天数", blank=True, null=True,)  #auto calc  
+    daysfood        = models.IntegerField(verbose_name="伙食天数", blank=True, null=True,)  #auto calc
+    moneytotal      = models.FloatField(verbose_name="住院总费用", blank=True, null=True,)
+    moneymedicineself= models.FloatField(verbose_name="自费药金额", blank=True, null=True,)
+    moneyselfscale  = models.FloatField(verbose_name="自付比例", blank=True, null=True,)
+    moneyself       = models.FloatField(verbose_name="个人支付", blank=True, null=True,)
+    moneyinsurance  = models.FloatField(verbose_name="医保支付", blank=True, null=True,)    
+    dateclose       = models.DateField(verbose_name="结算日期", blank=True, null=True,)
+
+    # level set
+    daysfoodlimit   = models.IntegerField(verbose_name="救助上限", blank=True, null=True,)
+    savelevel       = models.FloatField(verbose_name="救助标准", blank=True, null=True,)
+    foodlevel       = models.FloatField(verbose_name="伙食标准", blank=True, null=True,)
+    startlevel      = models.FloatField(verbose_name="起付标准", blank=True, null=True,)
+
     class Meta:
         # ordering = ['ppid',]
         verbose_name = "审批信息"  
