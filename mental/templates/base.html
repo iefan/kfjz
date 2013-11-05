@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="zh">
+  <head>
+    <meta charset="utf-8">
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+    <!-- <link rel="stylesheet" href="style.css" /> -->
+    <title>康复救助系统—{% block title %}{% endblock %}</title>
+
+    <link rel="stylesheet" type="text/css" href="/static/mycss/my.css" />
+    <link rel="stylesheet" type="text/css" href="/static/mycss/marketing.css" />
+    <link rel="stylesheet" type="text/css" href="/static/mycss/normalize.css" />
+    <link rel="stylesheet" type="text/css" href="/static/mycss/pure-min.css" />
+
+    {% block othercssjs %}{% endblock %}
+
+
+  </head>
+
+  <body>
+    <div class="header pure-u-1 gamenav">
+      <div class="pure-menu pure-menu-open pure-menu-fixed pure-menu-horizontal">
+        <!-- <a class="pure-menu-heading" href="">站点展示</a> -->
+
+        <ul>
+          <li class="pure-menu-selected gamenav"><a href="/">首页</a></li>
+          <li class="gamenav"><a href="/about/">精神病人信息库</a></li>
+          <li class="gamenav"><a href="/about/">填写申请</a></li>
+          <li class="gamenav"><a href="/about/">市残联申批</a></li>
+          <li class="gamenav"><a href="/about/">确认入院</a></li>
+          <li class="gamenav"><a href="/about/">出院结算</a></li>
+          <li class="gamenav"><a href="/about/">结算归档</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- <br/><br/> -->
+    {% block content %}{% endblock %}
+
+    <div class="footer pure-u-1">
+      Copyright &copy; 2013 &nbsp;  康复救助基金领导小组
+    </div>
+  </body>
+</html>

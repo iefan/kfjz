@@ -74,8 +74,8 @@ class MyUserAdmin(UserAdmin):
     # The fields to be used in displaying the User model.
     # These override the definitions on the base UserAdmin
     # that reference specific fields on auth.User.
-    list_display = ('unitsn', 'unitname', 'unitgroup','is_admin')
-    list_filter = ('is_admin',)
+    list_display = ('unitsn', 'unitname', 'unitgroup','is_admin',)
+    list_filter = ('is_admin','unitgroup',)
     fieldsets = (
         (None, {'fields': ('unitsn', 'unitname', 'unitgroup', 'password')}),
         ('附加信息', {'fields': ('operatorname',)}),
