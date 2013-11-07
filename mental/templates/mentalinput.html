@@ -1,0 +1,20 @@
+{% extends "mentalbase.html" %}
+{% block title %}精神病人信息录入{% endblock %}
+
+{% block mentaltable %}
+<form class="pure-form" action="." method="post">
+    <table align="center" class="pure-table  pure-table-horizontal gameordertable">
+    {% for field in form %}
+        {% if forloop.counter0|divisibleby:2 %}
+        <tr>
+            <td align="right">{{ field.label }}</td>
+            <td>{{ field }}</td>
+        {% else %}
+            <td align="right">{{ field.label }}</td>
+            <td>{{ field }}</td>            
+        </tr>
+        {% endif %}
+    {% endfor %}
+    </table>
+</form>
+{% endblock %}

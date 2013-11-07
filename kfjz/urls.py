@@ -11,10 +11,12 @@ def i18n_javascript(request):
     return admin.site.i18n_javascript(request)
     
 urlpatterns = patterns('',
-    (r'^admin/jsi18n', i18n_javascript),
-    url(r'^about/$', 'mental.views.about'),
+    (r'^admin/jsi18n', i18n_javascript),    
     (r'^login/$', login, {'template_name':'login.html'} ),
     (r'^logout/$', logout,{'template_name':'logout.html'}),
+
+    url(r'^about/$', 'mental.views.about'),
+    url(r'input', 'mental.views.mentalinput'),
     # Examples:
     # url(r'^$', 'kfjz.views.home', name='home'),
     # url(r'^kfjz/', include('kfjz.foo.urls')),

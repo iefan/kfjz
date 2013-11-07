@@ -74,6 +74,7 @@ ISAPPROVAL_CHOICES = (\
     (u'待审', u'待审'),
     (u'退审', u'退审'),
     (u'同意', u'同意'),
+    (u'作废', u'作废'),
     )
 SAVEOK_CHOICES = (\
     (u'已确认', u'已确认'),
