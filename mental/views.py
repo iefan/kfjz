@@ -22,7 +22,9 @@ def mentalinput(request):
     # gameclass = request.session['gameclass']
     if request.method == "POST":
         form = MentalForm(request.POST)
+        print request.POST
         if form.is_valid():
+            print request.POST
             # request.session['startdate'] = request.POST['startdate']
             # request.session['starttime'] = request.POST['starttime']
             return HttpResponseRedirect('/about/') # Redirect

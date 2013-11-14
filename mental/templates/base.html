@@ -13,7 +13,10 @@
   <link rel="stylesheet" type="text/css" href="/static/mycss/marketing.css" />
   <link rel="stylesheet" type="text/css" href="/static/mycss/normalize.css" />
   <link rel="stylesheet" type="text/css" href="/static/mycss/pure-min.css" />
-  {% block othercssjs %}{% endblock %}
+  <!--   <link rel="stylesheet" type="text/css" href="/static/mycss/960/reset.css" />
+  <link rel="stylesheet" type="text/css" href="/static/mycss/960/text.css" />
+  <link rel="stylesheet" type="text/css" href="/static/mycss/960/960.css" />
+  -->  {% block othercssjs %}{% endblock %}
   <style>
 body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, input, textarea, p, blockquote, th, td{margin:0; padding:0}
 table{border-collapse:collapse; border-spacing:0}
@@ -78,14 +81,6 @@ $(document).ready(function(){
           </ul>
         </li>
         <li>
-          <a href="#">区残联业务</a>
-          <ul class="child">
-            <li>
-              <a href="#">申请救助</a>
-            </li>
-          </ul>
-        </li>
-        <li>
           <a href="#">市残联业务</a>
           <ul class="child">
             <li>
@@ -93,6 +88,14 @@ $(document).ready(function(){
             </li>
             <li>
               <a href="#">结算归档</a>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a href="#">区残联业务</a>
+          <ul class="child">
+            <li>
+              <a href="#">申请救助</a>
             </li>
           </ul>
         </li>
@@ -113,9 +116,7 @@ $(document).ready(function(){
 
   <br/>
   <br/>
- 
- 
-    {% block content %}{% endblock %}
+  {% block content %}{% endblock %}
   <div class="footer pure-u-1">Copyright &copy; 2013 &nbsp;  康复救助基金领导小组</div>
 </body>
 </html>

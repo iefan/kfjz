@@ -3,18 +3,26 @@
 
 {% block mentaltable %}
 <form class="pure-form" action="." method="post">
-    <table align="center" class="pure-table  pure-table-horizontal gameordertable">
-    {% for field in form %}
-        {% if forloop.counter0|divisibleby:2 %}
-        <tr>
-            <td align="right">{{ field.label }}</td>
-            <td>{{ field }}</td>
-        {% else %}
-            <td align="right">{{ field.label }}</td>
-            <td>{{ field }}</td>            
-        </tr>
-        {% endif %}
-    {% endfor %}
-    </table>
+    <div class='pure-u-1' align='center'>
+        <table align="center" class="pure-table  pure-table-horizontal gameordertable">
+            {% for field in form %}
+            {% if forloop.counter0|divisibleby:2 %}
+            <tr>
+                <td align="right">{{ field.label }}</td>
+                <td class="fieldWrapper" width="40%">{{ field.errors }}{{ field }}</td>
+                <!-- <td>{{ field }}</td> -->
+                {% else %}
+                <td align="right">{{ field.label }}</td>
+                <td class="fieldWrapper" width="40%">{{ field.errors }}{{ field }}</td>
+                <!-- <td>{{ field }}</td> -->
+            </tr>
+            {% endif %}
+            {% endfor %}
+        </table>
+    </div>
+    <br>
+    <p align="center">
+        <button type="submit" class="pure-button pure-button-primary" align="center">保存</button>
+    </p>
 </form>
 {% endblock %}

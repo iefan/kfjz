@@ -2,7 +2,7 @@
 {% block othercssjs %}
 <link rel="stylesheet" type="text/css" href="/static/JSCal2/css/jscal2.css" />
 <link rel="stylesheet" type="text/css" href="/static/JSCal2/css/border-radius.css" />
-<link rel="stylesheet" type="text/css" href="/static/JSCal2/css/gold/gold.css" />
+<link rel="stylesheet" type="text/css" href="/static/JSCal2/css/steel/steel.css" />
 <script type="text/javascript" src="/static/JSCal2/js/jscal2.js"></script>
 <script type="text/javascript" src="/static/JSCal2/js/lang/cn.js"></script>
 {% endblock %}
@@ -16,6 +16,12 @@
         Calendar.setup({
         trigger    : "id_certtime",
         inputField : "id_certtime",
+        min: {{ jscal_min }},
+        max: {{ jscal_max }}
+        });
+        Calendar.setup({
+        trigger    : "id_regtime",
+        inputField : "id_regtime",
         min: {{ jscal_min }},
         max: {{ jscal_max }}
         });
