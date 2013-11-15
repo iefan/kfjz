@@ -1,0 +1,44 @@
+{% extends "selectbase.html" %}
+{% block title %}精神病人信息查询{% endblock %}
+{% block admincssjs %}{% endblock %}
+
+{% block orderselect %}
+<form method="POST" action="/mentalselect/" class="pure-form">
+  <fieldset align="center" class="mselect">
+    <label>姓名： </label>
+    <input name="name" type="text" placeholder="姓名">
+    <label>身份证号： </label>
+    <input name="ppid" type="text" placeholder="身份证号">
+    <button type="submit" class="pure-button pure-button-success">查询</button>
+  </fieldset>
+</form>
+{% endblock %}
+
+{% block ordertable %}
+<h2 align="center">个人信息</h2>
+<table align="center" class="pure-table pure-table-bordered">
+  <thead>
+    <tr>
+      {% for item in curppname %}
+      <th>{{ item }}</th>
+      {% endfor %}
+    </tr>
+  </thead>
+  {% for ipp in curpp %}
+  <tr>
+    {% for item in ipp %}
+    {% if not item %}
+    <td>&nbsp;</td>
+    {% else %}
+    <td>{{ item }}</td>
+    {% endif %}
+    {% endfor %}
+  </tr>
+  {% endfor %}
+</table>
+<br/>
+<div class='pure-u-1' align='center'>
+  <a class="pure-button pure-button-primary" href="/modifyorder/">返回修改</a>
+</div>
+<br/>
+{% endblock %}

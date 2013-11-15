@@ -12,6 +12,9 @@
     width: 60%;
 }
 
+.mselect{
+    height: 0px;
+}
 /* Apply the .box class on the immediate parent of any grid element (pure-u-*) to apply some padding. */
 /*.l-box {
     padding: 1.3em;

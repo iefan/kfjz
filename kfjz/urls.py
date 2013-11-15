@@ -17,6 +17,8 @@ urlpatterns = patterns('',
 
     url(r'^about/$', 'mental.views.about'),
     url(r'^mentalinput/$', 'mental.views.mentalinput'),
+    url(r'^mentalselect/$', 'mental.views.mentalselect'),
+
     # Examples:
     # url(r'^$', 'kfjz.views.home', name='home'),
     # url(r'^kfjz/', include('kfjz.foo.urls')),
@@ -25,6 +27,6 @@ urlpatterns = patterns('',
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     # Uncomment the next line to enable the admin:
-    url(r'^admin/$', include(admin.site.urls)),
+    url(r'^admin/', include(admin.site.urls)),
 )
 urlpatterns += static(settings.STATIC_URL, document_root = settings.STATIC_ROOT )
