@@ -1,0 +1,34 @@
+{% extends "mentalbase.html" %}
+{% block title %}精神病人信息修改{% endblock %}
+
+{% block mentaltable %}
+<form class="pure-form" action="." method="post">
+    <div class="pure-u-2" align="center">
+    <address>
+    {% for item in nomodifyinfo %}
+    {{ item }}；
+    {% endfor %}
+    </address>
+    </div>
+    <br/>
+
+    <div class='pure-u-1' align='center'>
+        <table align="center" class="pure-table  pure-table-horizontal gameordertable">
+            {% for field in form %}
+            {% if forloop.counter0|divisibleby:2 %}
+            <tr>
+                <td align="right" class="tdlabel">{{ field.label }}</td>
+                <td class="fieldWrapper">{{ field.errors }}{{ field }}</td>
+                {% else %}
+                <td align="right" class="tdlabel">{{ field.label }}</td>
+                <td class="fieldWrapper" >{{ field.errors }}{{ field }}</td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+        </table>
+    </div>    
+    <p align="center">
+        <button type="submit" class="pure-button pure-button-primary" align="center">修改</button>
+    </p>
+</form>
+{% endblock %}

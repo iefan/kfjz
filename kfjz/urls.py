@@ -18,6 +18,7 @@ urlpatterns = patterns('',
     url(r'^about/$', 'mental.views.about'),
     url(r'^mentalinput/$', 'mental.views.mentalinput'),
     url(r'^mentalselect/$', 'mental.views.mentalselect'),
+    url(r'^mentalmodify/(\d+)/$', 'mental.views.mentalmodify'),
 
     # Examples:
     # url(r'^$', 'kfjz.views.home', name='home'),
