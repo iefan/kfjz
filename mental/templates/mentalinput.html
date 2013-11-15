@@ -8,19 +8,16 @@
             {% for field in form %}
             {% if forloop.counter0|divisibleby:2 %}
             <tr>
-                <td align="right">{{ field.label }}</td>
-                <td class="fieldWrapper" width="40%">{{ field.errors }}{{ field }}</td>
-                <!-- <td>{{ field }}</td> -->
+                <td align="right" class="tdlabel">{{ field.label }}</td>
+                <td class="fieldWrapper">{{ field.errors }}{{ field }}</td>
                 {% else %}
-                <td align="right">{{ field.label }}</td>
-                <td class="fieldWrapper" width="40%">{{ field.errors }}{{ field }}</td>
-                <!-- <td>{{ field }}</td> -->
+                <td align="right" class="tdlabel">{{ field.label }}</td>
+                <td class="fieldWrapper" >{{ field.errors }}{{ field }}</td>
             </tr>
             {% endif %}
             {% endfor %}
         </table>
-    </div>
-    <br>
+    </div>    
     <p align="center">
         <button type="submit" class="pure-button pure-button-primary" align="center">保存</button>
     </p>

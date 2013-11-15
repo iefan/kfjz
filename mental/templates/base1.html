@@ -3,15 +3,49 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
+  <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  -->
+  <!-- <link rel="stylesheet" href="style.css" />
+  -->
   <title>康复救助系统—{% block title %}{% endblock %}</title>
 
   <link rel="stylesheet" type="text/css" href="/static/mycss/my.css" />
   <link rel="stylesheet" type="text/css" href="/static/mycss/marketing.css" />
   <link rel="stylesheet" type="text/css" href="/static/mycss/normalize.css" />
   <link rel="stylesheet" type="text/css" href="/static/mycss/pure-min.css" />
+  <!--   <link rel="stylesheet" type="text/css" href="/static/mycss/960/reset.css" />
+  <link rel="stylesheet" type="text/css" href="/static/mycss/960/text.css" />
+  <link rel="stylesheet" type="text/css" href="/static/mycss/960/960.css" />
+  -->  {% block othercssjs %}{% endblock %}
+  <style>
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, input, textarea, p, blockquote, th, td{margin:0; padding:0}
+table{border-collapse:collapse; border-spacing:0}
+fieldset, img{border:0}
+address, caption, cite, code, dfn, em, strong, th, var{font-style:normal; font-weight:normal}
+ol, ul{list-style:none}
+caption, th{text-align:left}
+h1, h2, h3, h4, h5, h6{font-size:100%; font-weight:normal}
+q:before, q:after{content:''}
+abbr, acronym{border:0}
+:focus{outline:0}
+ins{text-decoration:none}
+del{text-decoration:line-through}
+a { color: #fff; text-decoration: none; }
+a:hover { text-decoration: underline; }
+a { color: black }
+#nav li { float: left; position: relative; }
+#nav li a { background: #d6cfbd; border: 2px solid #4f4026; color: #333; display: block; margin: 0 5px 0 3px; padding: 5px 8px; }
+#nav li a:hover { background: #f7f7f7; text-decoration: none; }
+#nav { display: block; height: 35px; padding: 10px 0; width: 1000px; z-index: 100; position: absolute;margin: 10px 0 0 5px;}
+#nav > li > a {  border-top-left-radius: 10px; border-top-right-radius: 10px; -moz-border-radius-topleft: 10px; -moz-border-radius-topright: 10px; -webkit-border-top-left-radius: 10px; -webkit-border-top-right-radius: 10px;}
+#nav li ul { background: #e1ddd3; border: 2px solid #4f4026; color: #333; display: none; margin: -3px 0 0 3px; width: 150px; position: absolute; }
+#nav li ul li { width: 100% }
+#nav li ul li a { background: none; border: none; line-height: 30px; margin: 0; padding: 0 0 0 5px;  }
+#nav li ul li a:hover { background: #f7f7f7;}
+#nav li.current > a { background: #f7f7f7; }
+#nav li:hover > ul.child { display: block; }
+</style>
   <script type='text/javascript' src='/static/admin/js/jquery.min.js'></script>
-  {% block othercssjs %}{% endblock %}
-  <style></style>
   <script type="text/javascript">
 $(document).ready(function(){ 
   $("#nav ul.child").removeClass("child");
