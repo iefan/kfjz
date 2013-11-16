@@ -77,10 +77,12 @@ class ApprovalForm(forms.ModelForm):
 
 class ApplyForm(forms.ModelForm):
     """申请表"""
+    ppid = forms.CharField(widget=forms.HiddenInput())
+    
     class Meta:
         model = ApprovalModel
-        fields = ('insurance','cert1_ppid','cert2_diag','cert3_poor',)
-        exclude = ('ppid','hospital','period','foodallow','savetimes','savecontinue','notifystart','notifyend',\
+        fields = ('ppid','insurance','cert1_ppid','cert2_diag','cert3_poor',)
+        exclude = ('hospital','period','foodallow','savetimes','savecontinue','notifystart','notifyend',\
             'commitdate','isapproval','approvaldate','approvalman','saveok','iscal','moneyhospital', \
             'moneyfood','moneyfrom','isenterfile','enterfileman','approvalsn','indate','outdate','dayshosp','dayssave','daysfood','moneytotal','moneymedicineself',\
             'moneyselfscale','moneyself','moneyinsurance','dateclose','daysfoodlimit','savelevel','foodlevel','startlevel',)

@@ -29,7 +29,7 @@ class MentalModel(models.Model):
             self.economic, self.iscity, self.certtime,)
 
 class ApprovalModel(models.Model):
-    approvalsn      = models.CharField(max_length=30, verbose_name="审批编号", unique=True,) # NEED AUTO GENERATE
+    approvalsn      = models.CharField(max_length=30, verbose_name="审批编号", unique=True,blank=True, null=True,) # NEED AUTO GENERATE
     ppid            = models.CharField(max_length=30, verbose_name="身份证号")
     insurance       = models.CharField(max_length=30,verbose_name="医保类别", choices=jzr.INSU_CHOICES, default="城乡医保",)
     cert1_ppid      = models.CharField(max_length=30,verbose_name="身份证明", choices=jzr.CERT1_CHOICES,default="身份证")       
@@ -40,9 +40,9 @@ class ApprovalModel(models.Model):
     foodallow       = models.CharField(max_length=30,verbose_name="伙食补助", choices=jzr.YESNO_CHOICE, default="否")
     savetimes       = models.IntegerField(verbose_name="救助次数", default=0)
     savecontinue    = models.CharField(max_length=30,verbose_name="续院类型", blank=True, null=True,choices=jzr.CONTINUE_CHOICES,)
-    notifystart     = models.DateField(verbose_name="有效起始时间")
-    notifyend       = models.DateField(verbose_name="有效终止时间")
-    commitdate      = models.DateField(verbose_name="提交申核时间")
+    notifystart     = models.DateField(verbose_name="有效起始时间", blank=True, null=True,)
+    notifyend       = models.DateField(verbose_name="有效终止时间", blank=True, null=True,)
+    commitdate      = models.DateField(verbose_name="提交申核时间", blank=True, null=True,)
     isapproval      = models.CharField(max_length=30,verbose_name="残联审核", choices=jzr.ISAPPROVAL_CHOICES, default="待审",)
     approvaldate    = models.DateField(verbose_name="审核时间", blank=True, null=True,)
     approvalman     = models.CharField(max_length=30, verbose_name="审核人员", blank=True, null=True,)

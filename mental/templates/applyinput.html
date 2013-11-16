@@ -11,17 +11,19 @@
     </address>
     </div>
     <br/>
-    
+    {% for hidden in form.hidden_fields %}
+    {{ hidden }}
+    {% endfor %}
     <div class='pure-u-1' align='center'>
         <table align="center" class="pure-table  pure-table-horizontal gameordertable">
-            {% for field in form %}
+            {% for field in form.visible_fields %}
             {% if forloop.counter0|divisibleby:2 %}
             <tr>
                 <td align="right" class="tdlabel">{{ field.label }}</td>
-                <td class="fieldWrapper">{{ field.errors }}{{ field }}</td>
+                <td class="fieldWrapper applyinputselect">{{ field.errors }}{{ field }}</td>
                 {% else %}
                 <td align="right" class="tdlabel">{{ field.label }}</td>
-                <td class="fieldWrapper" >{{ field.errors }}{{ field }}</td>
+                <td class="fieldWrapper applyinputselect" >{{ field.errors }}{{ field }}</td>
             </tr>
             {% endif %}
             {% endfor %}
