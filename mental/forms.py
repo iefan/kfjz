@@ -1,6 +1,6 @@
 #coding=utf8
 from django import forms
-from models import MentalModel
+from models import MentalModel, ApprovalModel
 
 class MentalForm(forms.ModelForm):
     certtime   = forms.CharField(error_messages={'required':u'日期不能为空'}, label='办证时间', \
@@ -60,3 +60,30 @@ class MentalForm2(forms.ModelForm):
         if not phone.isdigit() or len(phone)<11 or len(phone) > 12:
             raise forms.ValidationError("请输入11或12位电话号码")
         return phone
+
+class ApprovalForm(forms.ModelForm):
+    """申批表"""
+    class Meta:
+        model = ApprovalModel
+        fields = ('approvalsn','ppid','insurance','cert1_ppid','cert2_diag','cert3_poor',\
+            'hospital','period','foodallow','savetimes','savecontinue','notifystart','notifyend',\
+            'commitdate','isapproval','approvaldate','approvalman','saveok','iscal','moneyhospital', \
+            'moneyfood','moneyfrom','isenterfile','enterfileman',)
+        exclude = ('indate','outdate','dayshosp','dayssave','daysfood','moneytotal','moneymedicineself',\
+            'moneyselfscale','moneyself','moneyinsurance','dateclose','daysfoodlimit','savelevel','foodlevel','startlevel',)
+
+    def clean(self):
+        return self.cleaned_data
+
+class ApplyForm(forms.ModelForm):
+    """申请表"""
+    class Meta:
+        model = ApprovalModel
+        fields = ('insurance','cert1_ppid','cert2_diag','cert3_poor',)
+        exclude = ('ppid','hospital','period','foodallow','savetimes','savecontinue','notifystart','notifyend',\
+            'commitdate','isapproval','approvaldate','approvalman','saveok','iscal','moneyhospital', \
+            'moneyfood','moneyfrom','isenterfile','enterfileman','approvalsn','indate','outdate','dayshosp','dayssave','daysfood','moneytotal','moneymedicineself',\
+            'moneyselfscale','moneyself','moneyinsurance','dateclose','daysfoodlimit','savelevel','foodlevel','startlevel',)
+
+    def clean(self):
+        return self.cleaned_data

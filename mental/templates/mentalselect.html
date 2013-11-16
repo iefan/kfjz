@@ -24,7 +24,7 @@
       {% endfor %}
     </tr>
   </thead>
-  {% for ipp, curid in curpp %}
+  {% for ipp, curid, curppid in curpp %}
   <tr>
     {% for item in ipp %}
     {% if not item %}
@@ -38,6 +38,12 @@
     <td>&nbsp;</td>
     {% else %}
     <td><a class="pure-button " href="/mentalmodify/{{ curid }}/">修改</a></td>
+    {% endif %}
+
+    {% if not curppid %}
+    <td>&nbsp;</td>
+    {% else %}
+    <td><a class="pure-button " href="/applyinput/{{ curppid }}/">申请</a></td>
     {% endif %}
     
   </tr>
