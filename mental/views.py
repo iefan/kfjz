@@ -106,7 +106,7 @@ def applyinput(request, curppid="111456789000"):
 
     # 如果已经申批，则跳转
     try:
-        ApprovalModel.objects.get(ppid=curppid)
+        ApprovalModel.objects.get(mental__ppid=curppid)
         return HttpResponseRedirect('/mentalselect/')
     except ApprovalModel.DoesNotExist:
         pass
@@ -119,9 +119,11 @@ def applyinput(request, curppid="111456789000"):
 
     nomodifyinfo = [u"姓名：%s"  % curpp.name, u"身份证号：%s" % curpp.ppid]
 
-    form = ApplyForm(instance=curpp)    
+    # form = ApplyForm(instance=curpp)    
+    form = ApplyForm(initial={'mental':curpp})
+    # print form
     if request.method == "POST":
-        form = ApplyForm(request.POST)
+        form = ApplyForm(request.POST)        
         if form.is_valid():
             form.save()
             return HttpResponseRedirect('/admin/') # Redirect

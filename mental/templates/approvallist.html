@@ -3,10 +3,10 @@
 {% block admincssjs %}{% endblock %}
 
 {% block orderselect %}
-<form method="POST" action="/mentalselect/" class="pure-form">
+<form method="POST" action="/approvallist/" class="pure-form">
   <fieldset align="center" class="mselect">
-    <label>姓名： </label>
-    <input name="name" type="text" placeholder="姓名">
+    <label>区县名称：： </label>
+    <input name="county" type="text" placeholder="区县名称">
     <label>身份证号： </label>
     <input name="ppid" type="text" placeholder="身份证号">
     <button type="submit" class="pure-button pure-button-success">查询</button>

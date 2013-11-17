@@ -25,12 +25,12 @@ class MentalModel(models.Model):
         # app_label = u"信息管理"
 
     def __unicode__(self):
-        return u"%s %s %s %s %s %s" % (self.name, self.county, self.dislevel, \
+        return u"%s %s %s %s %s %s" % (self.county, self.name, self.dislevel, \
             self.economic, self.iscity, self.certtime,)
 
 class ApprovalModel(models.Model):
     approvalsn      = models.CharField(max_length=30, verbose_name="审批编号", unique=True,blank=True, null=True,) # NEED AUTO GENERATE
-    mental          = models.ForeignKey('MentalModel')    
+    mental          = models.ForeignKey('MentalModel', verbose_name="病人信息")    
     # ppid            = models.CharField(max_length=30, verbose_name="身份证号")
     insurance       = models.CharField(max_length=30,verbose_name="医保类别", choices=jzr.INSU_CHOICES, default="城乡医保",)
     cert1_ppid      = models.CharField(max_length=30,verbose_name="身份证明", choices=jzr.CERT1_CHOICES,default="身份证")       
@@ -81,4 +81,4 @@ class ApprovalModel(models.Model):
         # app_label = u"信息管理"
 
     def __unicode__(self):
-        return u"%s " % (self.approvalsn, )
+        return u"%s %s" % (self.approvalsn, self.mental, )

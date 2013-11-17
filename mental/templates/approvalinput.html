@@ -4,8 +4,11 @@
 {% block mentaltable %}
 <form class="pure-form" action="." method="post">
     <div class='pure-u-1' align='center'>
+        {% for hidden in form.hidden_fields %}
+        {{ hidden }}
+        {% endfor %}
         <table align="center" class="pure-table  pure-table-horizontal gameordertable">
-            {% for field in form %}
+            {% for field in form.visible_fields %}
             {% if forloop.counter0|divisibleby:2 %}
             <tr>
                 <td align="right" class="tdlabel">{{ field.label }}</td>

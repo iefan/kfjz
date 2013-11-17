@@ -63,6 +63,8 @@ class MentalForm2(forms.ModelForm):
 
 class ApprovalForm(forms.ModelForm):
     """申批表"""
+    mental = forms.ModelChoiceField(queryset=MentalModel.objects.all(), widget=forms.HiddenInput())
+    
     class Meta:
         model = ApprovalModel
         fields = ('approvalsn','mental','insurance','cert1_ppid','cert2_diag','cert3_poor',\
@@ -77,7 +79,7 @@ class ApprovalForm(forms.ModelForm):
 
 class ApplyForm(forms.ModelForm):
     """申请表"""
-    # mental = forms.CharField(widget=forms.HiddenInput())
+    mental = forms.ModelChoiceField(queryset=MentalModel.objects.all(), widget=forms.HiddenInput())
     
     class Meta:
         model = ApprovalModel
