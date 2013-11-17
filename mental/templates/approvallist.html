@@ -6,9 +6,22 @@
 <form method="POST" action="/approvallist/" class="pure-form">
   <fieldset align="center" class="mselect">
     <label>区县名称：： </label>
-    <input name="county" type="text" placeholder="区县名称">
-    <label>身份证号： </label>
-    <input name="ppid" type="text" placeholder="身份证号">
+    <select name="county">
+      <option value ="">--</option>
+      <option value ="金平区">金平区</option>
+      <option value ="龙湖区">龙湖区</option>
+      <option value ="濠江区">濠江区</option>
+      <option value ="澄海区">澄海区</option>
+      <option value ="潮阳区">潮阳区</option>
+      <option value ="潮南区">潮南区</option>
+      <option value ="南澳县">南澳县</option>
+    </select>
+    <label>是否批准： </label>
+    <select name="isapproval">
+      <option value ="">--</option>
+      <option value ="1">是</option>
+      <option value="0">否</option>
+    </select>
     <button type="submit" class="pure-button pure-button-success">查询</button>
   </fieldset>
 </form>
@@ -43,9 +56,9 @@
     {% if curppid == "" %}
     <td>&nbsp;</td>    
     {% else %}{% if curppid == "--" %}
-    <td>已申请</td>
+    <td>已批准</td>
     {% else %}
-    <td><a class="pure-button " href="/applyinput/{{ curppid }}/">申请</a></td>
+    <td><a class="pure-button " href="/approvalinput/{{ curppid }}/">批准</a></td>
     {% endif %}{% endif %}
     
   </tr>
