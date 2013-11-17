@@ -65,7 +65,7 @@ class ApprovalForm(forms.ModelForm):
     """申批表"""
     class Meta:
         model = ApprovalModel
-        fields = ('approvalsn','ppid','insurance','cert1_ppid','cert2_diag','cert3_poor',\
+        fields = ('approvalsn','mental','insurance','cert1_ppid','cert2_diag','cert3_poor',\
             'hospital','period','foodallow','savetimes','savecontinue','notifystart','notifyend',\
             'commitdate','isapproval','approvaldate','approvalman','saveok','iscal','moneyhospital', \
             'moneyfood','moneyfrom','isenterfile','enterfileman',)
@@ -77,11 +77,11 @@ class ApprovalForm(forms.ModelForm):
 
 class ApplyForm(forms.ModelForm):
     """申请表"""
-    ppid = forms.CharField(widget=forms.HiddenInput())
+    # mental = forms.CharField(widget=forms.HiddenInput())
     
     class Meta:
         model = ApprovalModel
-        fields = ('ppid','insurance','cert1_ppid','cert2_diag','cert3_poor',)
+        fields = ('mental','insurance','cert1_ppid','cert2_diag','cert3_poor',)
         exclude = ('hospital','period','foodallow','savetimes','savecontinue','notifystart','notifyend',\
             'commitdate','isapproval','approvaldate','approvalman','saveok','iscal','moneyhospital', \
             'moneyfood','moneyfrom','isenterfile','enterfileman','approvalsn','indate','outdate','dayshosp','dayssave','daysfood','moneytotal','moneymedicineself',\

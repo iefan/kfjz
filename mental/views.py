@@ -42,7 +42,7 @@ def mentalselect(request, curname="", curppid=""):
             curpp = []
             for ipp in cur_re:
                 try:
-                    ApprovalModel.objects.get(ppid=ipp.ppid, isenterfile="否")
+                    ApprovalModel.objects.get(mental__ppid=ipp.ppid, isenterfile="否")
                     curpp.append([[ipp.name,  ipp.county, ipp.ppid, ipp.iscity, ipp.guardian, ipp.phone], ipp.id, '--'])
                 except ApprovalModel.DoesNotExist:
                     curpp.append([[ipp.name,  ipp.county, ipp.ppid, ipp.iscity, ipp.guardian, ipp.phone], ipp.id, ipp.ppid])

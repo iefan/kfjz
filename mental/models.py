@@ -30,7 +30,8 @@ class MentalModel(models.Model):
 
 class ApprovalModel(models.Model):
     approvalsn      = models.CharField(max_length=30, verbose_name="审批编号", unique=True,blank=True, null=True,) # NEED AUTO GENERATE
-    ppid            = models.CharField(max_length=30, verbose_name="身份证号")
+    mental          = models.ForeignKey('MentalModel')    
+    # ppid            = models.CharField(max_length=30, verbose_name="身份证号")
     insurance       = models.CharField(max_length=30,verbose_name="医保类别", choices=jzr.INSU_CHOICES, default="城乡医保",)
     cert1_ppid      = models.CharField(max_length=30,verbose_name="身份证明", choices=jzr.CERT1_CHOICES,default="身份证")       
     cert2_diag      = models.CharField(max_length=30,verbose_name="疾病证明", choices=jzr.CERT2_CHOICES, default="精神残疾证")
