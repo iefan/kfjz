@@ -83,9 +83,9 @@ class ApplyForm(forms.ModelForm):
     
     class Meta:
         model = ApprovalModel
-        fields = ('mental','insurance','cert1_ppid','cert2_diag','cert3_poor',)
+        fields = ('mental','insurance','cert1_ppid','cert2_diag','cert3_poor','commitdate',)
         exclude = ('hospital','period','foodallow','savetimes','savecontinue','notifystart','notifyend',\
-            'commitdate','isapproval','approvaldate','approvalman','saveok','iscal','moneyhospital', \
+            'isapproval','approvaldate','approvalman','saveok','iscal','moneyhospital', \
             'moneyfood','moneyfrom','isenterfile','enterfileman','approvalsn','indate','outdate','dayshosp','dayssave','daysfood','moneytotal','moneymedicineself',\
             'moneyselfscale','moneyself','moneyinsurance','dateclose','daysfoodlimit','savelevel','foodlevel','startlevel',)
 

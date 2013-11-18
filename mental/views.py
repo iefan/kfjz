@@ -139,6 +139,11 @@ def applyinput(request, curppid="111456789000"):
 
     nomodifyinfo = [u"姓名：%s"  % curpp.name, u"身份证号：%s" % curpp.ppid]
 
+    today   = datetime.date.today()
+
+    jscal_min = int(today.isoformat().replace('-', ''))
+    jscal_max = int((today + datetime.timedelta(30)).isoformat().replace('-', ''))
+
     # form = ApplyForm(instance=curpp)    
     form = ApplyForm(initial={'mental':curpp})
     # print form
@@ -147,4 +152,4 @@ def applyinput(request, curppid="111456789000"):
         if form.is_valid():
             form.save()
             return HttpResponseRedirect('/admin/') # Redirect
-    return render_to_response('applyinput.html', {"form":form, "nomodifyinfo":nomodifyinfo,})
+    return render_to_response('applyinput.html', {"form":form, "nomodifyinfo":nomodifyinfo,"jscal_min":jscal_min, "jscal_max":jscal_max})

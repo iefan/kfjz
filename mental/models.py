@@ -1,6 +1,7 @@
 #coding=utf8
 from django.db import models
 import resources as jzr
+from datetime import date
 
 class MentalModel(models.Model):
     name        = models.CharField(max_length=30, verbose_name="姓名")
@@ -43,7 +44,7 @@ class ApprovalModel(models.Model):
     savecontinue    = models.CharField(max_length=30,verbose_name="续院类型", blank=True, null=True,choices=jzr.CONTINUE_CHOICES,)
     notifystart     = models.DateField(verbose_name="有效起始时间", blank=True, null=True,)
     notifyend       = models.DateField(verbose_name="有效终止时间", blank=True, null=True,)
-    commitdate      = models.DateField(verbose_name="提交申核时间", blank=True, null=True,)
+    commitdate      = models.DateField(verbose_name="提交申核时间", blank=True, null=True, default=date.today)
     isapproval      = models.CharField(max_length=30,verbose_name="残联审核", choices=jzr.ISAPPROVAL_CHOICES, default="待审",)
     approvaldate    = models.DateField(verbose_name="审核时间", blank=True, null=True,)
     approvalman     = models.CharField(max_length=30, verbose_name="审核人员", blank=True, null=True,)

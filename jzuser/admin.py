@@ -7,6 +7,11 @@ from django.contrib.auth.forms import ReadOnlyPasswordHashField
 
 from models import MyUser
 
+# 解决后台登录页面的UnicodeDecodeError:'ascii' codec can't decode byte ... 问题
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
+
 class UserCreationForm(forms.ModelForm):
     """A form for creating new users. Includes all the required
     fields, plus a repeated password."""
