@@ -19,7 +19,7 @@ urlpatterns = patterns('',
     url(r'^mentalinput/$', 'mental.views.mentalinput'),
     url(r'^mentalselect/$', 'mental.views.mentalselect'),
     url(r'^mentalmodify/(\d+)/$', 'mental.views.mentalmodify'),
-    url(r'^approvalinput/$', 'mental.views.approvalinput'),
+    url(r'^approvalinput/(.*|\d+)/$', 'mental.views.approvalinput'),
     url(r'^approvallist/$', 'mental.views.approvallist'),
     url(r'^applyinput/(.*|\d+)/$', 'mental.views.applyinput'),
 

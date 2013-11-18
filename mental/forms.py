@@ -1,6 +1,7 @@
 #coding=utf8
 from django import forms
 from models import MentalModel, ApprovalModel
+from datetime import date
 
 class MentalForm(forms.ModelForm):
     certtime   = forms.CharField(error_messages={'required':u'日期不能为空'}, label='办证时间', \
@@ -69,13 +70,36 @@ class ApprovalForm(forms.ModelForm):
         model = ApprovalModel
         fields = ('approvalsn','mental','insurance','cert1_ppid','cert2_diag','cert3_poor',\
             'hospital','period','foodallow','savetimes','savecontinue','notifystart','notifyend',\
-            'commitdate','isapproval','approvaldate','approvalman','saveok','iscal','moneyhospital', \
-            'moneyfood','moneyfrom','isenterfile','enterfileman',)
+            'isapproval','approvaldate','approvalman','saveok','iscal','moneyhospital', \
+            'moneyfood','moneyfrom',)
         exclude = ('indate','outdate','dayshosp','dayssave','daysfood','moneytotal','moneymedicineself',\
-            'moneyselfscale','moneyself','moneyinsurance','dateclose','daysfoodlimit','savelevel','foodlevel','startlevel',)
+            'moneyselfscale','moneyself','moneyinsurance','dateclose','daysfoodlimit','savelevel','foodlevel','startlevel','commitdate','isenterfile','enterfileman',)
 
     def clean(self):
         return self.cleaned_data
+
+    def clean_approvalsn(self):
+        if 'approvalsn' not in self.cleaned_data.keys():
+            raise forms.ValidationError("请输入申批编号")
+        approvalsn = self.cleaned_data['approvalsn']
+        if approvalsn == "":
+            raise forms.ValidationError("请输入申批编号")
+
+    def clean_notifystart(self):
+        if 'notifystart' not in self.cleaned_data.keys():
+            raise forms.ValidationError("请输入起始日期")
+        notifystart = self.cleaned_data['notifystart']
+        if notifystart is None:
+            raise forms.ValidationError("请输入起始日期")
+        return notifystart
+
+    def clean_notifyend(self):
+        if 'notifyend' not in self.cleaned_data.keys():
+            raise forms.ValidationError("请输入起始日期")
+        notifyend = self.cleaned_data['notifyend']
+        if notifyend is None:
+            raise forms.ValidationError("请输入起始日期")
+        return notifyend
 
 class ApplyForm(forms.ModelForm):
     """申请表"""

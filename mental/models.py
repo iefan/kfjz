@@ -46,7 +46,7 @@ class ApprovalModel(models.Model):
     notifyend       = models.DateField(verbose_name="有效终止时间", blank=True, null=True,)
     commitdate      = models.DateField(verbose_name="提交申核时间", blank=True, null=True, default=date.today)
     isapproval      = models.CharField(max_length=30,verbose_name="残联审核", choices=jzr.ISAPPROVAL_CHOICES, default="待审",)
-    approvaldate    = models.DateField(verbose_name="审核时间", blank=True, null=True,)
+    approvaldate    = models.DateField(verbose_name="审核时间", blank=True, null=True)
     approvalman     = models.CharField(max_length=30, verbose_name="审核人员", blank=True, null=True,)
     saveok          = models.CharField(max_length=30,verbose_name="救助确认", choices=jzr.SAVEOK_CHOICES, blank=True,null=True,)
     iscal           = models.CharField(max_length=30,verbose_name="是否结算", choices=jzr.ISCAL_CHOICES, blank=True,null=True,)

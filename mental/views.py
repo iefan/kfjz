@@ -109,22 +109,47 @@ def approvallist(request, curcounty="", curapproval=""):
 
     return render_to_response('approvallist.html', {'curpp': curpp, 'curppname':curppname})
 
-def approvalinput(request):
+def approvalinput(request, curppid=""):
     '''批准视图'''
-    form = ApprovalForm()
+
+    # 如果为空，则跳转到所有申请表中
+    if curppid == "":
+        return HttpResponseRedirect('/approvallist/')
+
+    # 如果已经申批，则跳转
+    # try:
+    #     curpp = ApprovalModel.objects.get(approvalsn__isnull=False)
+    #     return HttpResponseRedirect('/approvallist/')
+    # except ApprovalModel.DoesNotExist:
+    #     pass
+
+    # 如果当前批准列表中不存在该ppid，则跳转
+    try:
+        curpp = ApprovalModel.objects.get(mental__ppid=curppid)
+    except ApprovalModel.DoesNotExist:
+        return HttpResponseRedirect('/approvallist/')
+
+
+    today   = datetime.date.today()
+
+    jscal_min = int(today.isoformat().replace('-', ''))
+    jscal_max = int((today + datetime.timedelta(30)).isoformat().replace('-', ''))
+
+    curpp.approvaldate = today
+    form = ApprovalForm(instance=curpp)
     if request.method == "POST":
-        form = ApprovalForm(request.POST)
+        form = ApprovalForm(request.POST, instance=curpp)
         if form.is_valid():
             form.save()
             return HttpResponseRedirect('/admin/') # Redirect
-    return render_to_response('approvalinput.html', {"form":form})
+    return render_to_response('approvalinput.html', {"form":form, "jscal_min":jscal_min, "jscal_max":jscal_max})
 
 def applyinput(request, curppid="111456789000"):
     '''申请求助视图'''
     if curppid == "":
         return HttpResponseRedirect('/mentalselect/')
 
-    # 如果已经申批，则跳转
+    # 如果已经申请，则跳转
     try:
         ApprovalModel.objects.get(mental__ppid=curppid)
         return HttpResponseRedirect('/mentalselect/')
