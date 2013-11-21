@@ -80,29 +80,36 @@ def approvallist(request, curcounty="", curapproval=""):
 
     if request.method == 'POST':
         curcounty = request.POST['county']
-        if request.POST['isapproval'] == "":
-            curapproval = ""
-        else:
-            curapproval = int(request.POST['isapproval'])
-        if curcounty == "" and curapproval == "":
-            cur_re = ApprovalModel.objects.all()
-        elif curapproval == "":
-            cur_re = ApprovalModel.objects.filter(mental__county=curcounty)
-        elif curcounty == "":
-            cur_re = ApprovalModel.objects.filter(approvalsn__isnull = bool(curapproval))
-        else:
-            cur_re  = ApprovalModel.objects.filter(approvalsn__isnull = bool(curapproval), mental__county=curcounty)
+        curapproval = request.POST['isapproval']
 
-        if len(cur_re) != 0:
-            curpp = []
-            for ipp in cur_re:
-                if not ipp.approvalsn:
-                    curpp.append([[ipp.mental.name, ipp.mental.county, ipp.mental.ppid, ipp.mental.iscity, ipp.mental.guardian, ipp.mental.phone], ipp.mental.id, ipp.mental.ppid])
-                else:
-                    curpp.append([[ipp.mental.name,  ipp.mental.county, ipp.mental.ppid, ipp.mental.iscity, ipp.mental.guardian, ipp.mental.phone], ipp.mental.id, '--'])
+    if curapproval == "":
+        cur_re = ApprovalModel.objects.filter(mental__county__icontains=curcounty)
+    else:
+        cur_re  = ApprovalModel.objects.filter(approvalsn__isnull = bool(int(curapproval)), mental__county=curcounty)
 
-        else:
-            curpp[0][0][0] = "没有登记"
+
+        # if request.POST['isapproval'] == "":
+        #     curapproval = ""
+        # else:
+        #     curapproval = int(request.POST['isapproval'])
+        # if curcounty == "" and curapproval == "":
+        #     cur_re = ApprovalModel.objects.all()
+        # elif curapproval == "":
+        #     cur_re = ApprovalModel.objects.filter(mental__county=curcounty)
+        # elif curcounty == "":
+        #     cur_re = ApprovalModel.objects.filter(approvalsn__isnull = bool(curapproval))
+        # else:
+        #     cur_re  = ApprovalModel.objects.filter(approvalsn__isnull = bool(curapproval), mental__county=curcounty)
+
+    if len(cur_re) != 0:
+        curpp = []
+        for ipp in cur_re:
+            if not ipp.approvalsn:
+                curpp.append([[ipp.mental.name, ipp.mental.county, ipp.mental.ppid, ipp.mental.iscity, ipp.mental.guardian, ipp.mental.phone], ipp.mental.id, ipp.mental.ppid])
+            else:
+                curpp.append([[ipp.mental.name,  ipp.mental.county, ipp.mental.ppid, ipp.mental.iscity, ipp.mental.guardian, ipp.mental.phone], ipp.mental.id, '--'])
+    else:
+        curpp[0][0][0] = "没有登记"
 
     return render_to_response('approvallist.html', {'curpp': curpp, 'curppname':curppname})
 

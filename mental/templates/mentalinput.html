@@ -1,6 +1,11 @@
 {% extends "mentalbase.html" %}
 {% block title %}精神病人信息录入{% endblock %}
 
+{% block displayinfo %}
+<span>残疾人信息录入</span>
+<!-- <h2 align="center">残疾人信息录入</h2> -->
+{% endblock %}
+
 {% block mentaltable %}
 <form class="pure-form" action="." method="post">
     <div class='pure-u-1' align='center'>
@@ -8,11 +13,11 @@
             {% for field in form %}
             {% if forloop.counter0|divisibleby:2 %}
             <tr>
-                <td align="right" class="tdlabel">{{ field.label }}</td>
-                <td class="fieldWrapper">{{ field.errors }}{{ field }}</td>
+                <td class="tdlabel">{{ field.label }}</td>
+                <td class="fieldWrapper ">{{ field.errors }}{{ field }}</td>
                 {% else %}
-                <td align="right" class="tdlabel">{{ field.label }}</td>
-                <td class="fieldWrapper" >{{ field.errors }}{{ field }}</td>
+                <td class="tdlabel">{{ field.label }}</td>
+                <td class="fieldWrapper " >{{ field.errors }}{{ field }}</td>
             </tr>
             {% endif %}
             {% endfor %}

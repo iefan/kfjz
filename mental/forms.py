@@ -1,7 +1,7 @@
 #coding=utf8
 from django import forms
 from models import MentalModel, ApprovalModel
-from datetime import date
+# from datetime import date
 
 class MentalForm(forms.ModelForm):
     certtime   = forms.CharField(error_messages={'required':u'日期不能为空'}, label='办证时间', \
