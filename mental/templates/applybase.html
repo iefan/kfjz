@@ -6,23 +6,24 @@
 <script type="text/javascript" src="/static/JSCal2/js/jscal2.js"></script>
 <script type="text/javascript" src="/static/JSCal2/js/lang/cn.js"></script>
 {% endblock %}
+
 {% block content %}
-
-<div class="splash2 pure-u-1">
-  <div class="pure-g-r content-ribbon">
-    <div class="pure-u-1">
-      {% block mentaltable %}{% endblock %}
-      <script>
-        Calendar.setup({
-        trigger    : "id_commitdate",
-        inputField : "id_commitdate",
-        min: {{ jscal_min }},
-        max: {{ jscal_max }}
-        });
-      </script>
-
-    </div>
-  </div>
+<div class="splash3 pure-u-1 l-centered">
+  {% block orderselect %}{% endblock %}
 </div>
 
+<div class="pure-g-r content-ribbon">
+  <div class="pure-u-1">
+    {% block mentaltable %}{% endblock %}
+    <script>
+      Calendar.setup({
+      trigger    : "id_commitdate",
+      inputField : "id_commitdate",
+      min: {{ jscal_min }},
+      max: {{ jscal_max }}
+      });
+    </script>
+
+  </div>
+</div>
 {% endblock %}

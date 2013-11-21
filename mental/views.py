@@ -26,42 +26,26 @@ def mentalinput(request):
         form = MentalForm(request.POST)
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect('/admin/') # Redirect
+            return HttpResponseRedirect('/mentalselect/') # Redirect
     return render_to_response('mentalinput.html', {"form":form,"jscal_min":jscal_min, "jscal_max":jscal_max})
 
 def mentalselect(request, curname="", curppid="", curcounty=""):
-    curppname = [u"姓名", u"区县", u"身份证号", u"户口类别", u"监护人", u"联系电话", u"修改", u"申请求助"]
+    curppname = [u"姓名", u"区县", u"身份证号", u"户口类别", u"监护人", u"联系电话", u"修改"]
     curpp     = [[["","","","","",""], "", "",]]
 
-    if request.method == 'POST' or curcounty!="":
-        if curname == "":
-            try:
-                curname = request.POST['name']
-            except:
-                pass
-        if curppid=="":
-            try:
-                curppid = request.POST['ppid']
-            except:
-                pass
-        if curcounty=="":
-            try:
-                curcounty = request.POST['county']
-            except:
-                pass
+    if request.method == 'POST':
+        curname = request.POST['name']
+        curppid = request.POST['ppid']
+        curcounty = request.POST['county']
 
-        cur_re = MentalModel.objects.filter(name__icontains=curname, ppid__icontains=curppid, county__icontains=curcounty)
-        if len(cur_re) != 0:
-            curpp = []
-            for ipp in cur_re:
-                try:
-                    ApprovalModel.objects.get(mental__ppid=ipp.ppid, isenterfile="否")
-                    curpp.append([[ipp.name,  ipp.county, ipp.ppid, ipp.iscity, ipp.guardian, ipp.phone], ipp.id, '--'])
-                except ApprovalModel.DoesNotExist:
-                    curpp.append([[ipp.name,  ipp.county, ipp.ppid, ipp.iscity, ipp.guardian, ipp.phone], ipp.id, ipp.ppid])
-
-        else:
-            curpp[0][0][0] = "没有登记"
+    cur_re = MentalModel.objects.filter(name__icontains=curname, ppid__icontains=curppid, county__icontains=curcounty)
+    if len(cur_re) != 0:
+        curpp = []
+        for ipp in cur_re:
+            # ApprovalModel.objects.get(mental__ppid=ipp.ppid, isenterfile="否")
+            curpp.append([[ipp.name,  ipp.county, ipp.ppid, ipp.iscity, ipp.guardian, ipp.phone], ipp.id, ipp.ppid])
+    else:
+        curpp[0][0][0] = "没有登记"
 
     return render_to_response('mentalselect.html', {'curpp': curpp, 'curppname':curppname})
 
@@ -161,12 +145,12 @@ def approvalinput(request, curppid=""):
 def applyinput(request, curppid="111456789000"):
     '''申请求助视图'''
     if curppid == "":
-        return HttpResponseRedirect('/mentalselect/')
+        return HttpResponseRedirect('/applylist/')
 
     # 如果已经申请，则跳转
     try:
         ApprovalModel.objects.get(mental__ppid=curppid)
-        return HttpResponseRedirect('/mentalselect/')
+        return HttpResponseRedirect('/applylist/')
     except ApprovalModel.DoesNotExist:
         pass
 
@@ -174,12 +158,11 @@ def applyinput(request, curppid="111456789000"):
     try:
         curpp = MentalModel.objects.get(ppid=curppid)
     except MentalModel.DoesNotExist:
-        return HttpResponseRedirect('/mentalselect/')
+        return HttpResponseRedirect('/applylist/')
 
     nomodifyinfo = [u"姓名：%s"  % curpp.name, u"身份证号：%s" % curpp.ppid]
 
     today   = datetime.date.today()
-
     jscal_min = int(today.isoformat().replace('-', ''))
     jscal_max = int((today + datetime.timedelta(30)).isoformat().replace('-', ''))
 
@@ -193,5 +176,27 @@ def applyinput(request, curppid="111456789000"):
             return HttpResponseRedirect('/admin/') # Redirect
     return render_to_response('applyinput.html', {"form":form, "nomodifyinfo":nomodifyinfo,"jscal_min":jscal_min, "jscal_max":jscal_max})
 
-def applylist(request, county="金平区"):
-    return mentalselect(request, curname="", curppid="", curcounty=county)
+def applylist(request, curname="", curppid=""):
+    curcounty = "金平区"
+
+    curppname = [u"姓名", u"区县", u"身份证号", u"户口类别", u"监护人", u"联系电话", u"修改", u"申请求助"]
+    curpp     = [[["","","","","",""], "", "",]]
+
+    if request.method == 'POST':
+        curname = request.POST['name']
+        curppid = request.POST['ppid']
+
+    cur_re = MentalModel.objects.filter(name__icontains=curname, ppid__icontains=curppid, county__icontains=curcounty)
+    if len(cur_re) != 0:
+        curpp = []
+        for ipp in cur_re:
+            try:
+                ApprovalModel.objects.get(mental__ppid=ipp.ppid, isenterfile="否")
+                curpp.append([[ipp.name,  ipp.county, ipp.ppid, ipp.iscity, ipp.guardian, ipp.phone], ipp.id, '--'])
+            except ApprovalModel.DoesNotExist:
+                curpp.append([[ipp.name,  ipp.county, ipp.ppid, ipp.iscity, ipp.guardian, ipp.phone], ipp.id, ipp.ppid])
+    else:
+        curpp[0][0][0] = "没有登记"
+
+    return render_to_response('applylist.html', {'curpp': curpp, 'curppname':curppname})
+    # return mentalselect(request, curname="", curppid="", curcounty=county)

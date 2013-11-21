@@ -1,16 +1,16 @@
 {% extends "applybase.html" %}
 {% block title %}申请信息录入{% endblock %}
 
-{% block mentaltable %}
-<form class="pure-form" action="." method="post">
-    <div class="pure-u-2" align="center">
-    <address>
+{% block orderselect %}
+    <address align="center" class="mselect">
     {% for item in nomodifyinfo %}
     {{ item }}；
     {% endfor %}
     </address>
-    </div>
-    <br/>
+{% endblock %}
+
+{% block mentaltable %}
+<form class="pure-form" action="." method="post">
     {% for hidden in form.hidden_fields %}
     {{ hidden }}
     {% endfor %}
@@ -25,10 +25,13 @@
                 <td align="right" class="tdlabel">{{ field.label }}</td>
                 <td class="fieldWrapper applyinputselect" >{{ field.errors }}{{ field }}</td>
             </tr>
+            {% endif %}            
+            {% endfor %}            
+            {% if not form.visible_fields|length|divisibleby:2 %}
+            <td class="tdlabel">&nbsp;</td><td class="fieldWrapper applyinputselect">&nbsp;</td></tr>
             {% endif %}
-            {% endfor %}
         </table>
-    </div>    
+    </div>
     <p align="center">
         <button type="submit" class="pure-button pure-button-primary" align="center">申请救助</button>
     </p>

@@ -17,7 +17,7 @@ class MentalModel(models.Model):
     guardrelation = models.CharField(choices=jzr.RELASHIP_CHOICES, blank=True, null=True,max_length=10, verbose_name="监护关系", default="父亲")
     phone       = models.CharField(max_length=20, verbose_name="联系电话",blank=True, null=True,)
     regtime     = models.DateField(verbose_name="建档时间",blank=True, null=True,)
-    operatorname= models.CharField(max_length=30, verbose_name='操作人员', blank=True, null=True,)
+    operatorname= models.CharField(max_length=30, verbose_name='录入人员', blank=True, null=True,)
 
     class Meta:
         ordering = ['county',]
