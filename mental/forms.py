@@ -68,12 +68,15 @@ class ApprovalForm(forms.ModelForm):
     
     class Meta:
         model = ApprovalModel
-        fields = ('approvalsn','mental','insurance','cert1_ppid','cert2_diag','cert3_poor',\
+        fields = ('approvalsn','mental',\
             'hospital','period','foodallow','savetimes','savecontinue','notifystart','notifyend',\
-            'isapproval','approvaldate','approvalman','saveok','iscal','moneyhospital', \
-            'moneyfood','moneyfrom',)
-        exclude = ('indate','outdate','dayshosp','dayssave','daysfood','moneytotal','moneymedicineself',\
-            'moneyselfscale','moneyself','moneyinsurance','dateclose','daysfoodlimit','savelevel','foodlevel','startlevel','commitdate','isenterfile','enterfileman',)
+            'isapproval','approvaldate','approvalman','saveok', \
+            )
+        exclude = ('insurance','cert1_ppid','cert2_diag','cert3_poor','indate','outdate',\
+            'dayshosp','dayssave','daysfood','moneytotal','moneymedicineself',\
+            'iscal','moneyhospital','moneyfood','moneyfrom','moneyselfscale','moneyself',\
+            'moneyinsurance','dateclose','daysfoodlimit','savelevel','foodlevel','startlevel',\
+            'commitdate','isenterfile','enterfileman',)
 
     def clean(self):
         return self.cleaned_data

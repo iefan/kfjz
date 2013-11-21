@@ -49,6 +49,8 @@ class ApprovalModel(models.Model):
     approvaldate    = models.DateField(verbose_name="审核时间", blank=True, null=True)
     approvalman     = models.CharField(max_length=30, verbose_name="审核人员", blank=True, null=True,)
     saveok          = models.CharField(max_length=30,verbose_name="救助确认", choices=jzr.SAVEOK_CHOICES, blank=True,null=True,)
+
+    # 结算及归档
     iscal           = models.CharField(max_length=30,verbose_name="是否结算", choices=jzr.ISCAL_CHOICES, blank=True,null=True,)
     moneyhospital   = models.FloatField(verbose_name="医疗救助费用", blank=True, null=True,)  #经结算应救助的金额=救助天数*救助标准
     moneyfood       = models.FloatField(verbose_name="伙食费用", blank=True, null=True,)    #=补助天数*补助标准

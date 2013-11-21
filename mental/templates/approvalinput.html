@@ -3,6 +3,15 @@
 
 {% block approvaltable %}
 <form class="pure-form" action="." method="post">
+    <div class="pure-u-2" align="center">
+        <address>
+            {% for item in nomodifyinfo %}
+            {{ item }}；
+            {% endfor %}
+        </address>
+    </div>
+    <br/>    
+    
     <div class='pure-u-1' align='center'>
         {% for hidden in form.hidden_fields %}
         {{ hidden }}

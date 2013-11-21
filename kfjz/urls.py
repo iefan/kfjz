@@ -22,6 +22,7 @@ urlpatterns = patterns('',
     url(r'^approvalinput/(.*|\d+)/$', 'mental.views.approvalinput'),
     url(r'^approvallist/$', 'mental.views.approvallist'),
     url(r'^applyinput/(.*|\d+)/$', 'mental.views.applyinput'),
+    url(r'^applylist/(.*)/$', 'mental.views.applylist'),
 
     # Examples:
     # url(r'^$', 'kfjz.views.home', name='home'),

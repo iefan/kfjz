@@ -1,5 +1,6 @@
 #coding=utf8
 from django.shortcuts import render_to_response
+# from django.db.models import Q
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required  
 import datetime
@@ -28,16 +29,28 @@ def mentalinput(request):
             return HttpResponseRedirect('/admin/') # Redirect
     return render_to_response('mentalinput.html', {"form":form,"jscal_min":jscal_min, "jscal_max":jscal_max})
 
-def mentalselect(request, curname="", curppid=""):
+def mentalselect(request, curname="", curppid="", curcounty=""):
     curppname = [u"姓名", u"区县", u"身份证号", u"户口类别", u"监护人", u"联系电话", u"修改", u"申请求助"]
     curpp     = [[["","","","","",""], "", "",]]
 
-    if request.method == 'POST':
-        if curname == "" and curppid=="":
-            curname = request.POST['name']
-            curppid = request.POST['ppid']
+    if request.method == 'POST' or curcounty!="":
+        if curname == "":
+            try:
+                curname = request.POST['name']
+            except:
+                pass
+        if curppid=="":
+            try:
+                curppid = request.POST['ppid']
+            except:
+                pass
+        if curcounty=="":
+            try:
+                curcounty = request.POST['county']
+            except:
+                pass
 
-        cur_re = MentalModel.objects.filter(name__icontains=curname, ppid__icontains=curppid)
+        cur_re = MentalModel.objects.filter(name__icontains=curname, ppid__icontains=curppid, county__icontains=curcounty)
         if len(cur_re) != 0:
             curpp = []
             for ipp in cur_re:
@@ -129,6 +142,7 @@ def approvalinput(request, curppid=""):
     except ApprovalModel.DoesNotExist:
         return HttpResponseRedirect('/approvallist/')
 
+    nomodifyinfo = [u"姓名：%s"  % curpp.mental.name, u"身份证号：%s" % curpp.mental.ppid]
 
     today   = datetime.date.today()
 
@@ -142,7 +156,7 @@ def approvalinput(request, curppid=""):
         if form.is_valid():
             form.save()
             return HttpResponseRedirect('/admin/') # Redirect
-    return render_to_response('approvalinput.html', {"form":form, "jscal_min":jscal_min, "jscal_max":jscal_max})
+    return render_to_response('approvalinput.html', {"form":form, "nomodifyinfo":nomodifyinfo,"jscal_min":jscal_min, "jscal_max":jscal_max})
 
 def applyinput(request, curppid="111456789000"):
     '''申请求助视图'''
@@ -178,3 +192,6 @@ def applyinput(request, curppid="111456789000"):
             form.save()
             return HttpResponseRedirect('/admin/') # Redirect
     return render_to_response('applyinput.html', {"form":form, "nomodifyinfo":nomodifyinfo,"jscal_min":jscal_min, "jscal_max":jscal_max})
+
+def applylist(request, county="金平区"):
+    return mentalselect(request, curname="", curppid="", curcounty=county)
