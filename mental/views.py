@@ -9,10 +9,12 @@ from models import MentalModel, ApprovalModel
 
 @login_required(login_url="/login/")
 def about(request):
+    user = request.user
+    print user.unitgroup
     return render_to_response('about.html')
 
-
 def mentalinput(request):
+    print request.user
     # request.session['gameclass'] = ""
     today   = datetime.date.today()
 
@@ -200,24 +202,56 @@ def applyinput(request, curppid="111456789000"):
 def applylist(request, curname="", curppid=""):
     curcounty = "金平区"
 
-    curppname = [u"姓名", u"区县", u"身份证号", u"户口类别", u"监护人", u"联系电话", u"修改", u"申请求助"]
-    curpp     = [[["","","","","",""], "", "",]]
+    curppname = [u"姓名", u"区县", u"身份证号", u"户口类别", u"监护人", u"联系电话", u"修改", u"申请求助",u"申核情况"]
+    curpp     = [[["","","","","",""], "", "", "",]]
 
     if request.method == 'POST':
-        curname = request.POST['name']
-        curppid = request.POST['ppid']
+        if curname!="" or curppid!= "":
+            pass
+        else:
+            curname = request.POST['name']
+            curppid = request.POST['ppid']
 
     cur_re = MentalModel.objects.filter(name__icontains=curname, ppid__icontains=curppid, county__icontains=curcounty)
     if len(cur_re) != 0:
         curpp = []
         for ipp in cur_re:
             try:
-                ApprovalModel.objects.get(mental__ppid=ipp.ppid, isenterfile="否")
-                curpp.append([[ipp.name,  ipp.county, ipp.ppid, ipp.iscity, ipp.guardian, ipp.phone], ipp.id, '--'])
+                overpp = ApprovalModel.objects.get(mental__ppid=ipp.ppid, isenterfile="否")
+                if overpp.isapproval == u"同意":
+                    curpp.append([[ipp.name,  ipp.county, ipp.ppid, ipp.iscity, ipp.guardian, ipp.phone], "", '--', overpp.isapproval])
+                else:
+                    curpp.append([[ipp.name,  ipp.county, ipp.ppid, ipp.iscity, ipp.guardian, ipp.phone], ipp.id, '--', overpp.isapproval])
             except ApprovalModel.DoesNotExist:
-                curpp.append([[ipp.name,  ipp.county, ipp.ppid, ipp.iscity, ipp.guardian, ipp.phone], ipp.id, ipp.ppid])
+                curpp.append([[ipp.name,  ipp.county, ipp.ppid, ipp.iscity, ipp.guardian, ipp.phone], "", ipp.ppid, ""])
     else:
         curpp[0][0][0] = "没有登记"
 
     return render_to_response('applylist.html', {'curpp': curpp, 'curppname':curppname})
     # return mentalselect(request, curname="", curppid="", curcounty=county)
+
+def applymodify(request, curid="0"):
+    if curid == "0":
+        return HttpResponseRedirect('/applylist/')
+
+    # 如果还没有申请，则不存在修改的问题，直接跳转到申请列表
+    try:
+        curpp = ApprovalModel.objects.get(mental__id=curid)
+    except ApprovalModel.DoesNotExist:
+        return HttpResponseRedirect('/applylist/')
+
+    nomodifyinfo = [u"申请人姓名：%s"  % curpp.mental.name, \
+    u"身份证号：%s" % curpp.mental.ppid, u"经济状况：%s" % curpp.mental.economic,]
+
+    today   = datetime.date.today()
+    jscal_min = int(today.isoformat().replace('-', ''))
+    jscal_max = int((today + datetime.timedelta(30)).isoformat().replace('-', ''))
+
+    form = ApplyForm(instance=curpp)
+    if request.method == "POST":
+        form = ApplyForm(request.POST, instance=curpp) # this can modify the current form
+        if form.is_valid():
+            form.save()
+            return applylist(request, curpp.mental.name, curpp.mental.ppid)
+
+    return render_to_response('applymodify.html', {"form":form, "nomodifyinfo":nomodifyinfo, "jscal_min":jscal_min, "jscal_max":jscal_max})

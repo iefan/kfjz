@@ -2,7 +2,7 @@
     <form method="post" action="{% url 'django.contrib.auth.views.login' %}">
         {% csrf_token %}
         {{form}}<br/>
-       <input type="submit" value="login" />
+       <input type="submit" value="登录" />
        <input type="hidden" name="next" value="{{ next }}" />
    </form>
 </html>

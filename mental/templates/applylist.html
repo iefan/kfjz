@@ -3,7 +3,7 @@
 {% block admincssjs %}{% endblock %}
 
 {% block orderselect %}
-<form method="POST" action="." class="pure-form">
+<form method="POST" action="/applylist/" class="pure-form">
   <fieldset align="center" class="mselect">
     <label>姓名： </label>
     <input name="name" type="text" placeholder="姓名">
@@ -24,7 +24,7 @@
       {% endfor %}
     </tr>
   </thead>
-  {% for ipp, curid, curppid in curpp %}
+  {% for ipp, curid, curppid, curproval in curpp %}
   <tr>
     {% for item in ipp %}
     {% if not item %}
@@ -47,6 +47,12 @@
     {% else %}
     <td><a class="pure-button " href="/applyinput/{{ curppid }}/">申请</a></td>
     {% endif %}{% endif %}
+
+    {% if not curproval %}
+    <td>&nbsp;</td>
+    {% else %}
+    <td>{{ curproval }}</a></td>
+    {% endif %}
     
   </tr>
   {% endfor %}
