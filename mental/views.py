@@ -4,7 +4,7 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required  
 import datetime
-from forms import MentalForm, MentalForm2, ApprovalForm, ApplyForm
+from forms import MentalForm, MentalForm2, ApprovalForm, ApprovalForm2, ApplyForm
 from models import MentalModel, ApprovalModel
 
 @login_required(login_url="/login/")
@@ -79,35 +79,24 @@ def approvallist(request, curcounty="", curapproval=""):
     curpp     = [[["","","","","",""], "", "",]]
 
     if request.method == 'POST':
-        curcounty = request.POST['county']
-        curapproval = request.POST['isapproval']
+        if curapproval!="" or curcounty!= "":
+            pass
+        else:
+            curcounty = request.POST['county']
+            curapproval = request.POST['isapproval']
 
     if curapproval == "":
         cur_re = ApprovalModel.objects.filter(mental__county__icontains=curcounty)
     else:
         cur_re  = ApprovalModel.objects.filter(approvalsn__isnull = bool(int(curapproval)), mental__county=curcounty)
 
-
-        # if request.POST['isapproval'] == "":
-        #     curapproval = ""
-        # else:
-        #     curapproval = int(request.POST['isapproval'])
-        # if curcounty == "" and curapproval == "":
-        #     cur_re = ApprovalModel.objects.all()
-        # elif curapproval == "":
-        #     cur_re = ApprovalModel.objects.filter(mental__county=curcounty)
-        # elif curcounty == "":
-        #     cur_re = ApprovalModel.objects.filter(approvalsn__isnull = bool(curapproval))
-        # else:
-        #     cur_re  = ApprovalModel.objects.filter(approvalsn__isnull = bool(curapproval), mental__county=curcounty)
-
     if len(cur_re) != 0:
         curpp = []
         for ipp in cur_re:
             if not ipp.approvalsn:
-                curpp.append([[ipp.mental.name, ipp.mental.county, ipp.mental.ppid, ipp.mental.iscity, ipp.mental.guardian, ipp.mental.phone], ipp.mental.id, ipp.mental.ppid])
+                curpp.append([[ipp.mental.name, ipp.mental.county, ipp.mental.ppid, ipp.mental.iscity, ipp.mental.guardian, ipp.mental.phone], "", ipp.mental.ppid])
             else:
-                curpp.append([[ipp.mental.name,  ipp.mental.county, ipp.mental.ppid, ipp.mental.iscity, ipp.mental.guardian, ipp.mental.phone], ipp.mental.id, '--'])
+                curpp.append([[ipp.mental.name,  ipp.mental.county, ipp.mental.ppid, ipp.mental.iscity, ipp.mental.guardian, ipp.mental.phone], ipp.id, '--'])
     else:
         curpp[0][0][0] = "没有登记"
 
@@ -146,8 +135,33 @@ def approvalinput(request, curppid=""):
         form = ApprovalForm(request.POST, instance=curpp)
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect('/admin/') # Redirect
+            return HttpResponseRedirect('/approvallist/') # Redirect
     return render_to_response('approvalinput.html', {"form":form, "nomodifyinfo":nomodifyinfo,"jscal_min":jscal_min, "jscal_max":jscal_max})
+
+def approvalmodify(request, curid="0"):
+    if curid == "0":
+        return HttpResponseRedirect('/approvallist/')
+
+    try:
+        curpp = ApprovalModel.objects.get(id=curid)
+    except ApprovalModel.DoesNotExist:
+        return HttpResponseRedirect('/approvallist/')
+
+    nomodifyinfo = [u"申批编号：%s"  % curpp.approvalsn, u"姓名：%s"  % curpp.mental.name, \
+    u"身份证号：%s" % curpp.mental.ppid, u"区县：%s" % curpp.mental.county,]
+
+    today   = datetime.date.today()
+    jscal_min = int(today.isoformat().replace('-', ''))
+    jscal_max = int((today + datetime.timedelta(30)).isoformat().replace('-', ''))
+
+    form = ApprovalForm2(instance=curpp)
+    if request.method == "POST":
+        form = ApprovalForm2(request.POST, instance=curpp) # this can modify the current form
+        if form.is_valid():
+            form.save()
+            return approvallist(request, curpp.mental.county, '1')
+
+    return render_to_response('approvalmodify.html', {"form":form, "nomodifyinfo":nomodifyinfo, "jscal_min":jscal_min, "jscal_max":jscal_max})
 
 def applyinput(request, curppid="111456789000"):
     '''申请求助视图'''
@@ -180,7 +194,7 @@ def applyinput(request, curppid="111456789000"):
         form = ApplyForm(request.POST)        
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect('/admin/') # Redirect
+            return HttpResponseRedirect('/applylist/') # Redirect
     return render_to_response('applyinput.html', {"form":form, "nomodifyinfo":nomodifyinfo,"jscal_min":jscal_min, "jscal_max":jscal_max})
 
 def applylist(request, curname="", curppid=""):

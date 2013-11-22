@@ -85,8 +85,63 @@ class ApprovalForm(forms.ModelForm):
         if 'approvalsn' not in self.cleaned_data.keys():
             raise forms.ValidationError("请输入申批编号")
         approvalsn = self.cleaned_data['approvalsn']
+        try:
+            ApprovalModel.objects.get(approvalsn=approvalsn)
+            raise forms.ValidationError("所输入的申批编号已经存在")
+        except ApprovalModel.DoesNotExist:
+            pass
+
         if approvalsn == "":
             raise forms.ValidationError("请输入申批编号")
+        return approvalsn
+
+    def clean_notifystart(self):
+        if 'notifystart' not in self.cleaned_data.keys():
+            raise forms.ValidationError("请输入起始日期")
+        notifystart = self.cleaned_data['notifystart']
+        if notifystart is None:
+            raise forms.ValidationError("请输入起始日期")
+        return notifystart
+
+    def clean_notifyend(self):
+        if 'notifyend' not in self.cleaned_data.keys():
+            raise forms.ValidationError("请输入起始日期")
+        notifyend = self.cleaned_data['notifyend']
+        if notifyend is None:
+            raise forms.ValidationError("请输入起始日期")
+        return notifyend
+
+class ApprovalForm2(forms.ModelForm):
+    """申批表"""
+    mental = forms.ModelChoiceField(queryset=MentalModel.objects.all(), widget=forms.HiddenInput())
+    
+    class Meta:
+        model = ApprovalModel
+        fields = ('mental',\
+            'hospital','period','foodallow','savetimes','savecontinue','notifystart','notifyend',\
+            'isapproval','approvaldate','saveok', )
+        exclude = ('approvalsn','approvalman','insurance','cert1_ppid','cert2_diag','cert3_poor','indate','outdate',\
+            'dayshosp','dayssave','daysfood','moneytotal','moneymedicineself',\
+            'iscal','moneyhospital','moneyfood','moneyfrom','moneyselfscale','moneyself',\
+            'moneyinsurance','dateclose','daysfoodlimit','savelevel','foodlevel','startlevel',\
+            'commitdate','isenterfile','enterfileman',)
+
+    def clean(self):
+        return self.cleaned_data
+
+    def clean_approvalsn(self):
+        if 'approvalsn' not in self.cleaned_data.keys():
+            raise forms.ValidationError("请输入申批编号")
+        approvalsn = self.cleaned_data['approvalsn']
+        try:
+            ApprovalModel.objects.get(approvalsn=approvalsn)
+            raise forms.ValidationError("所输入的申批编号已经存在")
+        except ApprovalModel.DoesNotExist:
+            pass
+
+        if approvalsn == "":
+            raise forms.ValidationError("请输入申批编号")
+        return approvalsn
 
     def clean_notifystart(self):
         if 'notifystart' not in self.cleaned_data.keys():

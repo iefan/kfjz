@@ -16,11 +16,15 @@ urlpatterns = patterns('',
     (r'^logout/$', logout,{'template_name':'logout.html'}),
 
     url(r'^about/$', 'mental.views.about'),
+    
     url(r'^mentalinput/$', 'mental.views.mentalinput'),
     url(r'^mentalselect/$', 'mental.views.mentalselect'),
     url(r'^mentalmodify/(\d+)/$', 'mental.views.mentalmodify'),
+
     url(r'^approvalinput/(.*|\d+)/$', 'mental.views.approvalinput'),
     url(r'^approvallist/$', 'mental.views.approvallist'),
+    url(r'^approvalmodify/(\d+)/$', 'mental.views.approvalmodify'),
+
     url(r'^applyinput/(.*|\d+)/$', 'mental.views.applyinput'),
     url(r'^applylist/$', 'mental.views.applylist'),
 

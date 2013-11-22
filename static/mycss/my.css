@@ -12,23 +12,7 @@
     width: 60%;
 }
 
-/* Apply the .box class on the immediate parent of any grid element (pure-u-*) to apply some padding. */
-/*.l-box {
-    padding: 1.3em;
-}
-
-.l-vbox {
-    padding: 1.3em 0;
-}
-
-.l-hbox {
-    padding: 0 1.3em;
-}
-
-.l-centered {
-    text-align: center;
-}*/
-/* set orderahead page */
+/*信息栏下的填写或是表格*/
 .splash2{
     margin: 0em auto 0;
     padding: 0em 0.5em;
@@ -47,7 +31,7 @@
 .splash2 table {
     width:60%;
 }
-.splash2 table td:not(.tdlabel) {
+.splash2 table td:not(.tdlabel .errorlist) {
     text-align: center;
 }
 .splash2  input[type="text"]{
