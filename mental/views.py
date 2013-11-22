@@ -7,8 +7,12 @@ import datetime
 from forms import MentalForm, MentalForm2, ApprovalForm, ApprovalForm2, ApplyForm
 from models import MentalModel, ApprovalModel
 
+def loginjz(request):
+    return render_to_response('loginjz.html')
+
 @login_required(login_url="/login/")
 def about(request):
+    # print request.COOKIES, type(request.COOKIES)
     user = request.user
     print user.unitgroup
     return render_to_response('about.html')
