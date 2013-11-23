@@ -1,14 +1,11 @@
 #coding=utf8
 from django.shortcuts import render_to_response
 # from django.db.models import Q
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required  
 import datetime
 from forms import MentalForm, MentalForm2, ApprovalForm, ApprovalForm2, ApplyForm
 from models import MentalModel, ApprovalModel
-
-def loginjz(request):
-    return render_to_response('loginjz.html')
 
 @login_required(login_url="/login/")
 def about(request):

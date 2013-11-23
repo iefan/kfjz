@@ -16,7 +16,6 @@ urlpatterns = patterns('',
     (r'^logout/$', logout,{'template_name':'logout.html'}),
 
     url(r'^about/$', 'mental.views.about'),
-    url(r'^loginjz/$', 'mental.views.loginjz'),
     
     url(r'^mentalinput/$', 'mental.views.mentalinput'),
     url(r'^mentalselect/$', 'mental.views.mentalselect'),

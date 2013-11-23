@@ -134,6 +134,7 @@ INSTALLED_APPS = (
     'mental',
 )
 AUTH_USER_MODEL = "jzuser.MyUser"
+LOGIN_REDIRECT_URL = "/mentalselect/"
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 
