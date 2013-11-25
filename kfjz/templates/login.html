@@ -6,42 +6,40 @@
 	<title>系统登录</title>
 
 	<style type="text/css"></style>
-	<link rel="stylesheet" type="text/css" href="/static/mycss/home2.css" />
+	<link rel="stylesheet" type="text/css" href="/static/mycss/my.css" />
+	<link rel="stylesheet" type="text/css" href="/static/mycss/marketing.css" />
 	<link rel="stylesheet" type="text/css" href="/static/mycss/normalize.css" />
-  	<link rel="stylesheet" type="text/css" href="/static/mycss/pure-min.css" />
+	<link rel="stylesheet" type="text/css" href="/static/mycss/pure-min.css" />
 
 <body class="small login">
 	<div id="header">
+		<div class="pure-u-1 logintitle">
+			<h1 class="logintitle">康复救助基金结算系统</h1>
+		</div>
+	</div>
+
+	<div class="pure-g-r content-ribbon logininput">
 		<div class="pure-u-1">
-			<h1>康复救助基金结算系统</h1>
+			<form class="pure-form pure-form-aligned" method="post" action="{% url 'django.contrib.auth.views.login' %}">
+				{% csrf_token %}
+				<table class="pure-table pure-table-horizontal ">
+					<tr>
+						<td align="right">{{ form.username.label }}</td>
+						<td class="fieldWrapper">{{ form.username.errors }}{{ form.username }}</td>
+					</tr>
+					<tr>
+						<td align="right">{{ form.password.label }}</td>
+						<td class="fieldWrapper">{{ form.password.errors }}{{ form.password }}</td>
+					</tr>
+				</table>
+				<br/>
+				<div class="pure-u-1" align="center">
+					<input  class="pure-button pure-button-primary" type="submit" tabindex="4" value="登录"></div>
+				<input type="hidden" name="next" value="{{ next }}" />
+			</form>
 		</div>
 	</div>
 
-	<div id="container">
-		<div id="content">
-			<div class="wrapper">
-				<form class="pure-form pure-form-aligned" method="post" action="{% url 'django.contrib.auth.views.login' %}">
-					{% csrf_token %}
-					<table class="pure-table pure-table-horizontal " style="margin-left: auto; margin-right: auto;">
-						<tr>
-							<td align="right" class="tdlabel">{{ form.username.label }}</td>
-							<td class="fieldWrapper">{{ form.username.errors }}{{ form.username }}</td>
-						</tr>
-						<tr>
-							<td align="right" class="tdlabel">{{ form.password.label }}</td>
-							<td class="fieldWrapper">{{ form.password.errors }}{{ form.password }}</td>
-						</tr>						
-					</table>
-					<br/>
-					<input class="pure-button pure-button-primary" type="submit" tabindex="4" value="登录">
-
-					<input type="hidden" name="next" value="{{ next }}" />
-				</form>
-			</div>
-		</div>
-		<!-- content -->
-	</div>
-	<!-- container -->
-	<div id="footer">Copyright &copy; 2013 &nbsp;  康复救助基金领导小组</div>
+	<div class="footer pure-u-1">Copyright &copy; 2013 &nbsp;  康复救助基金领导小组</div>
 </body>
 </html>

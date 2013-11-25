@@ -68,6 +68,26 @@
     width: 100%;
 }
 
+.logintitle{
+    text-align: center;
+    vertical-align: center;
+    background: #eee;
+    height: 60px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+.logininput{
+    margin-top: 40px;
+    /*text-align: center;*/
+}
+.logininput table{
+    margin: auto;
+    width: 360px;
+}
+.logininput .pure-button{
+    margin-bottom: 10px;
+}
+
 /*nav menu css*/
 body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, input, textarea, p, blockquote, th, td{margin:0; padding:0}
 table{border-collapse:collapse; border-spacing:0}
