@@ -70,8 +70,7 @@ class ApprovalForm(forms.ModelForm):
         model = ApprovalModel
         fields = ('approvalsn','mental',\
             'hospital','period','foodallow','savetimes','savecontinue','notifystart','notifyend',\
-            'isapproval','approvaldate','approvalman','saveok', \
-            )
+            'isapproval','approvaldate','saveok','approvalman',)
         exclude = ('insurance','cert1_ppid','cert2_diag','cert3_poor','indate','outdate',\
             'dayshosp','dayssave','daysfood','moneytotal','moneymedicineself',\
             'iscal','moneyhospital','moneyfood','moneyfrom','moneyselfscale','moneyself',\
@@ -174,3 +173,37 @@ class ApplyForm(forms.ModelForm):
     def clean(self):
         return self.cleaned_data
 
+class InHospitalForm(forms.ModelForm):
+    """入院表"""
+    mental = forms.ModelChoiceField(queryset=MentalModel.objects.all(), widget=forms.HiddenInput())
+    
+    class Meta:
+        model = ApprovalModel
+        fields = ('mental',"indate",)
+        exclude = ("dayshosp","dayssave","daysfood",\
+            "moneytotal","moneymedicineself","moneyselfscale","moneyself","moneyinsurance","dateclose",\
+            "approvalsn","outdate","insurance","cert1_ppid","cert2_diag","cert3_poor",\
+            "hospital","period","foodallow","savetimes","savecontinue",\
+            "notifystart","notifyend","commitdate","isapproval","approvaldate",\
+            "approvalman","saveok","iscal","moneyhospital","moneyfood","moneyfrom",\
+            "isenterfile","enterfileman","daysfoodlimit","savelevel","foodlevel","startlevel",)
+
+    def clean(self):
+        return self.cleaned_data
+
+class OutHospitalForm(forms.ModelForm):
+    """出院结算表"""
+    mental = forms.ModelChoiceField(queryset=MentalModel.objects.all(), widget=forms.HiddenInput())
+    
+    class Meta:
+        model = ApprovalModel
+        fields = ('mental',"dayshosp","dayssave","daysfood",\
+            "moneytotal","moneymedicineself","moneyselfscale","moneyself","moneyinsurance","dateclose",)
+        exclude = ("approvalsn","outdate","insurance","cert1_ppid","cert2_diag","cert3_poor",\
+            "hospital","period","foodallow","savetimes","savecontinue",\
+            "notifystart","notifyend","commitdate","isapproval","approvaldate",\
+            "approvalman","saveok","iscal","moneyhospital","moneyfood","moneyfrom",\
+            "isenterfile","enterfileman","daysfoodlimit","savelevel","foodlevel","startlevel",)
+
+    def clean(self):
+        return self.cleaned_data

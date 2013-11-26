@@ -1,0 +1,61 @@
+{% extends "hospitalbase.html" %}
+{% block title %}已申请人员列表{% endblock %}
+{% block admincssjs %}{% endblock %}
+
+{% block hospitalselect %}
+<form method="POST" action="/hospitallist/" class="pure-form">
+  <fieldset align="center" class="mselect">
+    <label>区县名称：： </label>
+    <select name="county">
+      <option value ="">--</option>
+      <option value ="金平区">金平区</option>
+      <option value ="龙湖区">龙湖区</option>
+      <option value ="濠江区">濠江区</option>
+      <option value ="澄海区">澄海区</option>
+      <option value ="潮阳区">潮阳区</option>
+      <option value ="潮南区">潮南区</option>
+      <option value ="南澳县">南澳县</option>
+    </select>
+    <label>是否入院： </label>
+    <select name="inhospital">
+      <option value ="">--</option>
+      <option value ="1">未入院</option>
+      <option value="0">已入院</option>
+    </select>
+    <button type="submit" class="pure-button pure-button-success">查询</button>
+  </fieldset>
+</form>
+{% endblock %}
+
+{% block hospitaltable %}
+<h2 align="center">已申请人员列表</h2>
+<table align="center" class="pure-table pure-table-bordered">
+  <thead>
+    <tr>
+      {% for item in curppname %}
+      <th>{{ item }}</th>
+      {% endfor %}
+    </tr>
+  </thead>
+  {% for ipp, curid in curpp %}
+  <tr>
+    {% for item in ipp %}
+    {% if not item %}
+    <td>&nbsp;</td>
+    {% else %}
+    <td>{{ item }}</td>
+    {% endif %}
+    {% endfor %}
+
+    {% if not curid %}
+    <td>&nbsp;</td>
+    {% else %}
+    <td><a class="pure-button " href="/inhospital/{{ curid }}/">确认入院</a></td>
+    {% endif %}
+
+  </tr>
+  {% endfor %}
+</table>
+<br/>
+
+{% endblock %}

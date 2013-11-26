@@ -135,6 +135,7 @@ INSTALLED_APPS = (
 )
 AUTH_USER_MODEL = "jzuser.MyUser"
 LOGIN_REDIRECT_URL = "/mentalselect/"
+DATE_FORMAT = 'Y-m-d'
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 

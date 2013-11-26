@@ -16,7 +16,7 @@ def about(request):
     return render_to_response('about.html', {'hellotxt':'hello world',}, context_instance=RequestContext(request))
 
 def mentalinput(request):
-    print request.user
+    # print request.user
     # request.session['gameclass'] = ""
     today   = datetime.date.today()
 
@@ -257,3 +257,34 @@ def applymodify(request, curid="0"):
             return applylist(request, curpp.mental.name, curpp.mental.ppid)
 
     return render_to_response('applymodify.html', {"form":form, "nomodifyinfo":nomodifyinfo, "jscal_min":jscal_min, "jscal_max":jscal_max})
+
+def hospitallist(request, curcounty="", curinhospital=""):
+    '''医院信息列表'''
+    curppname = [u"姓名", u"区县", u"有效起始时间", u"有效终止时间", u"救助疗程", u"审核时间", u"确认入院", ]
+    curpp     = [[["","","","","",""], "", ]]
+
+    if request.method == 'POST':
+        if curcounty!="" or curinhospital!= "":
+            pass
+        else:
+            curcounty = request.POST['county']
+            curinhospital = request.POST['inhospital']
+
+    if curinhospital == "":
+        cur_re = ApprovalModel.objects.filter(mental__county__icontains=curcounty)
+    else:
+        cur_re  = ApprovalModel.objects.filter(indate__isnull = bool(int(curinhospital)), mental__county__icontains=curcounty)
+
+    if len(cur_re) != 0:
+        curpp = []
+        for ipp in cur_re:
+            print ipp.indate
+            if ipp.approvalsn:
+                if not ipp.indate:
+                    curpp.append([[ipp.mental.name, ipp.mental.county, ipp.notifystart, ipp.notifyend, ipp.period, ipp.approvaldate], ipp.id])
+                else:
+                    curpp.append([[ipp.mental.name, ipp.mental.county, ipp.notifystart, ipp.notifyend, ipp.period, ipp.approvaldate], ''])
+    else:
+        curpp[0][0][0] = "没有登记"
+
+    return render_to_response('hospitallist.html', {'curpp': curpp, 'curppname':curppname})
