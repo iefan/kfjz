@@ -21,16 +21,9 @@
 	<div class="pure-g-r content-ribbon logininput">
 		<div class="pure-u-1">
 			<form class="pure-form pure-form-aligned" method="post" action="{% url 'django.contrib.auth.views.login' %}">
-				{% csrf_token %}
+				{% csrf_token %}				
 				<table class="pure-table pure-table-horizontal ">
-					<tr>
-						<td align="right">{{ form.username.label }}</td>
-						<td class="fieldWrapper">{{ form.username.errors }}{{ form.username }}</td>
-					</tr>
-					<tr>
-						<td align="right">{{ form.password.label }}</td>
-						<td class="fieldWrapper">{{ form.password.errors }}{{ form.password }}</td>
-					</tr>
+				{{ form.as_table }}
 				</table>
 				<br/>
 				<div class="pure-u-1" align="center">

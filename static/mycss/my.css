@@ -83,10 +83,19 @@
 .logininput table{
     margin: auto;
     width: 360px;
+    font-size: 20px;
+    font-weight: bold;
 }
 .logininput .pure-button{
     margin-bottom: 10px;
 }
+.logininput table th{
+    text-align: right;
+}
+.logininput table input{
+    width: 100%;
+}
+
 
 /*nav menu css*/
 body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, input, textarea, p, blockquote, th, td{margin:0; padding:0}

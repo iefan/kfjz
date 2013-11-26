@@ -1,5 +1,6 @@
 #coding=utf8
 from django.shortcuts import render_to_response
+from django.template import RequestContext
 # from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required  
@@ -12,7 +13,7 @@ def about(request):
     # print request.COOKIES, type(request.COOKIES)
     user = request.user
     print user.unitgroup
-    return render_to_response('about.html')
+    return render_to_response('about.html', {'hellotxt':'hello world',}, context_instance=RequestContext(request))
 
 def mentalinput(request):
     print request.user
