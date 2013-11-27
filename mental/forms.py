@@ -191,6 +191,14 @@ class InHospitalForm(forms.ModelForm):
     def clean(self):
         return self.cleaned_data
 
+    def clean_indate(self):
+        if 'indate' not in self.cleaned_data.keys():
+            raise forms.ValidationError("请输入入院日期")
+        indate = self.cleaned_data['indate']
+        if indate is None:
+            raise forms.ValidationError("请输入入院日期")
+        return indate
+
 class OutHospitalForm(forms.ModelForm):
     """出院结算表"""
     mental = forms.ModelChoiceField(queryset=MentalModel.objects.all(), widget=forms.HiddenInput())
@@ -207,3 +215,4 @@ class OutHospitalForm(forms.ModelForm):
 
     def clean(self):
         return self.cleaned_data
+

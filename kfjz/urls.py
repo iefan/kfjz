@@ -30,6 +30,7 @@ urlpatterns = patterns('',
     url(r'^applymodify/(\d+)/$', 'mental.views.applymodify'),
 
     url(r'^hospitallist/$', 'mental.views.hospitallist'),
+    url(r'^inhospital/(\d+)/$', 'mental.views.inhospital'),
 
     # Examples:
     # url(r'^$', 'kfjz.views.home', name='home'),

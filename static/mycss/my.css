@@ -95,8 +95,17 @@
 .logininput table input{
     width: 100%;
 }
-
-
+.hospital{
+    width: 600px;
+    margin: auto;
+}
+.hospital table{
+    margin:auto;
+    width: 60%;
+}
+.hospital table td input[type="text"]{
+    width: 100%;
+}
 /*nav menu css*/
 body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, input, textarea, p, blockquote, th, td{margin:0; padding:0}
 table{border-collapse:collapse; border-spacing:0}

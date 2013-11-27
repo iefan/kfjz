@@ -1,0 +1,29 @@
+{% extends "hospitalbase.html" %}
+{% block title %}确认入院{% endblock %}
+
+{% block hospitalselect %}
+    <address align="center">
+        {% for item in nomodifyinfo %}
+        {{ item }}；
+        {% endfor %}
+    </address>
+{% endblock %}
+
+{% block hospitaltable %}
+<form class="pure-form" action="." method="post">    
+    <div class='pure-u-1 hospital' align='center'>
+        {% for hidden in form.hidden_fields %}
+        {{ hidden }}
+        {% endfor %}
+        <table align="center" class="pure-table  pure-table-horizontal gameordertable ">           
+            <tr>
+                <td align="right" class="tdlabel">{{ form.indate.label }}</td>
+                <td class="fieldWrapper">{{ form.indate.errors }}{{ form.indate }}</td>
+            </tr>
+        </table>
+    </div>    
+    <p align="center">
+        <button type="submit" class="pure-button pure-button-primary" align="center">确认入院</button>
+    </p>
+</form>
+{% endblock %}

@@ -5,7 +5,7 @@ from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required  
 import datetime
-from forms import MentalForm, MentalForm2, ApprovalForm, ApprovalForm2, ApplyForm
+from forms import MentalForm, MentalForm2, ApprovalForm, ApprovalForm2, ApplyForm, InHospitalForm
 from models import MentalModel, ApprovalModel
 
 @login_required(login_url="/login/")
@@ -288,3 +288,37 @@ def hospitallist(request, curcounty="", curinhospital=""):
         curpp[0][0][0] = "没有登记"
 
     return render_to_response('hospitallist.html', {'curpp': curpp, 'curppname':curppname})
+
+def inhospital(request, curid="1"):
+    '''申请求助视图'''
+    if curid == "":
+        return HttpResponseRedirect('/hospitallist/')
+
+    # 如果已经入院，则跳转
+    try:
+        ApprovalModel.objects.get(indate__isnull=False, id=curid)
+        return HttpResponseRedirect('/hospitallist/')
+    except ApprovalModel.DoesNotExist:
+        pass
+
+    # 如果信息总表中不存在,即可能用户手动输入urls使得id不存在，则跳转
+    try:
+        curpp = ApprovalModel.objects.get(indate__isnull=True, id=curid)
+    except MentalModel.DoesNotExist:
+        return HttpResponseRedirect('/hospitallist/')
+
+    nomodifyinfo = [u"审批号：%s"  % curpp.approvalsn,u"姓名：%s"  % curpp.mental.name, u"区县：%s" % curpp.mental.county]
+
+    today   = datetime.date.today()
+    jscal_min = int(today.isoformat().replace('-', ''))
+    jscal_max = int((today + datetime.timedelta(30)).isoformat().replace('-', ''))
+
+    # form = ApplyForm(instance=curpp)    
+    form = InHospitalForm(initial={'mental':curpp})
+    # print form
+    if request.method == "POST":
+        form = InHospitalForm(request.POST)        
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/hospitallist/') # Redirect
+    return render_to_response('hospitalin.html', {"form":form, "nomodifyinfo":nomodifyinfo,"jscal_min":jscal_min, "jscal_max":jscal_max})
