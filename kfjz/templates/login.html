@@ -20,7 +20,7 @@
 
 	<div class="pure-g-r content-ribbon logininput">
 		<div class="pure-u-1">
-			<form class="pure-form pure-form-aligned" method="post" action="{% url 'django.contrib.auth.views.login' %}">
+			<form class="pure-form pure-form-aligned" method="post" action="{% url 'mental.views.myuser_login' %}">
 				{% csrf_token %}				
 				<table class="pure-table pure-table-horizontal ">
 				{{ form.as_table }}

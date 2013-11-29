@@ -2,6 +2,7 @@ from django.conf.urls import patterns, include, url
 from django.conf.urls.static import static
 import settings
 from django.contrib.auth.views import login, logout
+from mental.views import myuser_login
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -12,8 +13,9 @@ def i18n_javascript(request):
     
 urlpatterns = patterns('',
     (r'^admin/jsi18n', i18n_javascript),    
-    (r'^login/$', login, {'template_name':'login.html'} ),
+    # (r'^login/$', login, {'template_name':'login.html'} ),
     (r'^logout/$', logout,{'template_name':'logout.html'}),
+    url(r'^login/$', myuser_login,  {'template_name': 'login.html'}),
 
     url(r'^about/$', 'mental.views.about'),
     

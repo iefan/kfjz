@@ -8,6 +8,15 @@ import datetime
 from forms import MentalForm, MentalForm2, ApprovalForm, ApprovalForm2, ApplyForm, InHospitalForm
 from models import MentalModel, ApprovalModel
 
+from django.contrib.auth.views import login
+def myuser_login(request, *args, **kwargs):
+    if request.method == 'POST':
+        request.session.set_expiry(600) #设置 cookie 时间 10 分钟
+        # if not request.POST.get('remember', None):
+        #     request.session.set_expiry(0)
+ 
+    return login(request, *args, **kwargs)
+
 @login_required(login_url="/login/")
 def about(request):
     # print request.COOKIES, type(request.COOKIES)
@@ -51,7 +60,7 @@ def mentalselect(request, curname="", curppid="", curcounty=""):
     else:
         curpp[0][0][0] = "没有登记"
 
-    return render_to_response('mentalselect.html', {'curpp': curpp, 'curppname':curppname})
+    return render_to_response('mentalselect.html', {'curpp': curpp, 'curppname':curppname}, context_instance=RequestContext(request))
 
 def mentalmodify(request, curid="0"):
     if curid == "0":
@@ -79,7 +88,7 @@ def mentalmodify(request, curid="0"):
 
 def approvallist(request, curcounty="", curapproval=""):
     '''批准列表'''
-    curppname = [u"姓名", u"区县", u"身份证号", u"户口类别", u"监护人", u"联系电话", u"修改", u"批准"]
+    curppname = [u"姓名", u"区县", u"身份证号", u"户口类别", u"监护人", u"联系电话", u"修改/入院", u"批准"]
     curpp     = [[["","","","","",""], "", "",]]
 
     if request.method == 'POST':
@@ -100,7 +109,12 @@ def approvallist(request, curcounty="", curapproval=""):
             if not ipp.approvalsn:
                 curpp.append([[ipp.mental.name, ipp.mental.county, ipp.mental.ppid, ipp.mental.iscity, ipp.mental.guardian, ipp.mental.phone], "", ipp.mental.ppid])
             else:
-                curpp.append([[ipp.mental.name,  ipp.mental.county, ipp.mental.ppid, ipp.mental.iscity, ipp.mental.guardian, ipp.mental.phone], ipp.id, '--'])
+                tmpitem = ipp.id
+                if ipp.indate and not ipp.outdate: #已入院
+                    tmpitem = "--"
+                elif ipp.outdate:
+                    tmpitem = "over"
+                curpp.append([[ipp.mental.name,  ipp.mental.county, ipp.mental.ppid, ipp.mental.iscity, ipp.mental.guardian, ipp.mental.phone], tmpitem, '--'])
     else:
         curpp[0][0][0] = "没有登记"
 
@@ -260,8 +274,8 @@ def applymodify(request, curid="0"):
 
 def hospitallist(request, curcounty="", curinhospital=""):
     '''医院信息列表'''
-    curppname = [u"姓名", u"区县", u"有效起始时间", u"有效终止时间", u"救助疗程", u"审核时间", u"确认入院", ]
-    curpp     = [[["","","","","",""], "", ]]
+    curppname = [u"姓名", u"区县", u"有效起始时间", u"有效终止时间", u"救助疗程", u"审核时间", u"确认入院", u"入院时间"]
+    curpp     = [[["","","","","",""], "", "",]]
 
     if request.method == 'POST':
         if curcounty!="" or curinhospital!= "":
@@ -278,12 +292,13 @@ def hospitallist(request, curcounty="", curinhospital=""):
     if len(cur_re) != 0:
         curpp = []
         for ipp in cur_re:
-            print ipp.indate
+            # print ipp.indate, ipp.approvalsn, '=================='
             if ipp.approvalsn:
+                # print ipp.indate, ipp.approvalsn
                 if not ipp.indate:
-                    curpp.append([[ipp.mental.name, ipp.mental.county, ipp.notifystart, ipp.notifyend, ipp.period, ipp.approvaldate], ipp.id])
+                    curpp.append([[ipp.mental.name, ipp.mental.county, ipp.notifystart, ipp.notifyend, ipp.period, ipp.approvaldate], ipp.id, ""])
                 else:
-                    curpp.append([[ipp.mental.name, ipp.mental.county, ipp.notifystart, ipp.notifyend, ipp.period, ipp.approvaldate], ''])
+                    curpp.append([[ipp.mental.name, ipp.mental.county, ipp.notifystart, ipp.notifyend, ipp.period, ipp.approvaldate], '', ipp.indate])
     else:
         curpp[0][0][0] = "没有登记"
 
@@ -310,14 +325,14 @@ def inhospital(request, curid="1"):
     nomodifyinfo = [u"审批号：%s"  % curpp.approvalsn,u"姓名：%s"  % curpp.mental.name, u"区县：%s" % curpp.mental.county]
 
     today   = datetime.date.today()
-    jscal_min = int(today.isoformat().replace('-', ''))
-    jscal_max = int((today + datetime.timedelta(30)).isoformat().replace('-', ''))
+    jscal_min = int((today - datetime.timedelta(30)).isoformat().replace('-', ''))
+    jscal_max = int(today.isoformat().replace('-', ''))
 
-    # form = ApplyForm(instance=curpp)    
-    form = InHospitalForm(initial={'mental':curpp})
+    form = InHospitalForm(instance=curpp)    
+    # form = InHospitalForm(initial={'mental':curpp})
     # print form
     if request.method == "POST":
-        form = InHospitalForm(request.POST)        
+        form = InHospitalForm(request.POST, instance=curpp)        
         if form.is_valid():
             form.save()
             return HttpResponseRedirect('/hospitallist/') # Redirect

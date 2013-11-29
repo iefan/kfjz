@@ -26,6 +26,16 @@ $(document).ready(function(){
 </head>
 
 <body>
+  <div class="pure-u-1" id="user_nav">
+    {% if user.is_authenticated %}
+    <span>单位编号：{{ user.unitsn }} &nbsp;</span>
+    <span>单位名称：{{ user.unitname }} &nbsp; </span> 
+    <span>操作员：{{ user.operatorname }} &nbsp; </span> | &nbsp;
+    <span><a href="/logout/">退出</a></span>
+    {% else %}
+    <span><a href="/login/" class="welcome" title="登录">您还未登录，请登录!</a></span>
+    {% endif %}
+    </div>
   <div id="page-wrap">
     <div id="content">
       <ul id="nav">

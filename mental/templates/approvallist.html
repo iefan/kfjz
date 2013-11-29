@@ -49,9 +49,13 @@
 
     {% if not curid %}
     <td>&nbsp;</td>
+    {% else %}{% if curid == "--" %}
+    <td>已入院</td>
+    {% else %}{% if curid == "over" %}
+    <td>已出院</td>
     {% else %}
     <td><a class="pure-button " href="/approvalmodify/{{ curid }}/">修改</a></td>
-    {% endif %}
+    {% endif %}{% endif %}{% endif %}
 
     {% if curppid == "" %}
     <td>&nbsp;</td>    
