@@ -5,7 +5,7 @@ from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required  
 import datetime
-from forms import MentalForm, MentalForm2, ApprovalForm, ApprovalForm2, ApplyForm, InHospitalForm
+from forms import MentalForm, MentalForm2, ApprovalForm, ApprovalForm2, ApplyForm, InHospitalForm, OutHospitalForm
 from models import MentalModel, ApprovalModel
 
 from django.contrib.auth.views import login
@@ -274,8 +274,8 @@ def applymodify(request, curid="0"):
 
 def hospitallist(request, curcounty="", curinhospital=""):
     '''医院信息列表'''
-    curppname = [u"姓名", u"区县", u"有效起始时间", u"有效终止时间", u"救助疗程", u"审核时间", u"确认入院", u"入院时间"]
-    curpp     = [[["","","","","",""], "", "",]]
+    curppname = [u"姓名", u"区县", u"有效起始时间", u"有效终止时间", u"救助疗程", u"审核时间", u"确认入院", u"入院/出院时间", u"确认出院",]
+    curpp     = [[["","","","","",""], "", "","",]]
 
     if request.method == 'POST':
         if curcounty!="" or curinhospital!= "":
@@ -295,17 +295,20 @@ def hospitallist(request, curcounty="", curinhospital=""):
             # print ipp.indate, ipp.approvalsn, '=================='
             if ipp.approvalsn:
                 # print ipp.indate, ipp.approvalsn
-                if not ipp.indate:
-                    curpp.append([[ipp.mental.name, ipp.mental.county, ipp.notifystart, ipp.notifyend, ipp.period, ipp.approvaldate], ipp.id, ""])
+                if not ipp.outdate:
+                    if not ipp.indate:
+                        curpp.append([[ipp.mental.name, ipp.mental.county, ipp.notifystart, ipp.notifyend, ipp.period, ipp.approvaldate], ipp.id, "", ""])
+                    else:
+                        curpp.append([[ipp.mental.name, ipp.mental.county, ipp.notifystart, ipp.notifyend, ipp.period, ipp.approvaldate], '', ipp.indate, ipp.id])
                 else:
-                    curpp.append([[ipp.mental.name, ipp.mental.county, ipp.notifystart, ipp.notifyend, ipp.period, ipp.approvaldate], '', ipp.indate])
+                    curpp.append([[ipp.mental.name, ipp.mental.county, ipp.notifystart, ipp.notifyend, ipp.period, ipp.approvaldate], 'over', ipp.outdate, "",])
     else:
         curpp[0][0][0] = "没有登记"
 
     return render_to_response('hospitallist.html', {'curpp': curpp, 'curppname':curppname})
 
 def inhospital(request, curid="1"):
-    '''申请求助视图'''
+    '''医院入院视图'''
     if curid == "":
         return HttpResponseRedirect('/hospitallist/')
 
@@ -337,3 +340,37 @@ def inhospital(request, curid="1"):
             form.save()
             return HttpResponseRedirect('/hospitallist/') # Redirect
     return render_to_response('hospitalin.html', {"form":form, "nomodifyinfo":nomodifyinfo,"jscal_min":jscal_min, "jscal_max":jscal_max})
+
+def outhospital(request, curid="1"):
+    '''医院出院视图'''
+    if curid == "":
+        return HttpResponseRedirect('/hospitallist/')
+
+    # 如果已经出院，则跳转
+    try:
+        ApprovalModel.objects.get(outdate__isnull=False, id=curid)
+        return HttpResponseRedirect('/hospitallist/')
+    except ApprovalModel.DoesNotExist:
+        pass
+
+    # 如果信息总表中不存在,即可能用户手动输入urls使得id不存在，则跳转
+    try:
+        curpp = ApprovalModel.objects.get(outdate__isnull=True, id=curid)
+    except MentalModel.DoesNotExist:
+        return HttpResponseRedirect('/hospitallist/')
+
+    nomodifyinfo = [u"审批号：%s"  % curpp.approvalsn,u"姓名：%s"  % curpp.mental.name, \
+        u"区县：%s" % curpp.mental.county, u"入院时间：%s" % curpp.indate]
+
+    today   = datetime.date.today()
+    jscal_max = int((today + datetime.timedelta(30)).isoformat().replace('-', ''))
+    jscal_min = int(today.isoformat().replace('-', ''))
+
+    form = OutHospitalForm(instance=curpp)  
+    # print form
+    if request.method == "POST":
+        form = OutHospitalForm(request.POST, instance=curpp)        
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/hospitallist/') # Redirect
+    return render_to_response('hospitalout.html', {"form":form, "nomodifyinfo":nomodifyinfo,"jscal_min":jscal_min, "jscal_max":jscal_max})

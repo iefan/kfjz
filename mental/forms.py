@@ -205,9 +205,9 @@ class OutHospitalForm(forms.ModelForm):
     
     class Meta:
         model = ApprovalModel
-        fields = ('mental',"dayshosp","dayssave","daysfood",\
+        fields = ('mental',"dayshosp","dayssave","daysfood","outdate",\
             "moneytotal","moneymedicineself","moneyselfscale","moneyself","moneyinsurance","dateclose",)
-        exclude = ("approvalsn","outdate","insurance","cert1_ppid","cert2_diag","cert3_poor",\
+        exclude = ("approvalsn","insurance","cert1_ppid","cert2_diag","cert3_poor",\
             "hospital","period","foodallow","savetimes","savecontinue",\
             "notifystart","notifyend","commitdate","isapproval","approvaldate",\
             "approvalman","saveok","iscal","moneyhospital","moneyfood","moneyfrom",\
