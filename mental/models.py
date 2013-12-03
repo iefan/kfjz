@@ -36,6 +36,8 @@ class ApprovalModel(models.Model):
     cert1_ppid      = models.CharField(max_length=30,verbose_name="身份证明", choices=jzr.CERT1_CHOICES,default="身份证")       
     cert2_diag      = models.CharField(max_length=30,verbose_name="疾病证明", choices=jzr.CERT2_CHOICES, default="精神残疾证")
     cert3_poor      = models.CharField(max_length=30,verbose_name="贫困证明", choices=jzr.CERT3_CHOICES,default="低保证")
+    applyman        = models.CharField(max_length=30, verbose_name="申请人员", blank=True, null=True,)
+
     hospital        = models.CharField(max_length=30,verbose_name="医疗机构", choices=jzr.HOSPITAL_CHOICES, default="市四本部",)
     period          = models.CharField(max_length=30,verbose_name="救助疗程", choices=jzr.PERIOD_CHOICES, default="急性",)
     foodallow       = models.CharField(max_length=30,verbose_name="伙食补助", choices=jzr.YESNO_CHOICE, default="否")
@@ -59,6 +61,8 @@ class ApprovalModel(models.Model):
 
     # hospital write
     indate          = models.DateField(verbose_name="住院时间", blank=True, null=True,)
+    inhospitalman   = models.CharField(max_length=30, verbose_name="入院填写人", blank=True, null=True,)
+
     outdate         = models.DateField(verbose_name="出院时间", blank=True, null=True,)
     dayshosp        = models.IntegerField(verbose_name="住院天数", blank=True, null=True,)  #auto calc
     dayssave        = models.IntegerField(verbose_name="救助天数", blank=True, null=True,)  #auto calc  
@@ -69,6 +73,7 @@ class ApprovalModel(models.Model):
     moneyself       = models.FloatField(verbose_name="个人支付", blank=True, null=True,)
     moneyinsurance  = models.FloatField(verbose_name="医保支付", blank=True, null=True,)    
     dateclose       = models.DateField(verbose_name="结算日期", blank=True, null=True,)
+    outhospitalman  = models.CharField(max_length=30, verbose_name="出院填写人", blank=True, null=True,)
 
     # level set
     daysfoodlimit   = models.IntegerField(verbose_name="救助上限", blank=True, null=True,)

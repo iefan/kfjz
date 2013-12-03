@@ -164,7 +164,7 @@ class ApplyForm(forms.ModelForm):
     
     class Meta:
         model = ApprovalModel
-        fields = ('mental','insurance','cert1_ppid','cert2_diag','cert3_poor','commitdate',)
+        fields = ('mental','insurance','cert1_ppid','cert2_diag','cert3_poor','commitdate','applyman', )
         exclude = ('hospital','period','foodallow','savetimes','savecontinue','notifystart','notifyend',\
             'isapproval','approvaldate','approvalman','saveok','iscal','moneyhospital', \
             'moneyfood','moneyfrom','isenterfile','enterfileman','approvalsn','indate','outdate','dayshosp','dayssave','daysfood','moneytotal','moneymedicineself',\
@@ -215,4 +215,12 @@ class OutHospitalForm(forms.ModelForm):
 
     def clean(self):
         return self.cleaned_data
+
+    def clean_outdate(self):
+        if 'outdate' not in self.cleaned_data.keys():
+            raise forms.ValidationError("请输入出院日期")
+        outdate = self.cleaned_data['outdate']
+        if outdate is None:
+            raise forms.ValidationError("请输入出院日期")
+        return outdate
 
