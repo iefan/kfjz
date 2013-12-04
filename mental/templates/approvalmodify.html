@@ -27,6 +27,9 @@
             </tr>
             {% endif %}
             {% endfor %}
+            {% if not form.visible_fields|length|divisibleby:2 %}
+            <td class="tdlabel">&nbsp;</td><td class="fieldWrapper ">&nbsp;</td></tr>
+            {% endif %}
         </table>
     </div>    
     <p align="center">

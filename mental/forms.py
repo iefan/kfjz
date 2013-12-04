@@ -70,12 +70,12 @@ class ApprovalForm(forms.ModelForm):
         model = ApprovalModel
         fields = ('approvalsn','mental',\
             'hospital','period','foodallow','savetimes','savecontinue','notifystart','notifyend',\
-            'isapproval','approvaldate','saveok','approvalman',)
+            'isapproval','approvaldate','approvalman',)
         exclude = ('insurance','cert1_ppid','cert2_diag','cert3_poor','indate','outdate',\
             'dayshosp','dayssave','daysfood','moneytotal','moneymedicineself',\
             'iscal','moneyhospital','moneyfood','moneyfrom','moneyselfscale','moneyself',\
             'moneyinsurance','dateclose','daysfoodlimit','savelevel','foodlevel','startlevel',\
-            'commitdate','isenterfile','enterfileman',)
+            'commitdate','isenterfile','enterfileman','saveok',)
 
     def clean(self):
         return self.cleaned_data
@@ -118,12 +118,12 @@ class ApprovalForm2(forms.ModelForm):
         model = ApprovalModel
         fields = ('mental',\
             'hospital','period','foodallow','savetimes','savecontinue','notifystart','notifyend',\
-            'isapproval','approvaldate','saveok', )
+            'isapproval','approvaldate',)
         exclude = ('approvalsn','approvalman','insurance','cert1_ppid','cert2_diag','cert3_poor','indate','outdate',\
             'dayshosp','dayssave','daysfood','moneytotal','moneymedicineself',\
             'iscal','moneyhospital','moneyfood','moneyfrom','moneyselfscale','moneyself',\
             'moneyinsurance','dateclose','daysfoodlimit','savelevel','foodlevel','startlevel',\
-            'commitdate','isenterfile','enterfileman',)
+            'commitdate','isenterfile','enterfileman','saveok', )
 
     def clean(self):
         return self.cleaned_data
@@ -230,10 +230,10 @@ class CalcHospitalForm(forms.ModelForm):
     
     class Meta:
         model = ApprovalModel
-        fields = ('mental',"dayshosp","dayssave","daysfood","outdate",\
+        fields = ('mental',"dayshosp","dayssave","daysfood",\
             "moneytotal","moneymedicineself","moneyselfscale","moneyself","moneyinsurance","dateclose",)
         exclude = ("approvalsn","insurance","cert1_ppid","cert2_diag","cert3_poor",\
-            "hospital","period","foodallow","savetimes","savecontinue",\
+            "hospital","period","foodallow","savetimes","savecontinue","outdate",\
             "notifystart","notifyend","commitdate","isapproval","approvaldate",\
             "approvalman","saveok","iscal","moneyhospital","moneyfood","moneyfrom",\
             "isenterfile","enterfileman","daysfoodlimit","savelevel","foodlevel","startlevel",)

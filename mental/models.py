@@ -49,18 +49,18 @@ class ApprovalModel(models.Model):
     isapproval      = models.CharField(max_length=30,verbose_name="残联审核", choices=jzr.ISAPPROVAL_CHOICES, default="待审",)
     approvaldate    = models.DateField(verbose_name="审核时间", blank=True, null=True)
     approvalman     = models.CharField(max_length=30, verbose_name="审核人员", blank=True, null=True,)
-    saveok          = models.CharField(max_length=30,verbose_name="救助确认", choices=jzr.SAVEOK_CHOICES, blank=True,null=True,)
 
     # 结算及归档
     iscal           = models.CharField(max_length=30,verbose_name="是否结算", choices=jzr.ISCAL_CHOICES, blank=True,null=True,)
     moneyhospital   = models.FloatField(verbose_name="医疗救助费用", blank=True, null=True,)  #经结算应救助的金额=救助天数*救助标准
     moneyfood       = models.FloatField(verbose_name="伙食费用", blank=True, null=True,)    #=补助天数*补助标准
     moneyfrom       = models.FloatField(verbose_name="民政补助", blank=True, null=True,)    #医疗费救助金额大于1000元的显示1000
-    isenterfile     = models.CharField(max_length=30,verbose_name="是否归档", choices=jzr.YESNO_CHOICE, default="否")
-    enterfileman    = models.CharField(max_length=30, verbose_name="归档管理员", blank=True, null=True,)
+    isenterfile     = models.CharField(max_length=30,verbose_name="是否核结", choices=jzr.YESNO_CHOICE, default="否")
+    enterfileman    = models.CharField(max_length=30, verbose_name="核结管理员", blank=True, null=True,)
 
     # hospital write
     indate          = models.DateField(verbose_name="住院时间", blank=True, null=True,)
+    saveok          = models.CharField(max_length=30,verbose_name="救助确认", choices=jzr.SAVEOK_CHOICES, blank=True,null=True,)
     inhospitalman   = models.CharField(max_length=30, verbose_name="入院填写人", blank=True, null=True,)
 
     outdate         = models.DateField(verbose_name="出院时间", blank=True, null=True,)
