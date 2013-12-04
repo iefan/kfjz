@@ -205,6 +205,31 @@ class OutHospitalForm(forms.ModelForm):
     
     class Meta:
         model = ApprovalModel
+        fields = ('mental',"outdate",)
+        exclude = ("dayshosp","dayssave","daysfood","approvalsn","insurance","cert1_ppid","cert2_diag","cert3_poor",\
+            "hospital","period","foodallow","savetimes","savecontinue",\
+            "moneytotal","moneymedicineself","moneyselfscale","moneyself","moneyinsurance","dateclose",\
+            "notifystart","notifyend","commitdate","isapproval","approvaldate",\
+            "approvalman","saveok","iscal","moneyhospital","moneyfood","moneyfrom",\
+            "isenterfile","enterfileman","daysfoodlimit","savelevel","foodlevel","startlevel",)
+
+    def clean(self):
+        return self.cleaned_data
+
+    def clean_outdate(self):
+        if 'outdate' not in self.cleaned_data.keys():
+            raise forms.ValidationError("请输入出院日期")
+        outdate = self.cleaned_data['outdate']
+        if outdate is None:
+            raise forms.ValidationError("请输入出院日期")
+        return outdate
+
+class CalcHospitalForm(forms.ModelForm):
+    """出院结算表"""
+    mental = forms.ModelChoiceField(queryset=MentalModel.objects.all(), widget=forms.HiddenInput())
+    
+    class Meta:
+        model = ApprovalModel
         fields = ('mental',"dayshosp","dayssave","daysfood","outdate",\
             "moneytotal","moneymedicineself","moneyselfscale","moneyself","moneyinsurance","dateclose",)
         exclude = ("approvalsn","insurance","cert1_ppid","cert2_diag","cert3_poor",\
@@ -223,4 +248,3 @@ class OutHospitalForm(forms.ModelForm):
         if outdate is None:
             raise forms.ValidationError("请输入出院日期")
         return outdate
-

@@ -34,6 +34,8 @@ urlpatterns = patterns('',
     url(r'^hospitallist/$', 'mental.views.hospitallist'),
     url(r'^inhospital/(\d+)/$', 'mental.views.inhospital'),
     url(r'^outhospital/(\d+)/$', 'mental.views.outhospital'),
+    url(r'^hospitallistout/$', 'mental.views.hospitallistout'),
+
 
     # Examples:
     # url(r'^$', 'kfjz.views.home', name='home'),

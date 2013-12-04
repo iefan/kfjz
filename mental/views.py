@@ -5,7 +5,7 @@ from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required  
 import datetime
-from forms import MentalForm, MentalForm2, ApprovalForm, ApprovalForm2, ApplyForm, InHospitalForm, OutHospitalForm
+from forms import MentalForm, MentalForm2, ApprovalForm, ApprovalForm2, ApplyForm, InHospitalForm, OutHospitalForm, CalcHospitalForm
 from models import MentalModel, ApprovalModel
 
 from django.contrib.auth.views import login
@@ -274,8 +274,8 @@ def applymodify(request, curid="0"):
 
 def hospitallist(request, curcounty="", curinhospital=""):
     '''医院信息列表'''
-    curppname = [u"姓名", u"区县", u"有效起始时间", u"有效终止时间", u"救助疗程", u"审核时间", u"确认入院", u"入院/出院时间", u"确认出院",]
-    curpp     = [[["","","","","",""], "", "","",]]
+    curppname = [u"姓名", u"区县", u"有效起始时间", u"有效终止时间", u"救助疗程", u"审核时间", u"确认入院", u"入院时间",]
+    curpp     = [[["","","","","",""], "", "",]]
 
     if request.method == 'POST':
         if curcounty!="" or curinhospital!= "":
@@ -295,13 +295,10 @@ def hospitallist(request, curcounty="", curinhospital=""):
             # print ipp.indate, ipp.approvalsn, '=================='
             if ipp.approvalsn:
                 # print ipp.indate, ipp.approvalsn
-                if not ipp.outdate:
-                    if not ipp.indate:
-                        curpp.append([[ipp.mental.name, ipp.mental.county, ipp.notifystart, ipp.notifyend, ipp.period, ipp.approvaldate], ipp.id, "", ""])
-                    else:
-                        curpp.append([[ipp.mental.name, ipp.mental.county, ipp.notifystart, ipp.notifyend, ipp.period, ipp.approvaldate], '', ipp.indate, ipp.id])
+                if not ipp.indate:
+                    curpp.append([[ipp.mental.name, ipp.mental.county, ipp.notifystart, ipp.notifyend, ipp.period, ipp.approvaldate], ipp.id, "",])
                 else:
-                    curpp.append([[ipp.mental.name, ipp.mental.county, ipp.notifystart, ipp.notifyend, ipp.period, ipp.approvaldate], 'over', ipp.outdate, "",])
+                    curpp.append([[ipp.mental.name, ipp.mental.county, ipp.notifystart, ipp.notifyend, ipp.period, ipp.approvaldate], '', ipp.indate, ])
     else:
         curpp[0][0][0] = "没有登记"
 
@@ -341,15 +338,47 @@ def inhospital(request, curid="1"):
             return HttpResponseRedirect('/hospitallist/') # Redirect
     return render_to_response('hospitalin.html', {"form":form, "nomodifyinfo":nomodifyinfo,"jscal_min":jscal_min, "jscal_max":jscal_max})
 
+def hospitallistout(request, curcounty="", curouthospital=""):
+    '''已经入院人员信息列表'''
+    curppname = [u"姓名", u"区县",  u"救助疗程", u"入院时间", u"确认出院",u"出院时间",]
+    curpp     = [[["","","","",], "", "",]]
+
+    if request.method == 'POST':
+        if curcounty!="" or curouthospital!= "":
+            pass
+        else:
+            curcounty = request.POST['county']
+            curouthospital = request.POST['outhospital']
+
+    if curouthospital == "": #查询已经入院人员
+        cur_re = ApprovalModel.objects.filter(indate__isnull=False, mental__county__icontains=curcounty)
+    else:
+        cur_re  = ApprovalModel.objects.filter(indate__isnull=False, outdate__isnull = bool(int(curouthospital)), mental__county__icontains=curcounty)
+
+    if len(cur_re) != 0:
+        curpp = []
+        for ipp in cur_re:
+            # print ipp.indate, ipp.approvalsn, '=================='
+            if ipp.approvalsn:
+                # print ipp.indate, ipp.approvalsn
+                if not ipp.outdate:
+                    curpp.append([[ipp.mental.name, ipp.mental.county, ipp.period, ipp.indate], ipp.id, "",])
+                else:
+                    curpp.append([[ipp.mental.name, ipp.mental.county, ipp.period, ipp.indate], '', ipp.outdate, ])
+    else:
+        curpp[0][0][0] = "没有登记"
+
+    return render_to_response('hospitallistout.html', {'curpp': curpp, 'curppname':curppname})
+
 def outhospital(request, curid="1"):
     '''医院出院视图'''
     if curid == "":
-        return HttpResponseRedirect('/hospitallist/')
+        return HttpResponseRedirect('/hospitallistout/')
 
     # 如果已经出院，则跳转
     try:
         ApprovalModel.objects.get(outdate__isnull=False, id=curid)
-        return HttpResponseRedirect('/hospitallist/')
+        return HttpResponseRedirect('/hospitallistout/')
     except ApprovalModel.DoesNotExist:
         pass
 
@@ -357,7 +386,7 @@ def outhospital(request, curid="1"):
     try:
         curpp = ApprovalModel.objects.get(outdate__isnull=True, id=curid)
     except MentalModel.DoesNotExist:
-        return HttpResponseRedirect('/hospitallist/')
+        return HttpResponseRedirect('/hospitallistout/')
 
     nomodifyinfo = [u"审批号：%s"  % curpp.approvalsn,u"姓名：%s"  % curpp.mental.name, \
         u"区县：%s" % curpp.mental.county, u"入院时间：%s" % curpp.indate]
@@ -372,5 +401,39 @@ def outhospital(request, curid="1"):
         form = OutHospitalForm(request.POST, instance=curpp)        
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect('/hospitallist/') # Redirect
+            return HttpResponseRedirect('/hospitallistout/') # Redirect
+    return render_to_response('hospitalout.html', {"form":form, "nomodifyinfo":nomodifyinfo,"jscal_min":jscal_min, "jscal_max":jscal_max})
+
+def calchospital(request, curid="1"):
+    '''医院结算视图'''
+    if curid == "":
+        return HttpResponseRedirect('/hospitallistout/')
+
+    # 如果已经出院，则跳转
+    try:
+        ApprovalModel.objects.get(outdate__isnull=False, id=curid)
+        return HttpResponseRedirect('/hospitallistout/')
+    except ApprovalModel.DoesNotExist:
+        pass
+
+    # 如果信息总表中不存在,即可能用户手动输入urls使得id不存在，则跳转
+    try:
+        curpp = ApprovalModel.objects.get(outdate__isnull=True, id=curid)
+    except MentalModel.DoesNotExist:
+        return HttpResponseRedirect('/hospitallistout/')
+
+    nomodifyinfo = [u"审批号：%s"  % curpp.approvalsn,u"姓名：%s"  % curpp.mental.name, \
+        u"区县：%s" % curpp.mental.county, u"入院时间：%s" % curpp.indate]
+
+    today   = datetime.date.today()
+    jscal_max = int((today + datetime.timedelta(30)).isoformat().replace('-', ''))
+    jscal_min = int(today.isoformat().replace('-', ''))
+
+    form = OutHospitalForm(instance=curpp)  
+    # print form
+    if request.method == "POST":
+        form = OutHospitalForm(request.POST, instance=curpp)        
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/hospitallistout/') # Redirect
     return render_to_response('hospitalout.html', {"form":form, "nomodifyinfo":nomodifyinfo,"jscal_min":jscal_min, "jscal_max":jscal_max})

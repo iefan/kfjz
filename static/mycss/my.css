@@ -107,6 +107,12 @@
     width: 100%;
 }
 
+.gameordertable{
+    border:0;
+    font-size: 120%;
+    width: 60%;
+}
+
 #user_nav{
     text-align: right;
     margin:5px 10px auto;

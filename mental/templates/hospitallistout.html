@@ -3,7 +3,7 @@
 {% block admincssjs %}{% endblock %}
 
 {% block hospitalselect %}
-<form method="POST" action="/hospitallist/" class="pure-form">
+<form method="POST" action="/hospitallistout/" class="pure-form">
   <fieldset align="center" class="mselect">
     <label>区县名称：： </label>
     <select name="county">
@@ -16,11 +16,11 @@
       <option value ="潮南区">潮南区</option>
       <option value ="南澳县">南澳县</option>
     </select>
-    <label>是否入院： </label>
-    <select name="inhospital">
+    <label>是否出院： </label>
+    <select name="outhospital">
       <option value ="">--</option>
-      <option value ="1">未入院</option>
-      <option value="0">已入院</option>
+      <option value ="1">未出院</option>
+      <option value="0">已出院</option>
     </select>
     <button type="submit" class="pure-button pure-button-success">查询</button>
   </fieldset>
@@ -28,7 +28,7 @@
 {% endblock %}
 
 {% block hospitaltable %}
-<h2 align="center">已申请人员列表</h2>
+<h2 align="center">已入院人员列表</h2>
 <table align="center" class="pure-table pure-table-bordered">
   <thead>
     <tr>
@@ -37,7 +37,7 @@
       {% endfor %}
     </tr>
   </thead>
-  {% for ipp, curid, curindate in curpp %}
+  {% for ipp, curid, curoutdate in curpp %}
   <tr>
     {% for item in ipp %}
     {% if not item %}
@@ -48,17 +48,15 @@
     {% endfor %}
 
     {% if not curid %}
-    <td>已入院</td>
-    {% else %}{% if curid == "over" %}
-    <td>已出院</td>
-    {% else %}
-    <td><a class="pure-button " href="/inhospital/{{ curid }}/">确认入院</a></td>
-    {% endif %}{% endif %}
-
-    {% if curindate == "" %}
     <td>&nbsp;</td>
     {% else %}
-    <td>{{curindate}}</td>
+    <td><a class="pure-button " href="/outhospital/{{ curid }}/">确认出院</a></td>
+    {% endif %}
+
+    {% if curoutdate == "" %}
+    <td>&nbsp;</td>
+    {% else %}
+    <td>{{curoutdate}}</td>
     {% endif %}
 
   </tr>
