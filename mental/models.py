@@ -51,17 +51,14 @@ class ApprovalModel(models.Model):
     approvalman     = models.CharField(max_length=30, verbose_name="审核人员", blank=True, null=True,)
 
     # 结算及归档
-    iscal           = models.CharField(max_length=30,verbose_name="是否结算", choices=jzr.ISCAL_CHOICES, blank=True,null=True,)
-    moneyhospital   = models.FloatField(verbose_name="医疗救助费用", blank=True, null=True,)  #经结算应救助的金额=救助天数*救助标准
-    moneyfood       = models.FloatField(verbose_name="伙食费用", blank=True, null=True,)    #=补助天数*补助标准
-    moneyfrom       = models.FloatField(verbose_name="民政补助", blank=True, null=True,)    #医疗费救助金额大于1000元的显示1000
-    isenterfile     = models.CharField(max_length=30,verbose_name="是否核结", choices=jzr.YESNO_CHOICE, default="否")
+    # iscal           = models.CharField(max_length=30,verbose_name="是否结算", choices=jzr.ISCAL_CHOICES, blank=True,null=True,)
+    enterfiledate   = models.DateField(verbose_name="核结日期", blank=True, null=True,)
     enterfileman    = models.CharField(max_length=30, verbose_name="核结管理员", blank=True, null=True,)
 
     # hospital write
     indate          = models.DateField(verbose_name="住院时间", blank=True, null=True,)
     saveok          = models.CharField(max_length=30,verbose_name="救助确认", choices=jzr.SAVEOK_CHOICES, blank=True,null=True,)
-    inhospitalman   = models.CharField(max_length=30, verbose_name="入院填写人", blank=True, null=True,)
+    inhospitalman   = models.CharField(max_length=30, verbose_name="入院确认人", blank=True, null=True,)
 
     outdate         = models.DateField(verbose_name="出院时间", blank=True, null=True,)
     dayshosp        = models.IntegerField(verbose_name="住院天数", blank=True, null=True,)  #auto calc
@@ -71,14 +68,20 @@ class ApprovalModel(models.Model):
     moneymedicineself= models.FloatField(verbose_name="自费药金额", blank=True, null=True,)
     moneyselfscale  = models.FloatField(verbose_name="自付比例", blank=True, null=True,)
     moneyself       = models.FloatField(verbose_name="个人支付", blank=True, null=True,)
-    moneyinsurance  = models.FloatField(verbose_name="医保支付", blank=True, null=True,)    
+    moneyinsurance  = models.FloatField(verbose_name="医保支付", blank=True, null=True,) 
+
+    # 在医院结算是自动根据设定标准进行计算
+    moneyhospital   = models.FloatField(verbose_name="医疗救助费用", blank=True, null=True,)  #经结算应救助的金额=救助天数*救助标准
+    moneyfood       = models.FloatField(verbose_name="伙食费用", blank=True, null=True,)    #=补助天数*补助标准
+    moneyfrom       = models.FloatField(verbose_name="民政补助", blank=True, null=True,)    #医疗费救助金额大于1000元的显示1000
+   
     dateclose       = models.DateField(verbose_name="结算日期", blank=True, null=True,)
-    outhospitalman  = models.CharField(max_length=30, verbose_name="出院填写人", blank=True, null=True,)
+    datecloseman  = models.CharField(max_length=30, verbose_name="结算人", blank=True, null=True,)
 
     # level set
     daysfoodlimit   = models.IntegerField(verbose_name="救助上限", blank=True, null=True,)
-    savelevel       = models.FloatField(verbose_name="救助标准", blank=True, null=True,)
-    foodlevel       = models.FloatField(verbose_name="伙食标准", blank=True, null=True,)
+    savelevel       = models.FloatField(verbose_name="救助标准", blank=True, null=True,) #急性64/天，慢性57/天
+    foodlevel       = models.FloatField(verbose_name="伙食标准", blank=True, null=True,) #伙食14天
     startlevel      = models.FloatField(verbose_name="起付标准", blank=True, null=True,)
 
     class Meta:

@@ -33,8 +33,10 @@ urlpatterns = patterns('',
 
     url(r'^hospitallist/$', 'mental.views.hospitallist'),
     url(r'^inhospital/(\d+)/$', 'mental.views.inhospital'),
-    url(r'^outhospital/(\d+)/$', 'mental.views.outhospital'),
     url(r'^hospitallistout/$', 'mental.views.hospitallistout'),
+    url(r'^outhospital/(\d+)/$', 'mental.views.outhospital'),
+    url(r'^hospitallistcalc/$', 'mental.views.hospitallistcalc'),
+    url(r'^calchospital/(\d+)/$', 'mental.views.calchospital'),
 
 
     # Examples:
