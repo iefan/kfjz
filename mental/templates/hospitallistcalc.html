@@ -3,7 +3,7 @@
 {% block admincssjs %}{% endblock %}
 
 {% block hospitalselect %}
-<form method="POST" action="/hospitallistout/" class="pure-form">
+<form method="POST" action="/hospitallistcalc/" class="pure-form">
   <fieldset align="center" class="mselect">
     <label>区县名称：： </label>
     <select name="county">
@@ -49,17 +49,17 @@
 
     {% if not curmodid %}
     <td>&nbsp;</td>
-    {% else %}{% if curmodid == "over" %}
-    <td>已结算</td>
     {% else %}
     <td><a class="pure-button " href="/calchospital/{{ curmodid }}/">修改结算</a></td>
-    {% endif %}{% endif %}
+    {% endif %}
 
     {% if curid == "" %}
     <td>&nbsp;</td>
+    {% else %}{% if curmodid == "over" %}
+    <td>已结算</td>
     {% else %}
     <td><a class="pure-button " href="/calchospital/{{ curid }}/">确认结算</a></td>
-    {% endif %}
+    {% endif %}{% endif %}
 
   </tr>
   {% endfor %}

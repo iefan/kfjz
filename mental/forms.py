@@ -231,14 +231,14 @@ class CalcHospitalForm(forms.ModelForm):
     class Meta:
         model = ApprovalModel
         fields = ('mental',"moneyhospital","moneyfood","moneyfrom","dayshosp","dayssave","daysfood",\
-            "moneytotal","moneymedicineself","moneyinsurance","moneyself","moneyselfscale",\
+            "moneytotal","moneymedicineself","moneyinsurance","moneyself","moneyselfscale","startlevel",\
             "dateclose","datecloseman",)
 
         exclude = ("approvalsn","insurance","cert1_ppid","cert2_diag","cert3_poor",\
             "hospital","period","foodallow","savetimes","savecontinue","outdate",\
             "notifystart","notifyend","commitdate","isapproval","approvaldate",\
             "approvalman","saveok",\
-            "enterfiledate","enterfileman","daysfoodlimit","savelevel","foodlevel","startlevel",)
+            "enterfiledate","enterfileman","daysfoodlimit","savelevel","foodlevel",)
 
     def clean(self):
         return self.cleaned_data

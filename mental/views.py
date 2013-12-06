@@ -7,6 +7,9 @@ from django.contrib.auth.decorators import login_required
 import datetime
 from forms import MentalForm, MentalForm2, ApprovalForm, ApprovalForm2, ApplyForm, InHospitalForm, OutHospitalForm, CalcHospitalForm
 from models import MentalModel, ApprovalModel
+from decimal import getcontext, Decimal as D, ROUND_UP
+getcontext().prec = 28
+getcontext().rounding = ROUND_UP
 
 from django.contrib.auth.views import login
 def myuser_login(request, *args, **kwargs):
@@ -419,8 +422,8 @@ def outhospital(request, curid="1"):
 
 def hospitallistcalc(request, curcounty="", curcalchospital=""):
     '''已经出院待结算人员信息列表'''
-    curppname = [u"姓名", u"区县",  u"救助疗程", u"出院时间", u"修改",u"结算",]
-    curpp     = [[["","","","",], "", "",]]
+    curppname = [u"姓名", u"区县",  u"救助疗程", u"出院时间", u"住院总费用", u"修改",u"结算",]
+    curpp     = [[["","","","","",], "", "",]]
 
     if request.method == 'POST':
         if curcounty!="" or curcalchospital!= "":
@@ -438,13 +441,13 @@ def hospitallistcalc(request, curcounty="", curcalchospital=""):
         curpp = []
         for ipp in cur_re:
             if ipp.approvalsn:
-                if not ipp.dateclose: #没有结算的人员显示结算
-                    curpp.append([[ipp.mental.name, ipp.mental.county, ipp.period, ipp.outdate],  "",ipp.id,])
+                if not ipp.dateclose: #对没有结算的人员显示结算按钮，以便进行结算
+                    curpp.append([[ipp.mental.name, ipp.mental.county, ipp.period, ipp.outdate, ipp.moneytotal,],  "",ipp.id,])
                 else:
-                    if not enterfiledate:
-                        curpp.append([[ipp.mental.name, ipp.mental.county, ipp.period, ipp.outdate], ipp.id, "", ])
+                    if not ipp.enterfiledate:
+                        curpp.append([[ipp.mental.name, ipp.mental.county, ipp.period, ipp.outdate, ipp.moneytotal,], ipp.id, "", ])
                     else:
-                        curpp.append([[ipp.mental.name, ipp.mental.county, ipp.period, ipp.outdate], 'over', "", ])
+                        curpp.append([[ipp.mental.name, ipp.mental.county, ipp.period, ipp.outdate, ipp.moneytotal,], '', "over", ])
     else:
         curpp[0][0][0] = "没有记录"
 
@@ -478,15 +481,25 @@ def calchospital(request, curid="1"):
     curpp.dayshosp = (curpp.outdate-curpp.indate).days  # 实际住院天数
     if curpp.period == u"急性":
         totallimit = 60
+        savelevel = 64 #急性64/天，慢性57/天
     else:
         totallimit = 90
+        savelevel = 57 #急性64/天，慢性57/天
 
+    curpp.savelevel = savelevel #设定救助标准
+    curpp.foodlevel = 14        #设定伙食标准
     if curpp.dayshosp < totallimit:
         curpp.dayssave = curpp.dayshosp                     # 救助天数
         curpp.daysfood = curpp.dayshosp + 1                 # 伙食天数
     else:
         curpp.dayssave = totallimit
         curpp.daysfood = totallimit
+
+    # 计算部分费用
+    curpp.moneyhospital  = D(curpp.savelevel * curpp.dayssave).quantize(D('.01'))  #医疗救助费用
+    curpp.moneyfood      = D(curpp.daysfood * curpp.foodlevel).quantize(D('.01')) #伙食费用
+    if curpp.moneyhospital >= 1000:
+        curpp.moneyfrom = D(1000).quantize(D('.01')) #民政补助费用
 
     curpp.dateclose = today
     form = CalcHospitalForm(instance=curpp)  

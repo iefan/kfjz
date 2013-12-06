@@ -64,25 +64,25 @@ class ApprovalModel(models.Model):
     dayshosp        = models.IntegerField(verbose_name="住院天数", blank=True, null=True,)  #auto calc
     dayssave        = models.IntegerField(verbose_name="救助天数", blank=True, null=True,)  #auto calc  
     daysfood        = models.IntegerField(verbose_name="伙食天数", blank=True, null=True,)  #auto calc
-    moneytotal      = models.FloatField(verbose_name="住院总费用", blank=True, null=True,)
-    moneymedicineself= models.FloatField(verbose_name="自费药金额", blank=True, null=True,)
-    moneyselfscale  = models.FloatField(verbose_name="自付比例", blank=True, null=True,)
-    moneyself       = models.FloatField(verbose_name="个人支付", blank=True, null=True,)
-    moneyinsurance  = models.FloatField(verbose_name="医保支付", blank=True, null=True,) 
+    moneytotal      = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="住院总费用", blank=True, null=True,)
+    moneymedicineself= models.DecimalField(max_digits=6, decimal_places=2, verbose_name="自费药金额", blank=True, null=True,)
+    moneyselfscale  = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="自付比例", blank=True, null=True,)
+    moneyself       = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="个人支付", blank=True, null=True,)
+    moneyinsurance  = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="医保支付", blank=True, null=True,) 
 
     # 在医院结算是自动根据设定标准进行计算
-    moneyhospital   = models.FloatField(verbose_name="医疗救助费用", blank=True, null=True,)  #经结算应救助的金额=救助天数*救助标准
-    moneyfood       = models.FloatField(verbose_name="伙食费用", blank=True, null=True,)    #=补助天数*补助标准
-    moneyfrom       = models.FloatField(verbose_name="民政补助", blank=True, null=True,)    #医疗费救助金额大于1000元的显示1000
+    moneyhospital   = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="医疗救助费用", blank=True, null=True,)  #经结算应救助的金额=救助天数*救助标准
+    moneyfood       = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="伙食费用", blank=True, null=True,)    #=补助天数*补助标准
+    moneyfrom       = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="民政补助", blank=True, null=True,)    #医疗费救助金额大于1000元的显示1000
    
     dateclose       = models.DateField(verbose_name="结算日期", blank=True, null=True,)
-    datecloseman  = models.CharField(max_length=30, verbose_name="结算人", blank=True, null=True,)
+    datecloseman    = models.CharField(max_length=30, verbose_name="结算人", blank=True, null=True,)
 
     # level set
     daysfoodlimit   = models.IntegerField(verbose_name="救助上限", blank=True, null=True,)
-    savelevel       = models.FloatField(verbose_name="救助标准", blank=True, null=True,) #急性64/天，慢性57/天
-    foodlevel       = models.FloatField(verbose_name="伙食标准", blank=True, null=True,) #伙食14天
-    startlevel      = models.FloatField(verbose_name="起付标准", blank=True, null=True,)
+    savelevel       = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="救助标准", blank=True, null=True,) #急性64/天，慢性57/天
+    foodlevel       = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="伙食标准", blank=True, null=True,) #伙食14天
+    startlevel      = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="起付标准", blank=True, null=True,)
 
     class Meta:
         # ordering = ['ppid',]
