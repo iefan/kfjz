@@ -1,7 +1,7 @@
-{% extends "hospitaloutbase.html" %}
-{% block title %}确认出院{% endblock %}
+{% extends "approvaloverbase.html" %}
+{% block title %}结算信息核结{% endblock %}
 
-{% block hospitalselect %}
+{% block orderselect %}
     <address align="center">
         {% for item in nomodifyinfo %}
         {{ item }}；
@@ -9,9 +9,9 @@
     </address>
 {% endblock %}
 
-{% block hospitaltable %}
+{% block approvaltable %}
 <form class="pure-form" action="." method="post">    
-    <div class='pure-u-1 ' align='center'>
+    <div class='pure-u-1' align='center'>
         {% for hidden in form.hidden_fields %}
         {{ hidden }}
         {% endfor %}
@@ -33,7 +33,7 @@
         </table>
     </div>    
     <p align="center">
-        <button type="submit" class="pure-button pure-button-primary" align="center">确认出院</button>
+        <button type="submit" class="pure-button pure-button-primary" align="center">核结</button>
     </p>
 </form>
 {% endblock %}

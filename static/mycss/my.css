@@ -95,7 +95,7 @@
 .logininput table input{
     width: 100%;
 }
-.hospital{
+/*.hospital{
     width: 600px;
     margin: auto;
 }
@@ -106,7 +106,7 @@
 .hospital table td input[type="text"]{
     width: 100%;
 }
-
+*/
 .gameordertable{
     border:0;
     font-size: 120%;

@@ -61,6 +61,8 @@ class ApprovalModel(models.Model):
     inhospitalman   = models.CharField(max_length=30, verbose_name="入院确认人", blank=True, null=True,)
 
     outdate         = models.DateField(verbose_name="出院时间", blank=True, null=True,)
+    outhospitalman  = models.CharField(max_length=30, verbose_name="出院确认人", blank=True, null=True,)
+    
     dayshosp        = models.IntegerField(verbose_name="住院天数", blank=True, null=True,)  #auto calc
     dayssave        = models.IntegerField(verbose_name="救助天数", blank=True, null=True,)  #auto calc  
     daysfood        = models.IntegerField(verbose_name="伙食天数", blank=True, null=True,)  #auto calc

@@ -1,3 +1,4 @@
+# coding:utf8
 from django.conf.urls import patterns, include, url
 from django.conf.urls.static import static
 import settings
@@ -26,6 +27,8 @@ urlpatterns = patterns('',
     url(r'^approvalinput/(.*|\d+)/$', 'mental.views.approvalinput'),
     url(r'^approvallist/$', 'mental.views.approvallist'),
     url(r'^approvalmodify/(\d+)/$', 'mental.views.approvalmodify'),
+    url(r'^approvallistover/$', 'mental.views.approvallistover'), #核结列表
+    url(r'^approvalover/(\d+)/$', 'mental.views.approvalover'), #核结
 
     url(r'^applyinput/(.*|\d+)/$', 'mental.views.applyinput'),
     url(r'^applylist/$', 'mental.views.applylist'),
@@ -37,6 +40,7 @@ urlpatterns = patterns('',
     url(r'^outhospital/(\d+)/$', 'mental.views.outhospital'),
     url(r'^hospitallistcalc/$', 'mental.views.hospitallistcalc'),
     url(r'^calchospital/(\d+)/$', 'mental.views.calchospital'),
+    url(r'^calmodifychospital/(\d+)/$', 'mental.views.calmodifychospital'),
 
 
     # Examples:

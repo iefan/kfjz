@@ -11,15 +11,25 @@
 
 {% block hospitaltable %}
 <form class="pure-form" action="." method="post">    
-    <div class='pure-u-1 hospital' align='center'>
+    <div class='pure-u-1 ' align='center'>
         {% for hidden in form.hidden_fields %}
         {{ hidden }}
         {% endfor %}
         <table align="center" class="pure-table  pure-table-horizontal gameordertable ">           
+            {% for field in form.visible_fields %}
+            {% if forloop.counter0|divisibleby:2 %}
             <tr>
-                <td align="right" class="tdlabel">{{ form.indate.label }}</td>
-                <td class="fieldWrapper">{{ form.indate.errors }}{{ form.indate }}</td>
+                <td align="right" class="tdlabel">{{ field.label }}</td>
+                <td class="fieldWrapper">{{ field.errors }}{{ field }}</td>
+                {% else %}
+                <td align="right" class="tdlabel">{{ field.label }}</td>
+                <td class="fieldWrapper" >{{ field.errors }}{{ field }}</td>
             </tr>
+            {% endif %}
+            {% endfor %}
+            {% if not form.visible_fields|length|divisibleby:2 %}
+            <td class="tdlabel">&nbsp;</td><td class="fieldWrapper ">&nbsp;</td></tr>
+            {% endif %}
         </table>
     </div>    
     <p align="center">

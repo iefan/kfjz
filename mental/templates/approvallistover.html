@@ -1,9 +1,9 @@
-{% extends "hospitalbase.html" %}
-{% block title %}已经出院待结算人员信息列表{% endblock %}
+{% extends "selectbase.html" %}
+{% block title %}已结算人员列表{% endblock %}
 {% block admincssjs %}{% endblock %}
 
-{% block hospitalselect %}
-<form method="POST" action="/hospitallistcalc/" class="pure-form">
+{% block orderselect %}
+<form method="POST" action="/approvallistover/" class="pure-form">
   <fieldset align="center" class="mselect">
     <label>区县名称：： </label>
     <select name="county">
@@ -16,19 +16,19 @@
       <option value ="潮南区">潮南区</option>
       <option value ="南澳县">南澳县</option>
     </select>
-    <label>是否出院： </label>
-    <select name="calchospital">
+    <label>是否核结： </label>
+    <select name="iscalchospital">
       <option value ="">--</option>
-      <option value ="1">未结算</option>
-      <option value="0">已结算</option>
+      <option value ="0">是</option>
+      <option value="1">否</option>
     </select>
     <button type="submit" class="pure-button pure-button-success">查询</button>
   </fieldset>
 </form>
 {% endblock %}
 
-{% block hospitaltable %}
-<h2 align="center">已经出院待结算人员信息列表</h2>
+{% block ordertable %}
+<h2 align="center">已经结算人员信息列表</h2>
 <table align="center" class="pure-table pure-table-bordered">
   <thead>
     <tr>
@@ -37,7 +37,7 @@
       {% endfor %}
     </tr>
   </thead>
-  {% for ipp, curmodid, curid in curpp %}
+  {% for ipp, curid, curoverdate in curpp %}
   <tr>
     {% for item in ipp %}
     {% if not item %}
@@ -47,20 +47,18 @@
     {% endif %}
     {% endfor %}
 
-    {% if not curmodid %}
+    {% if not curid %}
     <td>&nbsp;</td>
     {% else %}
-    <td><a class="pure-button " href="/calmodifychospital/{{ curmodid }}/">修改结算</a></td>
+    <td><a class="pure-button " href="/approvalover/{{ curid }}/">核结</a></td>
     {% endif %}
 
-    {% if curid == "" %}
-    <td>&nbsp;</td>
-    {% else %}{% if curid == "over" %}
-    <td>已核结</td>
+    {% if curoverdate == "" %}
+    <td>&nbsp;</td>    
     {% else %}
-    <td><a class="pure-button " href="/calchospital/{{ curid }}/">确认结算</a></td>
-    {% endif %}{% endif %}
-
+    <td>{{ curoverdate }}</td>    
+    {% endif %}
+    
   </tr>
   {% endfor %}
 </table>

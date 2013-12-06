@@ -47,7 +47,7 @@ class MentalForm2(forms.ModelForm):
         model=MentalModel
         fields = ('name','sex','county','ppid','dislevel','certtime','economic','iscity',\
             'address','guardian','guardrelation','phone','regtime','operatorname',)
-        exclude=('name','ppid',)
+        # exclude=('name','ppid',)
 
     def clean(self):
         return self.cleaned_data
@@ -71,12 +71,7 @@ class ApprovalForm(forms.ModelForm):
         fields = ('approvalsn','mental',\
             'hospital','period','foodallow','savetimes','savecontinue','notifystart','notifyend',\
             'isapproval','approvaldate','approvalman',)
-        exclude = ('insurance','cert1_ppid','cert2_diag','cert3_poor','indate','outdate',\
-            'dayshosp','dayssave','daysfood','moneytotal','moneymedicineself',\
-            'moneyhospital','moneyfood','moneyfrom','moneyselfscale','moneyself',\
-            'moneyinsurance','dateclose','daysfoodlimit','savelevel','foodlevel','startlevel',\
-            'commitdate','enterfiledate','enterfileman','saveok',)
-
+       
     def clean(self):
         return self.cleaned_data
 
@@ -119,12 +114,7 @@ class ApprovalForm2(forms.ModelForm):
         fields = ('mental',\
             'hospital','period','foodallow','savetimes','savecontinue','notifystart','notifyend',\
             'isapproval','approvaldate',)
-        exclude = ('approvalsn','approvalman','insurance','cert1_ppid','cert2_diag','cert3_poor','indate','outdate',\
-            'dayshosp','dayssave','daysfood','moneytotal','moneymedicineself',\
-            'moneyhospital','moneyfood','moneyfrom','moneyselfscale','moneyself',\
-            'moneyinsurance','dateclose','daysfoodlimit','savelevel','foodlevel','startlevel',\
-            'commitdate','enterfiledate','enterfileman','saveok', )
-
+      
     def clean(self):
         return self.cleaned_data
 
@@ -165,11 +155,7 @@ class ApplyForm(forms.ModelForm):
     class Meta:
         model = ApprovalModel
         fields = ('mental','insurance','cert1_ppid','cert2_diag','cert3_poor','commitdate','applyman', )
-        exclude = ('hospital','period','foodallow','savetimes','savecontinue','notifystart','notifyend',\
-            'isapproval','approvaldate','approvalman','saveok','moneyhospital', \
-            'moneyfood','moneyfrom','enterfiledate','enterfileman','approvalsn','indate','outdate','dayshosp','dayssave','daysfood','moneytotal','moneymedicineself',\
-            'moneyselfscale','moneyself','moneyinsurance','dateclose','daysfoodlimit','savelevel','foodlevel','startlevel',)
-
+       
     def clean(self):
         return self.cleaned_data
 
@@ -179,15 +165,8 @@ class InHospitalForm(forms.ModelForm):
     
     class Meta:
         model = ApprovalModel
-        fields = ('mental',"indate",)
-        exclude = ("dayshosp","dayssave","daysfood",\
-            "moneytotal","moneymedicineself","moneyselfscale","moneyself","moneyinsurance","dateclose",\
-            "approvalsn","outdate","insurance","cert1_ppid","cert2_diag","cert3_poor",\
-            "hospital","period","foodallow","savetimes","savecontinue",\
-            "notifystart","notifyend","commitdate","isapproval","approvaldate",\
-            "approvalman","saveok","moneyhospital","moneyfood","moneyfrom",\
-            "enterfiledate","enterfileman","daysfoodlimit","savelevel","foodlevel","startlevel",)
-
+        fields = ('mental',"indate","inhospitalman",)
+        
     def clean(self):
         return self.cleaned_data
 
@@ -200,19 +179,13 @@ class InHospitalForm(forms.ModelForm):
         return indate
 
 class OutHospitalForm(forms.ModelForm):
-    """出院结算表"""
+    """出院表"""
     mental = forms.ModelChoiceField(queryset=MentalModel.objects.all(), widget=forms.HiddenInput())
     
     class Meta:
         model = ApprovalModel
-        fields = ('mental',"outdate",)
-        exclude = ("dayshosp","dayssave","daysfood","approvalsn","insurance","cert1_ppid","cert2_diag","cert3_poor",\
-            "hospital","period","foodallow","savetimes","savecontinue",\
-            "moneytotal","moneymedicineself","moneyselfscale","moneyself","moneyinsurance","dateclose",\
-            "notifystart","notifyend","commitdate","isapproval","approvaldate",\
-            "approvalman","saveok","moneyhospital","moneyfood","moneyfrom",\
-            "enterfiledate","enterfileman","daysfoodlimit","savelevel","foodlevel","startlevel",)
-
+        fields = ('mental',"outdate","outhospitalman",)
+      
     def clean(self):
         return self.cleaned_data
 
@@ -234,11 +207,24 @@ class CalcHospitalForm(forms.ModelForm):
             "moneytotal","moneymedicineself","moneyinsurance","moneyself","moneyselfscale","startlevel",\
             "dateclose","datecloseman",)
 
-        exclude = ("approvalsn","insurance","cert1_ppid","cert2_diag","cert3_poor",\
-            "hospital","period","foodallow","savetimes","savecontinue","outdate",\
-            "notifystart","notifyend","commitdate","isapproval","approvaldate",\
-            "approvalman","saveok",\
-            "enterfiledate","enterfileman","daysfoodlimit","savelevel","foodlevel",)
+    def clean(self):
+        return self.cleaned_data
+
+    def clean_dateclose(self):
+        if 'dateclose' not in self.cleaned_data.keys():
+            raise forms.ValidationError("请输入结算日期")
+        dateclose = self.cleaned_data['dateclose']
+        if dateclose is None:
+            raise forms.ValidationError("请输入结算日期")
+        return dateclose
+
+class ApprovalOverForm(forms.ModelForm):
+    """出院结算表"""
+    mental = forms.ModelChoiceField(queryset=MentalModel.objects.all(), widget=forms.HiddenInput())
+    
+    class Meta:
+        model = ApprovalModel
+        fields = ('mental',"enterfiledate","enterfileman",)
 
     def clean(self):
         return self.cleaned_data
