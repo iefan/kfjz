@@ -95,6 +95,12 @@
 .logininput table input{
     width: 100%;
 }
+.pagination{
+    text-align: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
 /*.hospital{
     width: 600px;
     margin: auto;

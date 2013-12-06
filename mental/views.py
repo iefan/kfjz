@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 import datetime
 from forms import MentalForm, MentalForm2, ApprovalForm, ApprovalForm2, ApplyForm, InHospitalForm, OutHospitalForm, CalcHospitalForm, ApprovalOverForm
 from models import MentalModel, ApprovalModel
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger #增加分页功能
 from decimal import getcontext, Decimal as D, ROUND_UP
 getcontext().prec = 28
 getcontext().rounding = ROUND_UP
@@ -63,7 +64,20 @@ def mentalselect(request, curname="", curppid="", curcounty=""):
     else:
         curpp[0][0][0] = "没有记录"
 
-    return render_to_response('mentalselect.html', {'curpp': curpp, 'curppname':curppname}, context_instance=RequestContext(request))
+    #===========分页================
+    paginator = Paginator(curpp, 3) # Show 3 contacts per page
+    page = request.GET.get('page')
+    try:
+        curlistinfo = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        curlistinfo = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        curlistinfo = paginator.page(paginator.num_pages)
+    #===========分页================
+
+    return render_to_response('mentalselect.html', {'curpp': curlistinfo, 'curppname':curppname}, context_instance=RequestContext(request))
 
 def mentalmodify(request, curid="0"):
     if curid == "0":
