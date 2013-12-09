@@ -37,7 +37,7 @@ def mentalinput(request):
     jscal_min = int(today.isoformat().replace('-', ''))
     jscal_max = int((today + datetime.timedelta(30)).isoformat().replace('-', ''))
 
-    form = MentalForm()
+    form = MentalForm(initial={'operatorname':request.user.operatorname})
     # print form
     # gameclass = request.session['gameclass']
     if request.method == "POST":
@@ -45,7 +45,7 @@ def mentalinput(request):
         if form.is_valid():
             form.save()
             return HttpResponseRedirect('/mentalselect/') # Redirect
-    return render_to_response('mentalinput.html', {"form":form,"jscal_min":jscal_min, "jscal_max":jscal_max})
+    return render_to_response('mentalinput.html', {"form":form,"jscal_min":jscal_min, "jscal_max":jscal_max}, context_instance=RequestContext(request))
 
 def mentalselect(request, curname="", curppid="", curcounty=""):
     curppname = [u"姓名", u"区县", u"身份证号", u"户口类别", u"监护人", u"联系电话", u"修改"]
@@ -102,7 +102,7 @@ def mentalmodify(request, curid="0"):
             form.save()
             return mentalselect(request, curpp.name, curpp.ppid)
 
-    return render_to_response('mentalmodify.html', {"form":form, "nomodifyinfo":nomodifyinfo, "jscal_min":jscal_min, "jscal_max":jscal_max})
+    return render_to_response('mentalmodify.html', {"form":form, "nomodifyinfo":nomodifyinfo, "jscal_min":jscal_min, "jscal_max":jscal_max}, context_instance=RequestContext(request))
 
 def approvallistover(request, curcounty="", curover=""):
     '''已经结算人员信息列表'''
@@ -144,7 +144,7 @@ def approvallistover(request, curcounty="", curover=""):
         # If page is out of range (e.g. 9999), deliver last page of results.
         curlistinfo = paginator.page(paginator.num_pages)
     #===========分页================
-    return render_to_response('approvallistover.html', {'curpp': curlistinfo, 'curppname':curppname})
+    return render_to_response('approvallistover.html', {'curpp': curlistinfo, 'curppname':curppname}, context_instance=RequestContext(request))
 
 def approvalover(request, curid="0"):
     if curid == "0":
@@ -170,7 +170,7 @@ def approvalover(request, curid="0"):
             form.save()
             return approvallistover(request, curpp.mental.county, '')
 
-    return render_to_response('approvalover.html', {"form":form, "nomodifyinfo":nomodifyinfo, "jscal_min":jscal_min, "jscal_max":jscal_max})
+    return render_to_response('approvalover.html', {"form":form, "nomodifyinfo":nomodifyinfo, "jscal_min":jscal_min, "jscal_max":jscal_max}, context_instance=RequestContext(request))
 
 def approvallist(request, curcounty="", curapproval=""):
     '''批准列表'''
@@ -217,7 +217,7 @@ def approvallist(request, curcounty="", curapproval=""):
         # If page is out of range (e.g. 9999), deliver last page of results.
         curlistinfo = paginator.page(paginator.num_pages)
     #===========分页================
-    return render_to_response('approvallist.html', {'curpp': curlistinfo, 'curppname':curppname})
+    return render_to_response('approvallist.html', {'curpp': curlistinfo, 'curppname':curppname}, context_instance=RequestContext(request))
 
 def approvalinput(request, curppid=""):
     '''批准视图'''
@@ -248,6 +248,7 @@ def approvalinput(request, curppid=""):
     curpp.approvaldate = today
     curpp.approvalsn = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
     curpp.isapproval = u"同意"
+    curpp.approvalman = request.user.operatorname
     form = ApprovalForm(instance=curpp)
     if request.method == "POST":
         if request.POST['period'] == u"急性":
@@ -259,7 +260,7 @@ def approvalinput(request, curppid=""):
         if form.is_valid():
             form.save()
             return HttpResponseRedirect('/approvallist/') # Redirect
-    return render_to_response('approvalinput.html', {"form":form, "nomodifyinfo":nomodifyinfo,"jscal_min":jscal_min, "jscal_max":jscal_max})
+    return render_to_response('approvalinput.html', {"form":form, "nomodifyinfo":nomodifyinfo,"jscal_min":jscal_min, "jscal_max":jscal_max}, context_instance=RequestContext(request))
 
 def approvalmodify(request, curid="0"):
     if curid == "0":
@@ -290,7 +291,7 @@ def approvalmodify(request, curid="0"):
             form.save()
             return approvallist(request, curpp.mental.county, '')
 
-    return render_to_response('approvalmodify.html', {"form":form, "nomodifyinfo":nomodifyinfo, "jscal_min":jscal_min, "jscal_max":jscal_max})
+    return render_to_response('approvalmodify.html', {"form":form, "nomodifyinfo":nomodifyinfo, "jscal_min":jscal_min, "jscal_max":jscal_max}, context_instance=RequestContext(request))
 
 def applyinput(request, curppid="111456789000"):
     '''申请求助视图'''
@@ -324,7 +325,7 @@ def applyinput(request, curppid="111456789000"):
         if form.is_valid():
             form.save()
             return HttpResponseRedirect('/applylist/') # Redirect
-    return render_to_response('applyinput.html', {"form":form, "nomodifyinfo":nomodifyinfo,"jscal_min":jscal_min, "jscal_max":jscal_max})
+    return render_to_response('applyinput.html', {"form":form, "nomodifyinfo":nomodifyinfo,"jscal_min":jscal_min, "jscal_max":jscal_max}, context_instance=RequestContext(request))
 
 def applylist(request, curname="", curppid=""):
     curcounty = "金平区"
@@ -367,7 +368,7 @@ def applylist(request, curname="", curppid=""):
         # If page is out of range (e.g. 9999), deliver last page of results.
         curlistinfo = paginator.page(paginator.num_pages)
     #===========分页================
-    return render_to_response('applylist.html', {'curpp': curlistinfo, 'curppname':curppname})
+    return render_to_response('applylist.html', {'curpp': curlistinfo, 'curppname':curppname}, context_instance=RequestContext(request))
     # return mentalselect(request, curname="", curppid="", curcounty=county)
 
 def applymodify(request, curppid="0"):
@@ -395,7 +396,7 @@ def applymodify(request, curppid="0"):
             form.save()
             return applylist(request, curpp.mental.name, curpp.mental.ppid)
 
-    return render_to_response('applymodify.html', {"form":form, "nomodifyinfo":nomodifyinfo, "jscal_min":jscal_min, "jscal_max":jscal_max})
+    return render_to_response('applymodify.html', {"form":form, "nomodifyinfo":nomodifyinfo, "jscal_min":jscal_min, "jscal_max":jscal_max}, context_instance=RequestContext(request))
 
 def hospitallist(request, curcounty="", curinhospital=""):
     '''医院信息列表'''
@@ -444,7 +445,7 @@ def hospitallist(request, curcounty="", curinhospital=""):
         # If page is out of range (e.g. 9999), deliver last page of results.
         curlistinfo = paginator.page(paginator.num_pages)
     #===========分页================
-    return render_to_response('hospitallist.html', {'curpp': curlistinfo, 'curppname':curppname})
+    return render_to_response('hospitallist.html', {'curpp': curlistinfo, 'curppname':curppname}, context_instance=RequestContext(request))
 
 def inhospital(request, curid="1"):
     '''医院入院视图'''
@@ -480,7 +481,7 @@ def inhospital(request, curid="1"):
         if form.is_valid():
             form.save()
             return HttpResponseRedirect('/hospitallist/') # Redirect
-    return render_to_response('hospitalin.html', {"form":form, "nomodifyinfo":nomodifyinfo,"jscal_min":jscal_min, "jscal_max":jscal_max})
+    return render_to_response('hospitalin.html', {"form":form, "nomodifyinfo":nomodifyinfo,"jscal_min":jscal_min, "jscal_max":jscal_max}, context_instance=RequestContext(request))
 
 def hospitallistout(request, curcounty="", curouthospital=""):
     '''已经入院人员信息列表'''
@@ -524,7 +525,7 @@ def hospitallistout(request, curcounty="", curouthospital=""):
         # If page is out of range (e.g. 9999), deliver last page of results.
         curlistinfo = paginator.page(paginator.num_pages)
     #===========分页================
-    return render_to_response('hospitallistout.html', {'curpp': curlistinfo, 'curppname':curppname})
+    return render_to_response('hospitallistout.html', {'curpp': curlistinfo, 'curppname':curppname},context_instance=RequestContext(request))
 
 def outhospital(request, curid="1"):
     '''医院出院视图'''
@@ -559,7 +560,7 @@ def outhospital(request, curid="1"):
         if form.is_valid():
             form.save()
             return HttpResponseRedirect('/hospitallistout/') # Redirect
-    return render_to_response('hospitalout.html', {"form":form, "nomodifyinfo":nomodifyinfo,"jscal_min":jscal_min, "jscal_max":jscal_max})
+    return render_to_response('hospitalout.html', {"form":form, "nomodifyinfo":nomodifyinfo,"jscal_min":jscal_min, "jscal_max":jscal_max}, context_instance=RequestContext(request))
 
 def hospitallistcalc(request, curcounty="", curcalchospital=""):
     '''已经出院待结算人员信息列表'''
@@ -605,7 +606,7 @@ def hospitallistcalc(request, curcounty="", curcalchospital=""):
         # If page is out of range (e.g. 9999), deliver last page of results.
         curlistinfo = paginator.page(paginator.num_pages)
     #===========分页================
-    return render_to_response('hospitallistcalc.html', {'curpp': curlistinfo, 'curppname':curppname})
+    return render_to_response('hospitallistcalc.html', {'curpp': curlistinfo, 'curppname':curppname}, context_instance=RequestContext(request))
 
 def calchospital(request, curid="1"):
     '''医院结算视图'''
@@ -665,7 +666,7 @@ def calchospital(request, curid="1"):
         if form.is_valid():
             form.save()
             return HttpResponseRedirect('/hospitallistcalc/') # Redirect
-    return render_to_response('hospitalcalc.html', {"form":form, "nomodifyinfo":nomodifyinfo,"jscal_min":jscal_min, "jscal_max":jscal_max})
+    return render_to_response('hospitalcalc.html', {"form":form, "nomodifyinfo":nomodifyinfo,"jscal_min":jscal_min, "jscal_max":jscal_max}, context_instance=RequestContext(request))
 
 def calmodifychospital(request, curid="1"):
     '''医院结算修改视图'''
@@ -723,4 +724,4 @@ def calmodifychospital(request, curid="1"):
         if form.is_valid():
             form.save()
             return HttpResponseRedirect('/hospitallistcalc/') # Redirect
-    return render_to_response('hospitalcalcmodify.html', {"form":form, "nomodifyinfo":nomodifyinfo,"jscal_min":jscal_min, "jscal_max":jscal_max})
+    return render_to_response('hospitalcalcmodify.html', {"form":form, "nomodifyinfo":nomodifyinfo,"jscal_min":jscal_min, "jscal_max":jscal_max}, context_instance=RequestContext(request))
