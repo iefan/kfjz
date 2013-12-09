@@ -1,7 +1,7 @@
-{% extends "mentalbase.html" %}
+{% extends "inputbase.html" %}
 {% block title %}精神病人信息修改{% endblock %}
 
-{% block displayinfo %}
+{% block dispinfo %}
 <address align="center">
     {% for item in nomodifyinfo %}
     {{ item }}；
@@ -9,25 +9,23 @@
 </address>
 {% endblock %}
 
-{% block mentaltable %}
-<form class="pure-form" action="." method="post">    
-    <div class='pure-u-1' align='center'>
-        <table align="center" class="pure-table  pure-table-horizontal gameordertable">
-            {% for field in form %}
-            {% if forloop.counter0|divisibleby:2 %}
-            <tr>
-                <td align="right" class="tdlabel">{{ field.label }}</td>
-                <td class="fieldWrapper">{{ field.errors }}{{ field }}</td>
-                {% else %}
-                <td align="right" class="tdlabel">{{ field.label }}</td>
-                <td class="fieldWrapper" >{{ field.errors }}{{ field }}</td>
-            </tr>
-            {% endif %}
-            {% endfor %}
-        </table>
-    </div>    
-    <p align="center">
-        <button type="submit" class="pure-button pure-button-primary" align="center">修改</button>
-    </p>
-</form>
+{% block submitbtn %}
+<button type="submit" class="pure-button pure-button-primary" align="center">修改</button>
+{% endblock %}
+
+{% block jscal2 %}
+<script>
+    Calendar.setup({
+    trigger    : "id_certtime",
+    inputField : "id_certtime",
+    min: {{ jscal_min }},
+    max: {{ jscal_max }}
+    });
+    Calendar.setup({
+    trigger    : "id_regtime",
+    inputField : "id_regtime",
+    min: {{ jscal_min }},
+    max: {{ jscal_max }}
+    });
+</script>
 {% endblock %}

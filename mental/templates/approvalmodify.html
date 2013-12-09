@@ -1,7 +1,7 @@
-{% extends "approvalbase.html" %}
+{% extends "inputbase.html" %}
 {% block title %}申批信息修改{% endblock %}
 
-{% block orderselect %}
+{% block dispinfo %}
     <address align="center">
         {% for item in nomodifyinfo %}
         {{ item }}；
@@ -9,31 +9,29 @@
     </address>
 {% endblock %}
 
-{% block approvaltable %}
-<form class="pure-form" action="." method="post">    
-    <div class='pure-u-1' align='center'>
-        {% for hidden in form.hidden_fields %}
-        {{ hidden }}
-        {% endfor %}
-        <table align="center" class="pure-table  pure-table-horizontal gameordertable">
-            {% for field in form.visible_fields %}
-            {% if forloop.counter0|divisibleby:2 %}
-            <tr>
-                <td align="right" class="tdlabel">{{ field.label }}</td>
-                <td class="fieldWrapper">{{ field.errors }}{{ field }}</td>
-                {% else %}
-                <td align="right" class="tdlabel">{{ field.label }}</td>
-                <td class="fieldWrapper" >{{ field.errors }}{{ field }}</td>
-            </tr>
-            {% endif %}
-            {% endfor %}
-            {% if not form.visible_fields|length|divisibleby:2 %}
-            <td class="tdlabel">&nbsp;</td><td class="fieldWrapper ">&nbsp;</td></tr>
-            {% endif %}
-        </table>
-    </div>    
-    <p align="center">
-        <button type="submit" class="pure-button pure-button-primary" align="center">修改</button>
-    </p>
-</form>
+{% block submitbtn %}
+<button type="submit" class="pure-button pure-button-primary" align="center">修改</button>
+{% endblock %}
+
+{% block jscal2 %}
+<script>
+    Calendar.setup({
+    trigger    : "id_notifystart",
+    inputField : "id_notifystart",
+    min: {{ jscal_min }},
+    max: {{ jscal_max }}
+    });
+    Calendar.setup({
+    trigger    : "id_notifyend",
+    inputField : "id_notifyend",
+    min: {{ jscal_min }},
+    max: {{ jscal_max }}
+    });
+    Calendar.setup({
+    trigger    : "id_approvaldate",
+    inputField : "id_approvaldate",
+    min: {{ jscal_min }},
+    max: {{ jscal_max }}
+    });
+</script>
 {% endblock %}
