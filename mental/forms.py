@@ -1,4 +1,5 @@
 #coding=utf8
+import resources as jzr
 from django import forms
 from models import MentalModel, ApprovalModel
 # from datetime import date
@@ -236,3 +237,15 @@ class ApprovalOverForm(forms.ModelForm):
         if dateclose is None:
             raise forms.ValidationError("请输入结算日期")
         return dateclose
+
+class SelectMentalForm(forms.ModelForm):
+    '''精神病救助查询条件表单'''
+    lstcounty = list(jzr.COUNTY_CHOICES)
+    lstcounty.insert(0, ("", "--"))
+    county = forms.ChoiceField(choices = tuple(lstcounty), label="区县名称",)
+    class Meta:
+        model = MentalModel
+        fields = ('name', 'ppid', 'county',)
+
+    def clean(self):
+        return self.cleaned_data

@@ -5,21 +5,7 @@
 {% block orderselect %}
 <form method="POST" action="/mentalselect/" class="pure-form">
   <fieldset align="center" class="mselect">
-    <label>姓名：</label>
-    <input name="name" type="text" placeholder="姓名">
-    <label>身份证号：</label>
-    <input name="ppid" type="text" placeholder="身份证号">
-    <label>区县名称：：</label>
-    <select name="county">
-      <option value ="">--</option>
-      <option value ="金平区">金平区</option>
-      <option value ="龙湖区">龙湖区</option>
-      <option value ="濠江区">濠江区</option>
-      <option value ="澄海区">澄海区</option>
-      <option value ="潮阳区">潮阳区</option>
-      <option value ="潮南区">潮南区</option>
-      <option value ="南澳县">南澳县</option>
-    </select>
+    {{ form }}
     <button type="submit" class="pure-button pure-button-success">查询</button>
   </fieldset>
 </form>

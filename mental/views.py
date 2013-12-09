@@ -6,6 +6,7 @@ from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required  
 import datetime
 from forms import MentalForm, MentalForm2, ApprovalForm, ApprovalForm2, ApplyForm, InHospitalForm, OutHospitalForm, CalcHospitalForm, ApprovalOverForm
+from forms import SelectMentalForm
 from models import MentalModel, ApprovalModel
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger #增加分页功能
 from decimal import getcontext, Decimal as D, ROUND_UP
@@ -62,10 +63,13 @@ def mentalselect(request, curname="", curppid="", curcounty=""):
     curppname = [u"姓名", u"区县", u"身份证号", u"户口类别", u"监护人", u"联系电话", u"修改"]
     curpp     = [[["","","","","",""], "", "",]]
 
+    form = SelectMentalForm(initial={'name':curname, 'ppid':curppid, 'county':curcounty,}) #页面查询窗体
     if request.method == 'POST':
         curname = request.POST['name']
         curppid = request.POST['ppid']
         curcounty = request.POST['county']
+        form = SelectMentalForm(initial={'name':curname, 'ppid':curppid, 'county':curcounty,}) #页面查询窗体
+
 
     cur_re = MentalModel.objects.filter(name__icontains=curname, ppid__icontains=curppid, county__icontains=curcounty)
     if len(cur_re) != 0:
@@ -89,7 +93,7 @@ def mentalselect(request, curname="", curppid="", curcounty=""):
         curlistinfo = paginator.page(paginator.num_pages)
     #===========分页================
 
-    return render_to_response('mentalselect.html', {'curpp': curlistinfo, 'curppname':curppname}, context_instance=RequestContext(request))
+    return render_to_response('mentalselect.html', {"form":form, 'curpp': curlistinfo, 'curppname':curppname}, context_instance=RequestContext(request))
 
 @login_required(login_url="/login/")
 def mentalmodify(request, curid="0"):
