@@ -113,7 +113,7 @@ class ApprovalForm2(forms.ModelForm):
         model = ApprovalModel
         fields = ('mental',\
             'hospital','period','foodallow','savetimes','savecontinue','notifystart','notifyend',\
-            'isapproval','approvaldate',)
+            'isapproval','approvaldate','approvalman',)
       
     def clean(self):
         return self.cleaned_data

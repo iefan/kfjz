@@ -112,6 +112,10 @@
     padding-right: 10px;
     color: blue;
 }
+#username{color: blue;}
+#userunitname{color: blue;}
+#useroperatorname{color: blue;}
+#exitbtn{color: red;}
 
 /*.hospital{
     width: 600px;

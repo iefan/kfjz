@@ -22,15 +22,21 @@ def myuser_login(request, *args, **kwargs):
  
     return login(request, *args, **kwargs)
 
+def index(request):
+    return render_to_response("index.html")
+
 @login_required(login_url="/login/")
 def about(request):
     # print request.COOKIES, type(request.COOKIES)
-    user = request.user
-    print user.unitgroup
+    # user = request.user
+    # print user.unitgroup
     return render_to_response('about.html', {'hellotxt':'hello world',}, context_instance=RequestContext(request))
 
+@login_required(login_url="/login/")
 def mentalinput(request):
-    # print request.user
+    lstauth = [0,1]
+    if int(request.user.unitgroup) not in lstauth:
+        return render_to_response('noauth.html')
     # request.session['gameclass'] = ""
     today   = datetime.date.today()
 
@@ -47,7 +53,12 @@ def mentalinput(request):
             return HttpResponseRedirect('/mentalselect/') # Redirect
     return render_to_response('mentalinput.html', {"form":form,"jscal_min":jscal_min, "jscal_max":jscal_max}, context_instance=RequestContext(request))
 
+@login_required(login_url="/login/")
 def mentalselect(request, curname="", curppid="", curcounty=""):
+    lstauth = [0,1]
+    if int(request.user.unitgroup) not in lstauth:
+        return render_to_response('noauth.html')
+
     curppname = [u"姓名", u"区县", u"身份证号", u"户口类别", u"监护人", u"联系电话", u"修改"]
     curpp     = [[["","","","","",""], "", "",]]
 
@@ -80,7 +91,12 @@ def mentalselect(request, curname="", curppid="", curcounty=""):
 
     return render_to_response('mentalselect.html', {'curpp': curlistinfo, 'curppname':curppname}, context_instance=RequestContext(request))
 
+@login_required(login_url="/login/")
 def mentalmodify(request, curid="0"):
+    lstauth = [0,1]
+    if int(request.user.unitgroup) not in lstauth:
+        return render_to_response('noauth.html')
+
     if curid == "0":
         return HttpResponseRedirect('/mentalselect/')
     
@@ -104,8 +120,13 @@ def mentalmodify(request, curid="0"):
 
     return render_to_response('mentalmodify.html', {"form":form, "nomodifyinfo":nomodifyinfo, "jscal_min":jscal_min, "jscal_max":jscal_max}, context_instance=RequestContext(request))
 
+@login_required(login_url="/login/")
 def approvallistover(request, curcounty="", curover=""):
     '''已经结算人员信息列表'''
+    lstauth = [0,]
+    if int(request.user.unitgroup) not in lstauth:
+        return render_to_response('noauth.html')
+
     curppname = [u"姓名", u"区县", u"身份证号", u"户口类别",  u"医院", u"医院结算日期", u"核结", u"核结日期"]
     curpp     = [[["","","","","", ""], "","",]]
 
@@ -146,7 +167,12 @@ def approvallistover(request, curcounty="", curover=""):
     #===========分页================
     return render_to_response('approvallistover.html', {'curpp': curlistinfo, 'curppname':curppname}, context_instance=RequestContext(request))
 
+@login_required(login_url="/login/")
 def approvalover(request, curid="0"):
+    lstauth = [0,]
+    if int(request.user.unitgroup) not in lstauth:
+        return render_to_response('noauth.html')
+
     if curid == "0":
         return HttpResponseRedirect('/approvallistover/')
 
@@ -172,8 +198,13 @@ def approvalover(request, curid="0"):
 
     return render_to_response('approvalover.html', {"form":form, "nomodifyinfo":nomodifyinfo, "jscal_min":jscal_min, "jscal_max":jscal_max}, context_instance=RequestContext(request))
 
+@login_required(login_url="/login/")
 def approvallist(request, curcounty="", curapproval=""):
     '''批准列表'''
+    lstauth = [0,]
+    if int(request.user.unitgroup) not in lstauth:
+        return render_to_response('noauth.html')
+
     curppname = [u"姓名", u"区县", u"身份证号", u"户口类别", u"监护人", u"联系电话", u"修改/入院", u"批准"]
     curpp     = [[["","","","","",""], "", "",]]
 
@@ -219,8 +250,12 @@ def approvallist(request, curcounty="", curapproval=""):
     #===========分页================
     return render_to_response('approvallist.html', {'curpp': curlistinfo, 'curppname':curppname}, context_instance=RequestContext(request))
 
+@login_required(login_url="/login/")
 def approvalinput(request, curppid=""):
     '''批准视图'''
+    lstauth = [0,]
+    if int(request.user.unitgroup) not in lstauth:
+        return render_to_response('noauth.html')
 
     # 如果为空，则跳转到所有申请表中
     if curppid == "":
@@ -262,7 +297,12 @@ def approvalinput(request, curppid=""):
             return HttpResponseRedirect('/approvallist/') # Redirect
     return render_to_response('approvalinput.html', {"form":form, "nomodifyinfo":nomodifyinfo,"jscal_min":jscal_min, "jscal_max":jscal_max}, context_instance=RequestContext(request))
 
+@login_required(login_url="/login/")
 def approvalmodify(request, curid="0"):
+    lstauth = [0,]
+    if int(request.user.unitgroup) not in lstauth:
+        return render_to_response('noauth.html')
+
     if curid == "0":
         return HttpResponseRedirect('/approvallist/')
 
@@ -278,7 +318,8 @@ def approvalmodify(request, curid="0"):
     today   = datetime.date.today()
     jscal_min = int(today.isoformat().replace('-', ''))
     jscal_max = int((today + datetime.timedelta(30)).isoformat().replace('-', ''))
-
+    
+    curpp.approvalman = request.user.operatorname
     form = ApprovalForm2(instance=curpp)
     if request.method == "POST":
         if request.POST['period'] == u"急性":
@@ -293,8 +334,13 @@ def approvalmodify(request, curid="0"):
 
     return render_to_response('approvalmodify.html', {"form":form, "nomodifyinfo":nomodifyinfo, "jscal_min":jscal_min, "jscal_max":jscal_max}, context_instance=RequestContext(request))
 
+@login_required(login_url="/login/")
 def applyinput(request, curppid="111456789000"):
     '''申请求助视图'''
+    lstauth = [0,1,]
+    if int(request.user.unitgroup) not in lstauth:
+        return render_to_response('noauth.html')
+
     if curppid == "":
         return HttpResponseRedirect('/applylist/')
 
@@ -327,7 +373,12 @@ def applyinput(request, curppid="111456789000"):
             return HttpResponseRedirect('/applylist/') # Redirect
     return render_to_response('applyinput.html', {"form":form, "nomodifyinfo":nomodifyinfo,"jscal_min":jscal_min, "jscal_max":jscal_max}, context_instance=RequestContext(request))
 
+@login_required(login_url="/login/")
 def applylist(request, curname="", curppid=""):
+    lstauth = [0,1]
+    if int(request.user.unitgroup) not in lstauth:
+        return render_to_response('noauth.html')
+
     curcounty = "金平区"
 
     curppname = [u"姓名", u"区县", u"身份证号", u"户口类别", u"监护人", u"联系电话", u"修改", u"申请求助",u"申核情况"]
@@ -371,7 +422,12 @@ def applylist(request, curname="", curppid=""):
     return render_to_response('applylist.html', {'curpp': curlistinfo, 'curppname':curppname}, context_instance=RequestContext(request))
     # return mentalselect(request, curname="", curppid="", curcounty=county)
 
+@login_required(login_url="/login/")
 def applymodify(request, curppid="0"):
+    lstauth = [0,1]
+    if int(request.user.unitgroup) not in lstauth:
+        return render_to_response('noauth.html')
+
     if curppid == "0":
         return HttpResponseRedirect('/applylist/')
 
@@ -398,8 +454,13 @@ def applymodify(request, curppid="0"):
 
     return render_to_response('applymodify.html', {"form":form, "nomodifyinfo":nomodifyinfo, "jscal_min":jscal_min, "jscal_max":jscal_max}, context_instance=RequestContext(request))
 
+@login_required(login_url="/login/")
 def hospitallist(request, curcounty="", curinhospital=""):
     '''医院信息列表'''
+    lstauth = [0,2]
+    if int(request.user.unitgroup) not in lstauth:
+        return render_to_response('noauth.html')
+
     curppname = [u"姓名", u"区县", u"有效起始时间", u"有效终止时间", u"救助疗程", u"审核时间", u"确认入院", u"入院时间",]
     curpp     = [[["","","","","",""], "", "",]]
 
@@ -447,8 +508,13 @@ def hospitallist(request, curcounty="", curinhospital=""):
     #===========分页================
     return render_to_response('hospitallist.html', {'curpp': curlistinfo, 'curppname':curppname}, context_instance=RequestContext(request))
 
+@login_required(login_url="/login/")
 def inhospital(request, curid="1"):
     '''医院入院视图'''
+    lstauth = [0,2]
+    if int(request.user.unitgroup) not in lstauth:
+        return render_to_response('noauth.html')
+
     if curid == "":
         return HttpResponseRedirect('/hospitallist/')
 
@@ -483,8 +549,13 @@ def inhospital(request, curid="1"):
             return HttpResponseRedirect('/hospitallist/') # Redirect
     return render_to_response('hospitalin.html', {"form":form, "nomodifyinfo":nomodifyinfo,"jscal_min":jscal_min, "jscal_max":jscal_max}, context_instance=RequestContext(request))
 
+@login_required(login_url="/login/")
 def hospitallistout(request, curcounty="", curouthospital=""):
     '''已经入院人员信息列表'''
+    lstauth = [0,2]
+    if int(request.user.unitgroup) not in lstauth:
+        return render_to_response('noauth.html')
+
     curppname = [u"姓名", u"区县",  u"救助疗程", u"入院时间", u"确认出院",u"出院时间",]
     curpp     = [[["","","","",], "", "",]]
 
@@ -527,8 +598,13 @@ def hospitallistout(request, curcounty="", curouthospital=""):
     #===========分页================
     return render_to_response('hospitallistout.html', {'curpp': curlistinfo, 'curppname':curppname},context_instance=RequestContext(request))
 
+@login_required(login_url="/login/")
 def outhospital(request, curid="1"):
     '''医院出院视图'''
+    lstauth = [0,2]
+    if int(request.user.unitgroup) not in lstauth:
+        return render_to_response('noauth.html')
+
     if curid == "":
         return HttpResponseRedirect('/hospitallistout/')
 
@@ -562,8 +638,13 @@ def outhospital(request, curid="1"):
             return HttpResponseRedirect('/hospitallistout/') # Redirect
     return render_to_response('hospitalout.html', {"form":form, "nomodifyinfo":nomodifyinfo,"jscal_min":jscal_min, "jscal_max":jscal_max}, context_instance=RequestContext(request))
 
+@login_required(login_url="/login/")
 def hospitallistcalc(request, curcounty="", curcalchospital=""):
     '''已经出院待结算人员信息列表'''
+    lstauth = [0,2]
+    if int(request.user.unitgroup) not in lstauth:
+        return render_to_response('noauth.html')
+
     curppname = [u"姓名", u"区县",  u"救助疗程", u"出院时间", u"住院总费用", u"修改",u"结算",]
     curpp     = [[["","","","","",], "", "",]]
 
@@ -608,8 +689,13 @@ def hospitallistcalc(request, curcounty="", curcalchospital=""):
     #===========分页================
     return render_to_response('hospitallistcalc.html', {'curpp': curlistinfo, 'curppname':curppname}, context_instance=RequestContext(request))
 
+@login_required(login_url="/login/")
 def calchospital(request, curid="1"):
     '''医院结算视图'''
+    lstauth = [0,2]
+    if int(request.user.unitgroup) not in lstauth:
+        return render_to_response('noauth.html')
+
     if curid == "":
         return HttpResponseRedirect('/hospitallistcalc/')
 
@@ -668,8 +754,13 @@ def calchospital(request, curid="1"):
             return HttpResponseRedirect('/hospitallistcalc/') # Redirect
     return render_to_response('hospitalcalc.html', {"form":form, "nomodifyinfo":nomodifyinfo,"jscal_min":jscal_min, "jscal_max":jscal_max}, context_instance=RequestContext(request))
 
+@login_required(login_url="/login/")
 def calmodifychospital(request, curid="1"):
     '''医院结算修改视图'''
+    lstauth = [0,2]
+    if int(request.user.unitgroup) not in lstauth:
+        return render_to_response('noauth.html')
+
     if curid == "":
         return HttpResponseRedirect('/hospitallistcalc/')
 

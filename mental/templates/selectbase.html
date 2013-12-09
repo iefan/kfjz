@@ -28,7 +28,7 @@
 <div class="pure-u-1-2 pagination2 ">
 <form action="" method="get" class="pure-form" style="display:inline">
   <fieldset>
-    <span id="allpages">|共 {{ curpp.paginator.num_pages }} 页|</span>
+    <span id="allpages">|共 <a href="?page={{ curpp.paginator.num_pages }}">{{ curpp.paginator.num_pages }}</a> 页|</span>
     <span>到第</span>
     <input name="page" type="text" size="2">
     <span>页</span>

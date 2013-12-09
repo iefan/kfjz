@@ -19,6 +19,8 @@ urlpatterns = patterns('',
     url(r'^login/$', myuser_login,  {'template_name': 'login.html'}),
 
     url(r'^about/$', 'mental.views.about'),
+    url(r'^index/$', 'mental.views.index'),
+    url(r'^$', 'mental.views.index'),
     
     url(r'^mentalinput/$', 'mental.views.mentalinput'),
     url(r'^mentalselect/$', 'mental.views.mentalselect'),
