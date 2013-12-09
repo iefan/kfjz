@@ -95,10 +95,22 @@
 .logininput table input{
     width: 100%;
 }
-.pagination{
-    text-align: center;
+.pagination1{
+    text-align: right;
     padding-top: 10px;
     padding-bottom: 10px;
+    font-size: 13px;
+}
+.pagination2{
+    text-align: left;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    font-size: 13px;
+}
+#allpages{
+    padding-left:10px;
+    padding-right: 10px;
+    color: blue;
 }
 
 /*.hospital{

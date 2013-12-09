@@ -7,6 +7,35 @@
 <div class="pure-g-r ">
   <div class="pure-u-1 ">
     {% block ordertable %}{% endblock %}
+    
+<div class="pure-u-1-2 pagination1 ">
+ <ul class="pure-paginator">
+    {% if curpp.has_previous %}
+    <li><a class="pure-button prev" href="?page={{ curpp.previous_page_number }}">&#171;</a></li>
+    {% else %}  
+     <li><span class="pure-button prev pure-button-disabled" >&#171;</span></li>
+    {% endif %}
+
+    <li><a class="pure-button pure-button-active" href="?page={{ curpp.number }}">{{ curpp.number }}</a></li>
+
+    {% if curpp.has_next %}
+    <li><a class="pure-button next" href="?page={{ curpp.next_page_number }}">&#187;</a></li>
+    {% else %}  
+     <li><span class="pure-button next pure-button-disabled" >&#187;</span></li>
+    {% endif %}
+</ul>
+</div>
+<div class="pure-u-1-2 pagination2 ">
+<form action="" method="get" class="pure-form" style="display:inline">
+  <fieldset>
+    <span id="allpages">|共 {{ curpp.paginator.num_pages }} 页|</span>
+    <span>到第</span>
+    <input name="page" type="text" size="2">
+    <span>页</span>
+    <input type="submit" value="跳转">
+  </fieldset>
+</form>
+</div>
   </div>
 </div>
 

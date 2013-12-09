@@ -1,4 +1,4 @@
-{% extends "applybase.html" %}
+{% extends "selectbase.html" %}
 {% block title %}精神病人申请信息查询{% endblock %}
 {% block admincssjs %}{% endblock %}
 
@@ -14,7 +14,7 @@
 </form>
 {% endblock %}
 
-{% block mentaltable %}
+{% block ordertable %}
 <h2 align="center">待申请精神残疾人信息列表</h2>
 <table align="center" class="pure-table pure-table-bordered">
   <thead>
@@ -51,12 +51,11 @@
     {% if not curproval %}
     <td>&nbsp;</td>
     {% else %}
-    <td>{{ curproval }}</a></td>
+    <td>{{ curproval }}</td>
     {% endif %}
     
   </tr>
   {% endfor %}
 </table>
-<br/>
 
 {% endblock %}

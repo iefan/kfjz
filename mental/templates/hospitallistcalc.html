@@ -1,8 +1,8 @@
-{% extends "hospitalbase.html" %}
+{% extends "selectbase.html" %}
 {% block title %}已经出院待结算人员信息列表{% endblock %}
 {% block admincssjs %}{% endblock %}
 
-{% block hospitalselect %}
+{% block orderselect %}
 <form method="POST" action="/hospitallistcalc/" class="pure-form">
   <fieldset align="center" class="mselect">
     <label>区县名称：： </label>
@@ -27,7 +27,7 @@
 </form>
 {% endblock %}
 
-{% block hospitaltable %}
+{% block ordertable %}
 <h2 align="center">已经出院待结算人员信息列表</h2>
 <table align="center" class="pure-table pure-table-bordered">
   <thead>
@@ -64,6 +64,5 @@
   </tr>
   {% endfor %}
 </table>
-<br/>
 
 {% endblock %}

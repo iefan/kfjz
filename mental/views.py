@@ -11,6 +11,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger #增加
 from decimal import getcontext, Decimal as D, ROUND_UP
 getcontext().prec = 28
 getcontext().rounding = ROUND_UP
+MYPAGES = 3
 
 from django.contrib.auth.views import login
 def myuser_login(request, *args, **kwargs):
@@ -65,7 +66,7 @@ def mentalselect(request, curname="", curppid="", curcounty=""):
         curpp[0][0][0] = "没有记录"
 
     #===========分页================
-    paginator = Paginator(curpp, 3) # Show 3 contacts per page
+    paginator = Paginator(curpp, MYPAGES) # Show 3 contacts per page
     page = request.GET.get('page')
     try:
         curlistinfo = paginator.page(page)
@@ -131,7 +132,19 @@ def approvallistover(request, curcounty="", curover=""):
     else:
         curpp[0][0][0] = "没有记录"
 
-    return render_to_response('approvallistover.html', {'curpp': curpp, 'curppname':curppname})
+     #===========分页================
+    paginator = Paginator(curpp, MYPAGES) # Show 3 contacts per page
+    page = request.GET.get('page')
+    try:
+        curlistinfo = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        curlistinfo = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        curlistinfo = paginator.page(paginator.num_pages)
+    #===========分页================
+    return render_to_response('approvallistover.html', {'curpp': curlistinfo, 'curppname':curppname})
 
 def approvalover(request, curid="0"):
     if curid == "0":
@@ -192,7 +205,19 @@ def approvallist(request, curcounty="", curapproval=""):
     else:
         curpp[0][0][0] = "没有记录"
 
-    return render_to_response('approvallist.html', {'curpp': curpp, 'curppname':curppname})
+    #===========分页================
+    paginator = Paginator(curpp, MYPAGES) # Show 3 contacts per page
+    page = request.GET.get('page')
+    try:
+        curlistinfo = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        curlistinfo = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        curlistinfo = paginator.page(paginator.num_pages)
+    #===========分页================
+    return render_to_response('approvallist.html', {'curpp': curlistinfo, 'curppname':curppname})
 
 def approvalinput(request, curppid=""):
     '''批准视图'''
@@ -330,7 +355,19 @@ def applylist(request, curname="", curppid=""):
     else:
         curpp[0][0][0] = "没有记录"
 
-    return render_to_response('applylist.html', {'curpp': curpp, 'curppname':curppname})
+     #===========分页================
+    paginator = Paginator(curpp, MYPAGES) # Show 3 contacts per page
+    page = request.GET.get('page')
+    try:
+        curlistinfo = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        curlistinfo = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        curlistinfo = paginator.page(paginator.num_pages)
+    #===========分页================
+    return render_to_response('applylist.html', {'curpp': curlistinfo, 'curppname':curppname})
     # return mentalselect(request, curname="", curppid="", curcounty=county)
 
 def applymodify(request, curppid="0"):
@@ -395,7 +432,19 @@ def hospitallist(request, curcounty="", curinhospital=""):
     else:
         curpp[0][0][0] = "没有记录"
 
-    return render_to_response('hospitallist.html', {'curpp': curpp, 'curppname':curppname})
+    #===========分页================
+    paginator = Paginator(curpp, MYPAGES) # Show 3 contacts per page
+    page = request.GET.get('page')
+    try:
+        curlistinfo = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        curlistinfo = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        curlistinfo = paginator.page(paginator.num_pages)
+    #===========分页================
+    return render_to_response('hospitallist.html', {'curpp': curlistinfo, 'curppname':curppname})
 
 def inhospital(request, curid="1"):
     '''医院入院视图'''
@@ -463,7 +512,19 @@ def hospitallistout(request, curcounty="", curouthospital=""):
     else:
         curpp[0][0][0] = "没有记录"
 
-    return render_to_response('hospitallistout.html', {'curpp': curpp, 'curppname':curppname})
+    #===========分页================
+    paginator = Paginator(curpp, MYPAGES) # Show 3 contacts per page
+    page = request.GET.get('page')
+    try:
+        curlistinfo = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        curlistinfo = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        curlistinfo = paginator.page(paginator.num_pages)
+    #===========分页================
+    return render_to_response('hospitallistout.html', {'curpp': curlistinfo, 'curppname':curppname})
 
 def outhospital(request, curid="1"):
     '''医院出院视图'''
@@ -532,7 +593,19 @@ def hospitallistcalc(request, curcounty="", curcalchospital=""):
     else:
         curpp[0][0][0] = "没有记录"
 
-    return render_to_response('hospitallistcalc.html', {'curpp': curpp, 'curppname':curppname})
+    #===========分页================
+    paginator = Paginator(curpp, MYPAGES) # Show 3 contacts per page
+    page = request.GET.get('page')
+    try:
+        curlistinfo = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        curlistinfo = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        curlistinfo = paginator.page(paginator.num_pages)
+    #===========分页================
+    return render_to_response('hospitallistcalc.html', {'curpp': curlistinfo, 'curppname':curppname})
 
 def calchospital(request, curid="1"):
     '''医院结算视图'''

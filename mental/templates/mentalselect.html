@@ -57,29 +57,4 @@
   {% endfor %}
 </table>
 
-<div class="pure-u-1 pagination ">
- <ul class="pure-paginator">
-    {% if curpp.has_previous %}
-    <li><a class="pure-button prev" href="?page={{ curpp.previous_page_number }}">&#171;前一页</a></li>
-    {% else %}  
-     <li><span class="pure-button prev pure-button-disabled" >&#171;前一页</span></li>
-    {% endif %}
-
-    <li ><a class="pure-button pure-button-disabled " href="#">共 {{ curpp.paginator.num_pages }} 页.第 {{ curpp.number }} 页</a></li>
-
-    {% if curpp.has_next %}
-    <li><a class="pure-button next" href="?page={{ curpp.next_page_number }}">&#187;下一页</a></li>
-    {% else %}  
-     <li><span class="pure-button next pure-button-disabled" >&#187;下一页</span></li>
-    {% endif %}
-</ul>
-<form action="" method="get" class="pure-form" style="display:inline">
-  <fieldset>
-    <span>到第</span>
-    <input name="page" type="text" size="2">
-    <span>页</span>
-    <input type="submit" value="跳转">
-  </fieldset>
-</form>
-</div>
 {% endblock %}
