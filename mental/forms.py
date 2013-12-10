@@ -249,3 +249,68 @@ class SelectMentalForm(forms.ModelForm):
 
     def clean(self):
         return self.cleaned_data
+
+class SelectApprovalListForm(forms.ModelForm):
+    '''申批信息查询条件表单'''
+    lstcounty = list(jzr.COUNTY_CHOICES)
+    lstcounty.insert(0, ("", "--"))
+    county = forms.ChoiceField(choices = tuple(lstcounty), label="区县名称",)
+    lstisapproval = list(jzr.ISAPPROVAL_CHOICES)
+    lstisapproval.insert(0, ("", "--"))
+    isapproval = forms.ChoiceField(choices = tuple(lstisapproval), label="是否批准",)
+    
+    class Meta:
+        model = ApprovalModel
+        fields = ('isapproval', )
+
+    def clean(self):
+        return self.cleaned_data
+
+class SelectApprovalOverForm(forms.Form):
+    '''核结查询条件表单'''
+    lstcounty = list(jzr.COUNTY_CHOICES)
+    lstcounty.insert(0, ("", "--"))
+    county = forms.ChoiceField(choices = tuple(lstcounty), label="区县名称",)
+    iscalchospital = forms.ChoiceField(choices = jzr.YESNO01_CHOICE, label="是否核结",)
+    
+    def clean(self):
+        return self.cleaned_data
+
+class SelectApplyForm(forms.ModelForm):
+    '''区县申请救助查询条件表单'''
+    class Meta:
+        model = MentalModel
+        fields = ('name', 'ppid',)
+
+    def clean(self):
+        return self.cleaned_data
+
+class SelectHospitalInForm(forms.Form):
+    '''入院查询条件表单'''
+    lstcounty = list(jzr.COUNTY_CHOICES)
+    lstcounty.insert(0, ("", "--"))
+    county = forms.ChoiceField(choices = tuple(lstcounty), label="区县名称",)
+    inhospital = forms.ChoiceField(choices = jzr.YESNO01_CHOICE, label="是否入院",)
+    
+    def clean(self):
+        return self.cleaned_data
+
+class SelectHospitalOutForm(forms.Form):
+    '''出院查询条件表单'''
+    lstcounty = list(jzr.COUNTY_CHOICES)
+    lstcounty.insert(0, ("", "--"))
+    county = forms.ChoiceField(choices = tuple(lstcounty), label="区县名称",)
+    outhospital = forms.ChoiceField(choices = jzr.YESNO01_CHOICE, label="是否出院",)
+    
+    def clean(self):
+        return self.cleaned_data
+
+class SelectHospitalCalcForm(forms.Form):
+    '''医院结算查询条件表单'''
+    lstcounty = list(jzr.COUNTY_CHOICES)
+    lstcounty.insert(0, ("", "--"))
+    county = forms.ChoiceField(choices = tuple(lstcounty), label="区县名称",)
+    calchospital = forms.ChoiceField(choices = jzr.YESNO01_CHOICE, label="是否结算",)
+    
+    def clean(self):
+        return self.cleaned_data

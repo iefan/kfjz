@@ -5,10 +5,7 @@
 {% block orderselect %}
 <form method="POST" action="/applylist/" class="pure-form">
   <fieldset align="center" class="mselect">
-    <label>姓名： </label>
-    <input name="name" type="text" placeholder="姓名">
-    <label>身份证号： </label>
-    <input name="ppid" type="text" placeholder="身份证号">
+    {{ form }}
     <button type="submit" class="pure-button pure-button-success">查询</button>
   </fieldset>
 </form>

@@ -6,7 +6,7 @@ from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required  
 import datetime
 from forms import MentalForm, MentalForm2, ApprovalForm, ApprovalForm2, ApplyForm, InHospitalForm, OutHospitalForm, CalcHospitalForm, ApprovalOverForm
-from forms import SelectMentalForm
+from forms import SelectMentalForm, SelectApprovalListForm, SelectApprovalOverForm, SelectApplyForm, SelectHospitalInForm, SelectHospitalOutForm, SelectHospitalCalcForm
 from models import MentalModel, ApprovalModel
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger #增加分页功能
 from decimal import getcontext, Decimal as D, ROUND_UP
@@ -63,13 +63,11 @@ def mentalselect(request, curname="", curppid="", curcounty=""):
     curppname = [u"姓名", u"区县", u"身份证号", u"户口类别", u"监护人", u"联系电话", u"修改"]
     curpp     = [[["","","","","",""], "", "",]]
 
-    form = SelectMentalForm(initial={'name':curname, 'ppid':curppid, 'county':curcounty,}) #页面查询窗体
     if request.method == 'POST':
         curname = request.POST['name']
         curppid = request.POST['ppid']
         curcounty = request.POST['county']
-        form = SelectMentalForm(initial={'name':curname, 'ppid':curppid, 'county':curcounty,}) #页面查询窗体
-
+    form = SelectMentalForm(initial={'name':curname, 'ppid':curppid, 'county':curcounty,}) #页面查询窗体
 
     cur_re = MentalModel.objects.filter(name__icontains=curname, ppid__icontains=curppid, county__icontains=curcounty)
     if len(cur_re) != 0:
@@ -140,6 +138,7 @@ def approvallistover(request, curcounty="", curover=""):
         else:
             curcounty = request.POST['county']
             curover = request.POST['iscalchospital']
+    form = SelectApprovalOverForm(initial={'county':curcounty, "iscalchospital":curover,}) #页面查询窗体
 
     #只查询已经结算的人员信息
     if curover == "":
@@ -169,7 +168,7 @@ def approvallistover(request, curcounty="", curover=""):
         # If page is out of range (e.g. 9999), deliver last page of results.
         curlistinfo = paginator.page(paginator.num_pages)
     #===========分页================
-    return render_to_response('approvallistover.html', {'curpp': curlistinfo, 'curppname':curppname}, context_instance=RequestContext(request))
+    return render_to_response('approvallistover.html', {"form":form,'curpp': curlistinfo, 'curppname':curppname}, context_instance=RequestContext(request))
 
 @login_required(login_url="/login/")
 def approvalover(request, curid="0"):
@@ -218,13 +217,11 @@ def approvallist(request, curcounty="", curapproval=""):
         else:
             curcounty = request.POST['county']
             curapproval = request.POST['isapproval']
+    form = SelectApprovalListForm(initial={'county':curcounty, "isapproval":curapproval,}) #页面查询窗体
 
     # 只显示未归档人员
-    if curapproval == "":
-        cur_re = ApprovalModel.objects.filter(enterfiledate__isnull=True, mental__county__icontains=curcounty)
-    else:
-        cur_re  = ApprovalModel.objects.filter(enterfiledate__isnull=True, approvalsn__isnull = bool(int(curapproval)), mental__county=curcounty)
-
+    cur_re = ApprovalModel.objects.filter(enterfiledate__isnull=True, mental__county__icontains=curcounty, isapproval__icontains=curapproval,)
+   
     if len(cur_re) != 0:
         curpp = []
         for ipp in cur_re:
@@ -252,7 +249,7 @@ def approvallist(request, curcounty="", curapproval=""):
         # If page is out of range (e.g. 9999), deliver last page of results.
         curlistinfo = paginator.page(paginator.num_pages)
     #===========分页================
-    return render_to_response('approvallist.html', {'curpp': curlistinfo, 'curppname':curppname}, context_instance=RequestContext(request))
+    return render_to_response('approvallist.html', {"form":form,'curpp': curlistinfo, 'curppname':curppname}, context_instance=RequestContext(request))
 
 @login_required(login_url="/login/")
 def approvalinput(request, curppid=""):
@@ -394,6 +391,7 @@ def applylist(request, curname="", curppid=""):
         else:
             curname = request.POST['name']
             curppid = request.POST['ppid']
+    form = SelectApplyForm(initial={'name':curname, "ppid":curppid,}) #页面查询窗体
 
     cur_re = MentalModel.objects.filter(name__icontains=curname, ppid__icontains=curppid, county__icontains=curcounty)
     if len(cur_re) != 0:
@@ -423,7 +421,7 @@ def applylist(request, curname="", curppid=""):
         # If page is out of range (e.g. 9999), deliver last page of results.
         curlistinfo = paginator.page(paginator.num_pages)
     #===========分页================
-    return render_to_response('applylist.html', {'curpp': curlistinfo, 'curppname':curppname}, context_instance=RequestContext(request))
+    return render_to_response('applylist.html', {"form":form,'curpp': curlistinfo, 'curppname':curppname}, context_instance=RequestContext(request))
     # return mentalselect(request, curname="", curppid="", curcounty=county)
 
 @login_required(login_url="/login/")
@@ -474,12 +472,13 @@ def hospitallist(request, curcounty="", curinhospital=""):
         else:
             curcounty = request.POST['county']
             curinhospital = request.POST['inhospital']
+    form = SelectHospitalInForm(initial={'county':curcounty, "inhospital":curinhospital,}) #页面查询窗体
 
-    # 不显示归档人员
+    # 不显示归档人员和已经出院人员
     if curinhospital == "":
-        cur_re = ApprovalModel.objects.filter(enterfiledate__isnull=True, mental__county__icontains=curcounty)
+        cur_re = ApprovalModel.objects.filter(enterfiledate__isnull=True, outdate__isnull=True, mental__county__icontains=curcounty)
     else:
-        cur_re  = ApprovalModel.objects.filter(enterfiledate__isnull=True, indate__isnull = bool(int(curinhospital)), mental__county__icontains=curcounty)
+        cur_re  = ApprovalModel.objects.filter(enterfiledate__isnull=True, outdate__isnull=True, indate__isnull = bool(int(curinhospital)), mental__county__icontains=curcounty)
 
     if len(cur_re) != 0:
         curpp = []
@@ -510,7 +509,7 @@ def hospitallist(request, curcounty="", curinhospital=""):
         # If page is out of range (e.g. 9999), deliver last page of results.
         curlistinfo = paginator.page(paginator.num_pages)
     #===========分页================
-    return render_to_response('hospitallist.html', {'curpp': curlistinfo, 'curppname':curppname}, context_instance=RequestContext(request))
+    return render_to_response('hospitallist.html', {"form":form, 'curpp': curlistinfo, 'curppname':curppname}, context_instance=RequestContext(request))
 
 @login_required(login_url="/login/")
 def inhospital(request, curid="1"):
@@ -569,8 +568,10 @@ def hospitallistout(request, curcounty="", curouthospital=""):
         else:
             curcounty = request.POST['county']
             curouthospital = request.POST['outhospital']
+    form = SelectHospitalOutForm(initial={'county':curcounty, "outhospital":curouthospital,}) #页面查询窗体
 
-    if curouthospital == "": #查询已经入院人员，不显示归档人员
+    #查询已经入院人员，不显示归档人员
+    if curouthospital == "": 
         cur_re = ApprovalModel.objects.filter(enterfiledate__isnull=True, indate__isnull=False, mental__county__icontains=curcounty)
     else:
         cur_re  = ApprovalModel.objects.filter(enterfiledate__isnull=True, indate__isnull=False, outdate__isnull = bool(int(curouthospital)), mental__county__icontains=curcounty)
@@ -600,7 +601,7 @@ def hospitallistout(request, curcounty="", curouthospital=""):
         # If page is out of range (e.g. 9999), deliver last page of results.
         curlistinfo = paginator.page(paginator.num_pages)
     #===========分页================
-    return render_to_response('hospitallistout.html', {'curpp': curlistinfo, 'curppname':curppname},context_instance=RequestContext(request))
+    return render_to_response('hospitallistout.html', {"form":form, 'curpp': curlistinfo, 'curppname':curppname},context_instance=RequestContext(request))
 
 @login_required(login_url="/login/")
 def outhospital(request, curid="1"):
@@ -658,6 +659,7 @@ def hospitallistcalc(request, curcounty="", curcalchospital=""):
         else:
             curcounty = request.POST['county']
             curcalchospital = request.POST['calchospital']
+    form = SelectHospitalCalcForm(initial={"county":curcounty, "calchospital":curcalchospital,})
 
     if curcalchospital == "": #查询已经出院，但是没有核结的人员
         cur_re = ApprovalModel.objects.filter(enterfiledate__isnull=True, outdate__isnull=False, mental__county__icontains=curcounty)
@@ -691,7 +693,7 @@ def hospitallistcalc(request, curcounty="", curcalchospital=""):
         # If page is out of range (e.g. 9999), deliver last page of results.
         curlistinfo = paginator.page(paginator.num_pages)
     #===========分页================
-    return render_to_response('hospitallistcalc.html', {'curpp': curlistinfo, 'curppname':curppname}, context_instance=RequestContext(request))
+    return render_to_response('hospitallistcalc.html', {"form":form, 'curpp': curlistinfo, 'curppname':curppname}, context_instance=RequestContext(request))
 
 @login_required(login_url="/login/")
 def calchospital(request, curid="1"):

@@ -2,8 +2,8 @@
 
 # !!!===!!! MUST NEED ADD 'u' BEFORE IN UNICODE ! ===!!!
 COUNTY_CHOICES = (\
-    (u'龙湖区', u'龙湖区'),
     (u'金平区', u'金平区'),
+    (u'龙湖区', u'龙湖区'),
     (u'濠江区', u'濠江区'),
     (u'澄海区', u'澄海区'),
     (u'潮阳区', u'潮阳区'),
@@ -87,4 +87,9 @@ ISCAL_CHOICES = (\
 YESNO_CHOICE = (\
     (u'是',u'是'),
     (u'否',u'否'),
+    )
+YESNO01_CHOICE = (\
+    ('','--'),
+    (u'0',u'是'),
+    (u'1',u'否'),
     )
