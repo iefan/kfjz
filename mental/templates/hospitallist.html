@@ -32,12 +32,14 @@
     {% endfor %}
 
     {% if not curid %}
+    <td>&nbsp;</td>
+    {% else %}{% if curid == "--" %}
     <td>已入院</td>
     {% else %}{% if curid == "over" %}
     <td>已出院</td>
     {% else %}
     <td><a class="pure-button " href="/inhospital/{{ curid }}/">确认入院</a></td>
-    {% endif %}{% endif %}
+    {% endif %}{% endif %}{% endif %}
 
     {% if curindate == "" %}
     <td>&nbsp;</td>

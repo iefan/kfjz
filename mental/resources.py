@@ -21,7 +21,7 @@ ECON_CHOICES = (\
     (u'困难', u'困难'),
     )
 CITY_CHOICE = (\
-    (u'城镇', u'城镇'), 
+    (u'非农', u'非农'), 
     (u'农村', u'农村'),
     )
 RELASHIP_CHOICES = (\

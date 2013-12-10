@@ -116,7 +116,11 @@
 #userunitname{color: blue;}
 #useroperatorname{color: blue;}
 #exitbtn{color: red;}
-
+.selecttable table td{
+    padding:3px 6px 3px 10px !important; 
+    /*line-height:12px;*/
+    font-size: 14px!important;
+}
 /*.hospital{
     width: 600px;
     margin: auto;

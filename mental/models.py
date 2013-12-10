@@ -4,20 +4,21 @@ import resources as jzr
 from datetime import date
 
 class MentalModel(models.Model):
-    name        = models.CharField(max_length=30, verbose_name="姓名")
-    sex         = models.CharField(choices=jzr.SEX_CHOICES, max_length=2, verbose_name="性别", default="男")
-    county      = models.CharField(choices=jzr.COUNTY_CHOICES, max_length=30, verbose_name="区县", default="金平区")
-    ppid        = models.CharField(unique=True, max_length=30, verbose_name="身份证号")
-    dislevel    = models.CharField(choices=jzr.DISLEVEL_CHOICES, max_length=30, verbose_name="残疾类别", default="61")
-    certtime    = models.DateField(verbose_name="办证时间", blank=True, null=True, )
-    economic    = models.CharField(choices=jzr.ECON_CHOICES, max_length=10, verbose_name="经济状况", default="低保")
-    iscity      = models.CharField(choices=jzr.CITY_CHOICE, max_length=10, verbose_name="户口类别", default="城镇")
-    address     = models.CharField(max_length=100, verbose_name="住址", blank=True, null=True, )
-    guardian    = models.CharField(max_length=20, verbose_name="监护人")
-    guardrelation = models.CharField(choices=jzr.RELASHIP_CHOICES, max_length=10, verbose_name="监护关系",default="其他")
-    phone       = models.CharField(max_length=20, verbose_name="联系电话",blank=True, null=True,)
-    regtime     = models.DateField(verbose_name="建档时间",blank=True, null=True,)
-    operatorname= models.CharField(max_length=30, verbose_name='录入人员', blank=True, null=True,)
+    name            = models.CharField(max_length=30, verbose_name="姓名")
+    sex             = models.CharField(choices=jzr.SEX_CHOICES, max_length=2, verbose_name="性别", default="男")
+    county          = models.CharField(choices=jzr.COUNTY_CHOICES, max_length=30, verbose_name="区县", default="金平区")
+    ppid            = models.CharField(unique=True, max_length=30, verbose_name="身份证号")
+    dislevel        = models.CharField(choices=jzr.DISLEVEL_CHOICES, max_length=30, verbose_name="残疾类别", default="61")
+    certtime        = models.DateField(verbose_name="办证时间", blank=True, null=True, )
+    economic        = models.CharField(choices=jzr.ECON_CHOICES, max_length=10, verbose_name="经济状况", default="低保")
+    iscity          = models.CharField(choices=jzr.CITY_CHOICE, max_length=10, verbose_name="户口类别", default="非农")
+    address         = models.CharField(max_length=100, verbose_name="住址", blank=True, null=True, )
+    guardian        = models.CharField(max_length=20, verbose_name="监护人")
+    guardrelation   = models.CharField(choices=jzr.RELASHIP_CHOICES, max_length=10, verbose_name="监护关系",default="其他")
+    phone           = models.CharField(max_length=20, verbose_name="固定电话",blank=True, null=True,)
+    phone2          = models.CharField(max_length=20, verbose_name="手机",blank=True, null=True,)
+    regtime         = models.DateField(verbose_name="建档时间",blank=True, null=True,)
+    operatorname    = models.CharField(max_length=30, verbose_name='录入人员', blank=True, null=True,)
 
     class Meta:
         ordering = ['county',]
@@ -32,7 +33,6 @@ class MentalModel(models.Model):
 class ApprovalModel(models.Model):
     approvalsn      = models.CharField(max_length=30, verbose_name="审批编号", unique=True,blank=True, null=True,) # NEED AUTO GENERATE
     mental          = models.ForeignKey('MentalModel', verbose_name="病人信息")    
-    insurance       = models.CharField(max_length=30,verbose_name="医保类别", choices=jzr.INSU_CHOICES, default="城乡医保",)
     cert1_ppid      = models.CharField(max_length=30,verbose_name="身份证明", choices=jzr.CERT1_CHOICES,default="身份证")       
     cert2_diag      = models.CharField(max_length=30,verbose_name="疾病证明", choices=jzr.CERT2_CHOICES, default="精神残疾证")
     cert3_poor      = models.CharField(max_length=30,verbose_name="贫困证明", choices=jzr.CERT3_CHOICES,default="低保证")
@@ -71,6 +71,7 @@ class ApprovalModel(models.Model):
     moneyselfscale  = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="自付比例", blank=True, null=True,)
     moneyself       = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="个人支付", blank=True, null=True,)
     moneyinsurance  = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="医保支付", blank=True, null=True,) 
+    insurance       = models.CharField(max_length=30,verbose_name="医保类别", choices=jzr.INSU_CHOICES, default="城乡医保",)
 
     # 在医院结算是自动根据设定标准进行计算
     moneyhospital   = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="医疗救助费用", blank=True, null=True,)  #经结算应救助的金额=救助天数*救助标准

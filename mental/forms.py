@@ -11,7 +11,7 @@ class MentalForm(forms.ModelForm):
     class Meta:
         model=MentalModel
         fields = ('name','sex','county','ppid','dislevel','certtime','economic','iscity',\
-            'address','guardian','guardrelation','phone','regtime','operatorname',)
+            'guardian','guardrelation','phone',"phone2",'address','regtime','operatorname',)
         # exclude=('isagree',)
 
     def clean(self):
@@ -47,7 +47,7 @@ class MentalForm2(forms.ModelForm):
     class Meta:
         model=MentalModel
         fields = ('name','sex','county','ppid','dislevel','certtime','economic','iscity',\
-            'address','guardian','guardrelation','phone','regtime','operatorname',)
+            'guardian','guardrelation','phone',"phone2",'address','regtime','operatorname',)
         # exclude=('name','ppid',)
 
     def clean(self):
@@ -155,7 +155,7 @@ class ApplyForm(forms.ModelForm):
     
     class Meta:
         model = ApprovalModel
-        fields = ('mental','insurance','cert1_ppid','cert2_diag','cert3_poor','commitdate','applyman', )
+        fields = ('mental','cert1_ppid','cert2_diag','cert3_poor','commitdate','applyman', )
        
     def clean(self):
         return self.cleaned_data
@@ -204,7 +204,7 @@ class CalcHospitalForm(forms.ModelForm):
     
     class Meta:
         model = ApprovalModel
-        fields = ('mental',"moneyhospital","moneyfood","moneyfrom","dayshosp","dayssave","daysfood",\
+        fields = ('mental',"insurance", "moneyhospital","moneyfood","moneyfrom","dayshosp","dayssave","daysfood",\
             "moneytotal","moneymedicineself","moneyinsurance","moneyself","moneyselfscale","startlevel",\
             "dateclose","datecloseman",)
 

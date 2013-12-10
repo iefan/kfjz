@@ -12,7 +12,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger #增加
 from decimal import getcontext, Decimal as D, ROUND_UP
 getcontext().prec = 28
 getcontext().rounding = ROUND_UP
-MYPAGES = 3
+MYPAGES = 10
 
 from django.contrib.auth.views import login
 def myuser_login(request, *args, **kwargs):
@@ -490,7 +490,7 @@ def hospitallist(request, curcounty="", curinhospital=""):
                     curpp.append([[ipp.mental.name, ipp.mental.county, ipp.notifystart, ipp.notifyend, ipp.period, ipp.approvaldate], ipp.id, "",])
                 else:
                     if not ipp.outdate:
-                        curpp.append([[ipp.mental.name, ipp.mental.county, ipp.notifystart, ipp.notifyend, ipp.period, ipp.approvaldate], '', ipp.indate, ])
+                        curpp.append([[ipp.mental.name, ipp.mental.county, ipp.notifystart, ipp.notifyend, ipp.period, ipp.approvaldate], '--', ipp.indate, ])
                     else:
                         curpp.append([[ipp.mental.name, ipp.mental.county, ipp.notifystart, ipp.notifyend, ipp.period, ipp.approvaldate], 'over', "", ])
 
