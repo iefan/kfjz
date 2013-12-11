@@ -36,6 +36,7 @@ class ApprovalModel(models.Model):
     cert1_ppid      = models.CharField(max_length=30,verbose_name="身份证明", choices=jzr.CERT1_CHOICES,default="身份证")       
     cert2_diag      = models.CharField(max_length=30,verbose_name="疾病证明", choices=jzr.CERT2_CHOICES, default="精神残疾证")
     cert3_poor      = models.CharField(max_length=30,verbose_name="贫困证明", choices=jzr.CERT3_CHOICES,default="低保证")
+    commitdate      = models.DateField(verbose_name="提交申核时间", blank=True, null=True, default=date.today)
     applyman        = models.CharField(max_length=30, verbose_name="申请人员", blank=True, null=True,)
 
     hospital        = models.CharField(max_length=30,verbose_name="医疗机构", choices=jzr.HOSPITAL_CHOICES, default="市四本部",)
@@ -45,7 +46,6 @@ class ApprovalModel(models.Model):
     savecontinue    = models.CharField(max_length=30,verbose_name="续院类型", blank=True, null=True,choices=jzr.CONTINUE_CHOICES,)
     notifystart     = models.DateField(verbose_name="有效起始时间", blank=True, null=True,)
     notifyend       = models.DateField(verbose_name="有效终止时间", blank=True, null=True,)
-    commitdate      = models.DateField(verbose_name="提交申核时间", blank=True, null=True, default=date.today)
     isapproval      = models.CharField(max_length=30,verbose_name="残联审核", choices=jzr.ISAPPROVAL_CHOICES, default="待审",)
     approvaldate    = models.DateField(verbose_name="审核时间", blank=True, null=True)
     approvalman     = models.CharField(max_length=30, verbose_name="审核人员", blank=True, null=True,)

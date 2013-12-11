@@ -1,6 +1,7 @@
 #coding=utf8
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.core.exceptions import MultipleObjectsReturned
 # from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required  
@@ -203,7 +204,7 @@ def approvallist(request, curcounty="", curapproval=""):
     if int(request.user.unitgroup) not in lstauth:
         return render_to_response('noauth.html')
 
-    curppname = [u"姓名", u"区县", u"身份证号", u"户口类别", u"监护人", u"联系电话", u"修改/入院", u"批准"]
+    curppname = [u"姓名", u"区县", u"申批编号", u"户口类别", u"监护人", u"联系电话", u"修改/入院", u"批准"]
     curpp     = []
 
     if request.method == 'POST':
@@ -220,14 +221,14 @@ def approvallist(request, curcounty="", curapproval=""):
     if len(cur_re) != 0:
         for ipp in cur_re:
             if not ipp.approvalsn:
-                curpp.append([[ipp.mental.name, ipp.mental.county, ipp.mental.ppid, ipp.mental.iscity, ipp.mental.guardian, ipp.mental.phone], "", ipp.mental.ppid])
+                curpp.append([[ipp.mental.name, ipp.mental.county, ipp.approvalsn, ipp.mental.iscity, ipp.mental.guardian, ipp.mental.phone], "", ipp.mental.ppid])
             else:
                 tmpitem = ipp.id
                 if ipp.indate and not ipp.outdate: #已入院
                     tmpitem = "--"
                 elif ipp.outdate:
                     tmpitem = "over"
-                curpp.append([[ipp.mental.name,  ipp.mental.county, ipp.mental.ppid, ipp.mental.iscity, ipp.mental.guardian, ipp.mental.phone], tmpitem, '--'])
+                curpp.append([[ipp.mental.name,  ipp.mental.county, ipp.approvalsn, ipp.mental.iscity, ipp.mental.guardian, ipp.mental.phone], tmpitem, '--'])
 
     #===========分页================
     paginator = Paginator(curpp, MYPAGES) # Show 3 contacts per page
@@ -396,6 +397,11 @@ def applylist(request, curname="", curppid=""):
                     curpp.append([[ipp.name,  ipp.county, ipp.ppid, ipp.iscity, ipp.guardian, ipp.phone], ipp.id, '--', overpp.isapproval])
             except ApprovalModel.DoesNotExist:
                 curpp.append([[ipp.name,  ipp.county, ipp.ppid, ipp.iscity, ipp.guardian, ipp.phone], "", ipp.ppid, ""])
+            except MultipleObjectsReturned:
+                # curpp.append([[ipp.name,  ipp.county, ipp.ppid, ipp.iscity, ipp.guardian, ipp.phone], "", ipp.ppid, ""])
+                # curpp.append([[ipp.name,  ipp.county, ipp.ppid, ipp.iscity, ipp.guardian, ipp.phone], ipp.id, '--', overpp.isapproval])
+                curpp.append([[ipp.name,  ipp.county, ipp.ppid, ipp.iscity, ipp.guardian, ipp.phone], "", '--', overpp.isapproval])
+
 
      #===========分页================
     paginator = Paginator(curpp, MYPAGES) # Show 3 contacts per page
