@@ -77,64 +77,59 @@ def readxlsex():
                 # num += 1
             # print ppid, "already exist!!!"
     print num
+
+def readxlsex_approval():
+    path = r"/home/stcl/workdb/kfex2013.xls"
+    bk = xlrd.open_workbook(path)
+    sh = bk.sheets()[0]
+    nrows =  sh.nrows
+
+    cur = conn.cursor()
+    # sql1 = "insert into mental_mentalmodel(name,sex,county,ppid,dislevel,certtime,economic,iscity,address,guardian,guardrelation,phone,phone2,regtime,operatorname) values (%s,%s, %s,%s, %s,%s, %s,%s,%s, %s,%s, %s,%s,%s, %s)"
+
+    numinsert = 0
+    for indx in range(4, nrows):
+        approvalsn = "20130101000000" + z(sh.row(indx)[1].value, 6) #20bits, yyyymmddhhmmssffffff
+        ppid        = sh.row(indx)[5].value
+        strsqltmp = "select * from mental_mentalmodel where ppid='" + ppid + "'"
+        print strsqltmp
+        cur.execute(strsqltmp)
+        tmpmental =  cur.fetchall()
+        tmpmental = tmpmental[0][0]
+        print tmpmental
+        break;
+
+        # dislevel    = sh.row(indx)[7].value
+        # if dislevel == u"有":
+        #     dislevel = u"61"
+        # else:
+        #     dislevel = u"其他"
+        # certtime        = datetime.date(1900,1,1)
+        # economic        = sh.row(indx)[6].value
+        # iscity          = sh.row(indx)[8].value
+        # address         = sh.row(indx)[2].value
+        # guardian        = sh.row(indx)[10].value
+        # guardrelation   = sh.row(indx)[11].value.strip()
+        # if guardrelation == "":
+        #     guardrelation = u"其他"
         # try:
-        #     n = cur.execute(sql1,tuple(tmpinfo))
+        #     phone           = str(int(sh.row(indx)[12].value))
         # except:
-        #     print name, ppid
         #     pass
+        # try:
+        #     phone2          = str(int(sh.row(indx)[13].value))
+        # except:
+        #     pass
+        # regtime         = datetime.date.today()
+        # operatorname    = u"梁维忠"
+       
+        # tmpinfo =[name,sex,county,ppid,dislevel,certtime,economic,iscity,address,guardian,guardrelation,phone,phone2,regtime,operatorname,]
+        
 
-  # addr_dict = {}
-    # strsql = "select addrsn,addrname from addr where right(addrsn,6)='000000'"
-    # conn.query(strsql)
-    # result = conn.store_result()
-    # while True:
-    #     record = result.fetch_row()
-    #     if not record: break
-    #     addr_dict[record[0][1][:2]] = record[0][0]
-
-    # dictcou = {}
-    # dictcou[1] = u"金平";
-    # dictcou[2] = u"龙湖";
-    # dictcou[3] = u"濠江";
-    # cur = conn.cursor()
-    # for years in range(2011,2014):
-    #     for county in range(1,4):
-    #         path = "D:\\workdb\\zulian\\" + str(years) + "\\" + str(county) + ".xls"
-    #         print path, dictcou[county]
-
-    #         bk = xlrd.open_workbook(path)
-    #         sh = bk.sheets()[0]
-    #         nrows =  sh.nrows
-    #         for indx in range(2, nrows):
-    #             name        = sh.row(indx)[0].value
-    #             ppid        = sh.row(indx)[1].value
-    #             sex         = sh.row(indx)[2].value
-    #             cardtime    = sh.row(indx)[5].value
-    #             addrsn      = addr_dict[dictcou[county]]
-    #             address     = sh.row(indx)[6].value
-    #             try:
-    #                 phone       = sh.row(indx)[7].value
-    #             except:
-    #                 phone       = ''
-
-    #             name = name.replace(' ', '')
-    #             name = name.replace(u'　', '')
-
-    #             tmpinfo = [name, ppid, sex, cardtime, addrsn, address, phone, years, '', '']
-                # try:
-                #     print name, ppid, sex, cardtime, addrsn, address, phone, years
-                # except:
-                #     print tmpinfo, '-------------------'
-                #     return
-
-                # try:
-                #     n = cur.execute(sql1,tuple(tmpinfo))
-                # except:
-                #     print address, name
-                    # pass
-
-
+# approvalsn,mental,cert1_ppid,cert2_diag,cert3_poor,applyman,hospital,period,foodallow,savetimes,savecontinue,notifystart,notifyend,commitdate,isapproval,approvaldate,approvalman,enterfiledate,enterfileman,indate,saveok,inhospitalman,outdate,outhospitalman,dayshosp,dayssave,daysfood,moneytotal,moneymedicineself,
+# moneyselfscale,moneyself,moneyinsurance,insurance,moneyhospital,moneyfood,moneyfrom,dateclose,datecloseman,daysfoodlimit,savelevel,foodlevel,startlevel,
 if __name__ == '__main__':
-    readxlsex()
+    # readxlsex()
+    readxlsex_approval()
 #    DBCTLib()
 #    testdb()

@@ -20,13 +20,17 @@
 }
 /*导航栏下的信息显示栏*/
 .splash3{
-    margin: 1em auto 0;
-    padding: 1em 0.5em;
+    margin: 12px 0px 0px 0px;
+    padding: 0px;
     background: #eee;
     text-align: center;
 }
-.splash3 span{
-    font-size: 20px;
+.splash3 address{
+    font-size: 14px;
+    padding: 10px;
+}
+.splash3 fieldset{
+    font-size: 14px;
 }
 .splash2 table {
     width:60%;
@@ -97,15 +101,15 @@
 }
 .pagination1{
     text-align: right;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    font-size: 13px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    font-size: 12px;
 }
 .pagination2{
     text-align: left;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    font-size: 13px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    font-size: 12px;
 }
 #allpages{
     padding-left:10px;
@@ -117,9 +121,31 @@
 #useroperatorname{color: blue;}
 #exitbtn{color: red;}
 .selecttable table td{
-    padding:3px 6px 3px 10px !important; 
-    /*line-height:12px;*/
+    padding:3px 6px 3px 6px !important; 
     font-size: 14px!important;
+    text-align: center;
+}
+.selecttable table th{
+    padding:3px 10px 3px 10px !important; 
+    font-size: 16px!important;
+    text-align: center;
+}
+.selecttable table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+.selecttable h2{
+    margin:0px auto 0px auto;
+    padding:0px 0px 0px 0px !important; 
+    /*line-height:12px;*/
+    font-size: 18px!important;
+    font-weight: bold;
+}
+#tablenum{
+    text-align: center;
+    font-size: 10px;
+    margin:0;
+    padding: 0;
+    font-weight: lighter!important;
 }
 /*.hospital{
     width: 600px;

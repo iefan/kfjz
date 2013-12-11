@@ -17,7 +17,7 @@ MYPAGES = 10
 from django.contrib.auth.views import login
 def myuser_login(request, *args, **kwargs):
     if request.method == 'POST':
-        request.session.set_expiry(600) #设置 cookie 时间 10 分钟
+        request.session.set_expiry(6000) #设置 cookie 时间 10 分钟
         # if not request.POST.get('remember', None):
         #     request.session.set_expiry(0)
  
@@ -61,22 +61,19 @@ def mentalselect(request, curname="", curppid="", curcounty=""):
         return render_to_response('noauth.html')
 
     curppname = [u"姓名", u"区县", u"身份证号", u"户口类别", u"监护人", u"联系电话", u"修改"]
-    curpp     = [[["","","","","",""], "", "",]]
+    curpp     = []
 
     if request.method == 'POST':
-        curname = request.POST['name']
-        curppid = request.POST['ppid']
+        curname = request.POST['name'].strip()
+        curppid = request.POST['ppid'].strip()
         curcounty = request.POST['county']
     form = SelectMentalForm(initial={'name':curname, 'ppid':curppid, 'county':curcounty,}) #页面查询窗体
 
     cur_re = MentalModel.objects.filter(name__icontains=curname, ppid__icontains=curppid, county__icontains=curcounty)
     if len(cur_re) != 0:
-        curpp = []
         for ipp in cur_re:
             # ApprovalModel.objects.get(mental__ppid=ipp.ppid, enterfiledate="否")
             curpp.append([[ipp.name,  ipp.county, ipp.ppid, ipp.iscity, ipp.guardian, ipp.phone], ipp.id, ipp.ppid])
-    else:
-        curpp[0][0][0] = "没有记录"
 
     #===========分页================
     paginator = Paginator(curpp, MYPAGES) # Show 3 contacts per page
@@ -84,7 +81,6 @@ def mentalselect(request, curname="", curppid="", curcounty=""):
     try:
         curlistinfo = paginator.page(page)
     except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
         curlistinfo = paginator.page(1)
     except EmptyPage:
         # If page is out of range (e.g. 9999), deliver last page of results.
@@ -130,7 +126,7 @@ def approvallistover(request, curcounty="", curover=""):
         return render_to_response('noauth.html')
 
     curppname = [u"姓名", u"区县", u"身份证号", u"户口类别",  u"医院", u"医院结算日期", u"核结", u"核结日期"]
-    curpp     = [[["","","","","", ""], "","",]]
+    curpp     = []
 
     if request.method == 'POST':
         if curover!="" or curcounty!= "":
@@ -147,15 +143,12 @@ def approvallistover(request, curcounty="", curover=""):
         cur_re  = ApprovalModel.objects.filter( dateclose__isnull=False,enterfiledate__isnull = bool(int(curover)), mental__county__icontains=curcounty)
 
     if len(cur_re) != 0:
-        curpp = []
         for ipp in cur_re:
             if not ipp.enterfiledate: #没有核结
                 curpp.append([[ipp.mental.name, ipp.mental.county, ipp.mental.ppid, ipp.mental.iscity, ipp.hospital, ipp.dateclose], ipp.id, ""])
             else: #已经核结                
                 curpp.append([[ipp.mental.name,  ipp.mental.county, ipp.mental.ppid, ipp.mental.iscity, ipp.hospital, ipp.dateclose], "", ipp.enterfiledate])
-    else:
-        curpp[0][0][0] = "没有记录"
-
+   
      #===========分页================
     paginator = Paginator(curpp, MYPAGES) # Show 3 contacts per page
     page = request.GET.get('page')
@@ -191,7 +184,9 @@ def approvalover(request, curid="0"):
     today   = datetime.date.today()
     jscal_min = int(today.isoformat().replace('-', ''))
     jscal_max = int((today + datetime.timedelta(30)).isoformat().replace('-', ''))
-
+    
+    curpp.enterfileman = request.user.operatorname
+    curpp.enterfiledate = today
     form = ApprovalOverForm(instance=curpp)
     if request.method == "POST":
         form = ApprovalOverForm(request.POST, instance=curpp) # this can modify the current form
@@ -209,7 +204,7 @@ def approvallist(request, curcounty="", curapproval=""):
         return render_to_response('noauth.html')
 
     curppname = [u"姓名", u"区县", u"身份证号", u"户口类别", u"监护人", u"联系电话", u"修改/入院", u"批准"]
-    curpp     = [[["","","","","",""], "", "",]]
+    curpp     = []
 
     if request.method == 'POST':
         if curapproval!="" or curcounty!= "":
@@ -223,7 +218,6 @@ def approvallist(request, curcounty="", curapproval=""):
     cur_re = ApprovalModel.objects.filter(enterfiledate__isnull=True, mental__county__icontains=curcounty, isapproval__icontains=curapproval,)
    
     if len(cur_re) != 0:
-        curpp = []
         for ipp in cur_re:
             if not ipp.approvalsn:
                 curpp.append([[ipp.mental.name, ipp.mental.county, ipp.mental.ppid, ipp.mental.iscity, ipp.mental.guardian, ipp.mental.phone], "", ipp.mental.ppid])
@@ -234,8 +228,6 @@ def approvallist(request, curcounty="", curapproval=""):
                 elif ipp.outdate:
                     tmpitem = "over"
                 curpp.append([[ipp.mental.name,  ipp.mental.county, ipp.mental.ppid, ipp.mental.iscity, ipp.mental.guardian, ipp.mental.phone], tmpitem, '--'])
-    else:
-        curpp[0][0][0] = "没有记录"
 
     #===========分页================
     paginator = Paginator(curpp, MYPAGES) # Show 3 contacts per page
@@ -282,7 +274,7 @@ def approvalinput(request, curppid=""):
     curpp.notifystart = today
     curpp.notifyend   = today + datetime.timedelta(60)
     curpp.approvaldate = today
-    curpp.approvalsn = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+    curpp.approvalsn = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")
     curpp.isapproval = u"同意"
     curpp.approvalman = request.user.operatorname
     form = ApprovalForm(instance=curpp)
@@ -320,7 +312,6 @@ def approvalmodify(request, curid="0"):
     jscal_min = int(today.isoformat().replace('-', ''))
     jscal_max = int((today + datetime.timedelta(30)).isoformat().replace('-', ''))
     
-    curpp.approvalman = request.user.operatorname
     form = ApprovalForm2(instance=curpp)
     if request.method == "POST":
         if request.POST['period'] == u"急性":
@@ -365,7 +356,7 @@ def applyinput(request, curppid="111456789000"):
     jscal_max = int((today + datetime.timedelta(30)).isoformat().replace('-', ''))
 
     # form = ApplyForm(instance=curpp)    
-    form = ApplyForm(initial={'mental':curpp})
+    form = ApplyForm(initial={'mental':curpp, 'applyman':request.user.operatorname})
     # print form
     if request.method == "POST":
         form = ApplyForm(request.POST)        
@@ -383,7 +374,7 @@ def applylist(request, curname="", curppid=""):
     curcounty = "金平区"
 
     curppname = [u"姓名", u"区县", u"身份证号", u"户口类别", u"监护人", u"联系电话", u"修改", u"申请求助",u"申核情况"]
-    curpp     = [[["","","","","",""], "", "", "",]]
+    curpp     = []
 
     if request.method == 'POST':
         if curname!="" or curppid!= "":
@@ -395,7 +386,6 @@ def applylist(request, curname="", curppid=""):
 
     cur_re = MentalModel.objects.filter(name__icontains=curname, ppid__icontains=curppid, county__icontains=curcounty)
     if len(cur_re) != 0:
-        curpp = []
         for ipp in cur_re:
             try:
                 #只查询未出院的人员
@@ -406,8 +396,6 @@ def applylist(request, curname="", curppid=""):
                     curpp.append([[ipp.name,  ipp.county, ipp.ppid, ipp.iscity, ipp.guardian, ipp.phone], ipp.id, '--', overpp.isapproval])
             except ApprovalModel.DoesNotExist:
                 curpp.append([[ipp.name,  ipp.county, ipp.ppid, ipp.iscity, ipp.guardian, ipp.phone], "", ipp.ppid, ""])
-    else:
-        curpp[0][0][0] = "没有记录"
 
      #===========分页================
     paginator = Paginator(curpp, MYPAGES) # Show 3 contacts per page
@@ -464,7 +452,7 @@ def hospitallist(request, curcounty="", curinhospital=""):
         return render_to_response('noauth.html')
 
     curppname = [u"姓名", u"区县", u"有效起始时间", u"有效终止时间", u"救助疗程", u"审核时间", u"确认入院", u"入院时间",]
-    curpp     = [[["","","","","",""], "", "",]]
+    curpp     = []
 
     if request.method == 'POST':
         if curcounty!="" or curinhospital!= "":
@@ -481,7 +469,6 @@ def hospitallist(request, curcounty="", curinhospital=""):
         cur_re  = ApprovalModel.objects.filter(enterfiledate__isnull=True, outdate__isnull=True, indate__isnull = bool(int(curinhospital)), mental__county__icontains=curcounty)
 
     if len(cur_re) != 0:
-        curpp = []
         for ipp in cur_re:
             # print ipp.indate, ipp.approvalsn, '=================='
             if ipp.approvalsn:
@@ -494,8 +481,6 @@ def hospitallist(request, curcounty="", curinhospital=""):
                     else:
                         curpp.append([[ipp.mental.name, ipp.mental.county, ipp.notifystart, ipp.notifyend, ipp.period, ipp.approvaldate], 'over', "", ])
 
-    else:
-        curpp[0][0][0] = "没有记录"
 
     #===========分页================
     paginator = Paginator(curpp, MYPAGES) # Show 3 contacts per page
@@ -541,6 +526,7 @@ def inhospital(request, curid="1"):
     jscal_max = int((today + datetime.timedelta(15)).isoformat().replace('-', ''))
 
     curpp.indate = today
+    curpp.inhospitalman = request.user.operatorname
     form = InHospitalForm(instance=curpp)    
     # form = InHospitalForm(initial={'mental':curpp})
     # print form
@@ -560,7 +546,7 @@ def hospitallistout(request, curcounty="", curouthospital=""):
         return render_to_response('noauth.html')
 
     curppname = [u"姓名", u"区县",  u"救助疗程", u"入院时间", u"确认出院",u"出院时间",]
-    curpp     = [[["","","","",], "", "",]]
+    curpp     = []
 
     if request.method == 'POST':
         if curcounty!="" or curouthospital!= "":
@@ -577,7 +563,6 @@ def hospitallistout(request, curcounty="", curouthospital=""):
         cur_re  = ApprovalModel.objects.filter(enterfiledate__isnull=True, indate__isnull=False, outdate__isnull = bool(int(curouthospital)), mental__county__icontains=curcounty)
 
     if len(cur_re) != 0:
-        curpp = []
         for ipp in cur_re:
             # print ipp.indate, ipp.approvalsn, '=================='
             if ipp.approvalsn:
@@ -586,8 +571,6 @@ def hospitallistout(request, curcounty="", curouthospital=""):
                     curpp.append([[ipp.mental.name, ipp.mental.county, ipp.period, ipp.indate], ipp.id, "",])
                 else:
                     curpp.append([[ipp.mental.name, ipp.mental.county, ipp.period, ipp.indate], 'over', ipp.outdate, ])
-    else:
-        curpp[0][0][0] = "没有记录"
 
     #===========分页================
     paginator = Paginator(curpp, MYPAGES) # Show 3 contacts per page
@@ -634,6 +617,7 @@ def outhospital(request, curid="1"):
     jscal_min = int(today.isoformat().replace('-', ''))
 
     curpp.outdate = today
+    curpp.outhospitalman = request.user.operatorname
     form = OutHospitalForm(instance=curpp)  
     # print form
     if request.method == "POST":
@@ -651,7 +635,7 @@ def hospitallistcalc(request, curcounty="", curcalchospital=""):
         return render_to_response('noauth.html')
 
     curppname = [u"姓名", u"区县",  u"救助疗程", u"出院时间", u"住院总费用", u"修改",u"结算",]
-    curpp     = [[["","","","","",], "", "",]]
+    curpp     = []
 
     if request.method == 'POST':
         if curcounty!="" or curcalchospital!= "":
@@ -661,13 +645,12 @@ def hospitallistcalc(request, curcounty="", curcalchospital=""):
             curcalchospital = request.POST['calchospital']
     form = SelectHospitalCalcForm(initial={"county":curcounty, "calchospital":curcalchospital,})
 
-    if curcalchospital == "": #查询已经出院，但是没有核结的人员
-        cur_re = ApprovalModel.objects.filter(enterfiledate__isnull=True, outdate__isnull=False, mental__county__icontains=curcounty)
+    if curcalchospital == "": #查询已经出院
+        cur_re = ApprovalModel.objects.filter( outdate__isnull=False, mental__county__icontains=curcounty)
     else:
-        cur_re  = ApprovalModel.objects.filter(enterfiledate__isnull=True,outdate__isnull=False, dateclose__isnull = bool(int(curcalchospital)), mental__county__icontains=curcounty)
+        cur_re  = ApprovalModel.objects.filter(outdate__isnull=False, dateclose__isnull = bool(int(curcalchospital)), mental__county__icontains=curcounty)
 
     if len(cur_re) != 0:
-        curpp = []
         for ipp in cur_re:
             if ipp.approvalsn:
                 print ipp.dateclose
@@ -678,8 +661,6 @@ def hospitallistcalc(request, curcounty="", curcalchospital=""):
                         curpp.append([[ipp.mental.name, ipp.mental.county, ipp.period, ipp.outdate, ipp.moneytotal,], ipp.id, "", ])
                     else:
                         curpp.append([[ipp.mental.name, ipp.mental.county, ipp.period, ipp.outdate, ipp.moneytotal,], '', "over", ])
-    else:
-        curpp[0][0][0] = "没有记录"
 
     #===========分页================
     paginator = Paginator(curpp, MYPAGES) # Show 3 contacts per page
@@ -751,6 +732,7 @@ def calchospital(request, curid="1"):
         curpp.moneyfrom = D(0).quantize(D('.01')) #民政补助费用
 
     curpp.dateclose = today
+    curpp.datecloseman = request.user.operatorname
     form = CalcHospitalForm(instance=curpp)  
     # print form
     if request.method == "POST":

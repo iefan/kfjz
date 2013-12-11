@@ -7,6 +7,7 @@
 
 <div class="pure-g-r ">
   <div class="pure-u-1 selecttable">
+    <h2 align="center">{% block tabletitle %}{% endblock %}<span id="tablenum">&nbsp;&nbsp;[共&nbsp;{{curpp.paginator.count}}&nbsp;个]</span></h2>
     {% block ordertable %}{% endblock %}
     
     <div class="pure-u-1-2 pagination1 ">
