@@ -17,6 +17,7 @@ urlpatterns = patterns('',
     # (r'^login/$', login, {'template_name':'login.html'} ),
     (r'^logout/$', logout,{'template_name':'logout.html'}),
     url(r'^login/$', myuser_login,  {'template_name': 'login.html'}),
+    url(r'^changepassword/$', 'mental.views.changepassword'),
 
     url(r'^about/$', 'mental.views.about'),
     url(r'^index/$', 'mental.views.index'),

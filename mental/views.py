@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 import datetime
 from forms import MentalForm, MentalForm2, ApprovalForm, ApprovalForm2, ApplyForm, InHospitalForm, OutHospitalForm, CalcHospitalForm, ApprovalOverForm
 from forms import SelectMentalForm, SelectApprovalListForm, SelectApprovalOverForm, SelectApplyForm, SelectHospitalInForm, SelectHospitalOutForm, SelectHospitalCalcForm
+from forms import ChangePasswordForm
 from models import MentalModel, ApprovalModel
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger #增加分页功能
 from decimal import getcontext, Decimal as D, ROUND_UP
@@ -23,6 +24,19 @@ def myuser_login(request, *args, **kwargs):
         #     request.session.set_expiry(0)
  
     return login(request, *args, **kwargs)
+
+@login_required(login_url="/login/")
+def changepassword(request):
+    user = request.user
+    form = ChangePasswordForm()
+    # form = ChangePasswordForm(initial={"unitsn", user.unitsn})
+    print form
+    if request.method == "POST":
+        newpassword == request.POST['newpassword']
+        user.set_password(newpassword)
+        user.save()
+        return HttpResponseRedirect("/login/")
+    return render_to_response('changepassword.html', {'form':form,}, context_instance=RequestContext(request))
 
 def index(request):
     return render_to_response("index.html")
@@ -73,8 +87,11 @@ def mentalselect(request, curname="", curppid="", curcounty=""):
     cur_re = MentalModel.objects.filter(name__icontains=curname, ppid__icontains=curppid, county__icontains=curcounty)
     if len(cur_re) != 0:
         for ipp in cur_re:
+            curphone = ipp.phone
+            if ipp.phone == "":
+                curphone = ipp.phone2
             # ApprovalModel.objects.get(mental__ppid=ipp.ppid, enterfiledate="否")
-            curpp.append([[ipp.name,  ipp.county, ipp.ppid, ipp.iscity, ipp.guardian, ipp.phone], ipp.id, ipp.ppid])
+            curpp.append([[ipp.name,  ipp.county, ipp.ppid, ipp.iscity, ipp.guardian, curphone], ipp.id, ipp.ppid])
 
     #===========分页================
     paginator = Paginator(curpp, MYPAGES) # Show 3 contacts per page
@@ -220,15 +237,19 @@ def approvallist(request, curcounty="", curapproval=""):
    
     if len(cur_re) != 0:
         for ipp in cur_re:
+            curphone = ipp.mental.phone
+            if ipp.mental.phone == "":
+                curphone = ipp.mental.phone2
+
             if not ipp.approvalsn:
-                curpp.append([[ipp.mental.name, ipp.mental.county, ipp.approvalsn, ipp.mental.iscity, ipp.mental.guardian, ipp.mental.phone], "", ipp.mental.ppid])
+                curpp.append([[ipp.mental.name, ipp.mental.county, ipp.approvalsn, ipp.mental.iscity, ipp.mental.guardian, curphone], "", ipp.mental.ppid])
             else:
                 tmpitem = ipp.id
                 if ipp.indate and not ipp.outdate: #已入院
                     tmpitem = "--"
                 elif ipp.outdate:
                     tmpitem = "over"
-                curpp.append([[ipp.mental.name,  ipp.mental.county, ipp.approvalsn, ipp.mental.iscity, ipp.mental.guardian, ipp.mental.phone], tmpitem, '--'])
+                curpp.append([[ipp.mental.name,  ipp.mental.county, ipp.approvalsn, ipp.mental.iscity, ipp.mental.guardian, curphone], tmpitem, '--'])
 
     #===========分页================
     paginator = Paginator(curpp, MYPAGES) # Show 3 contacts per page
@@ -388,19 +409,28 @@ def applylist(request, curname="", curppid=""):
     cur_re = MentalModel.objects.filter(name__icontains=curname, ppid__icontains=curppid, county__icontains=curcounty)
     if len(cur_re) != 0:
         for ipp in cur_re:
+            curphone = ipp.phone
+            if ipp.phone == "":
+                curphone = ipp.phone2
+
             try:
                 #只查询未出院的人员
                 overpp = ApprovalModel.objects.get(outdate__isnull=True, mental__ppid=ipp.ppid, enterfiledate__isnull=True,)
                 if overpp.isapproval == u"同意":
-                    curpp.append([[ipp.name,  ipp.county, ipp.ppid, ipp.iscity, ipp.guardian, ipp.phone], "", '--', overpp.isapproval])
+                    curpp.append([[ipp.name,  ipp.county, ipp.ppid, ipp.iscity, ipp.guardian, curphone], "", '--', overpp.isapproval])
                 else:
-                    curpp.append([[ipp.name,  ipp.county, ipp.ppid, ipp.iscity, ipp.guardian, ipp.phone], ipp.id, '--', overpp.isapproval])
+                    curpp.append([[ipp.name,  ipp.county, ipp.ppid, ipp.iscity, ipp.guardian, curphone], ipp.id, '--', overpp.isapproval])
             except ApprovalModel.DoesNotExist:
-                curpp.append([[ipp.name,  ipp.county, ipp.ppid, ipp.iscity, ipp.guardian, ipp.phone], "", ipp.ppid, ""])
+                curpp.append([[ipp.name,  ipp.county, ipp.ppid, ipp.iscity, ipp.guardian, curphone], "", ipp.ppid, ""])
             except MultipleObjectsReturned:
+                overpp = ApprovalModel.objects.filter(outdate__isnull=True, mental__ppid=ipp.ppid, enterfiledate__isnull=True,)
+                for ipptmp in overpp:
+                    if ipptmp.isapproval == u"同意":
+                        curpp.append([[ipp.name,  ipp.county, ipp.ppid, ipp.iscity, ipp.guardian, curphone], "", '--', ipptmp.isapproval])
+                        break;
+
                 # curpp.append([[ipp.name,  ipp.county, ipp.ppid, ipp.iscity, ipp.guardian, ipp.phone], "", ipp.ppid, ""])
                 # curpp.append([[ipp.name,  ipp.county, ipp.ppid, ipp.iscity, ipp.guardian, ipp.phone], ipp.id, '--', overpp.isapproval])
-                curpp.append([[ipp.name,  ipp.county, ipp.ppid, ipp.iscity, ipp.guardian, ipp.phone], "", '--', overpp.isapproval])
 
 
      #===========分页================

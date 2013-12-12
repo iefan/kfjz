@@ -44,11 +44,13 @@ def readxlsex():
         try:
             phone           = str(int(sh.row(indx)[12].value))
         except:
-            pass
+            phone           = ""
+
         try:
             phone2          = str(int(sh.row(indx)[13].value))
         except:
-            pass
+            phone2          = ""
+
         regtime         = datetime.date.today()
         operatorname    = u"梁维忠"
        
@@ -58,8 +60,8 @@ def readxlsex():
             try:
                 numinsert += 1
                 print numinsert
-                # n = cur.execute(sql1,tuple(tmpinfo))
-                # conn.commit()
+                n = cur.execute(sql1,tuple(tmpinfo))
+                conn.commit()
             except:
                 print name, ppid
                 pass
@@ -146,8 +148,8 @@ def readxlsex_approval():
         try:
             numinsert += 1
             print numinsert
-            # n = cur.execute(sql1,tuple(tmpinfo))
-            # conn.commit()
+            n = cur.execute(sql1,tuple(tmpinfo))
+            conn.commit()
         except:
             print approvalsn, "========================================"
             pass
@@ -166,3 +168,4 @@ if __name__ == '__main__':
     readxlsex_approval()
 #    DBCTLib()
 #    testdb()
+# 
