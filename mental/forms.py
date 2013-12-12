@@ -7,24 +7,21 @@ from jzuser.models import MyUser
 # from datetime import date
 class ChangePasswordForm(forms.Form):
     '''更改密码视图'''
-    # username        = forms.CharField(widget=forms.HiddenInput())
-    oldpassword     = forms.CharField(label="原始密码",widget= forms.TextInput())
-    newpassword     = forms.CharField(label="新密码",widget= forms.TextInput())
-    newpassword2    = forms.CharField(label="重复新密码",widget= forms.TextInput())
+    # username        = forms.CharField(max_length=100, label="用户名",)
+    username        = forms.CharField(max_length=100,widget=forms.HiddenInput())
+    oldpassword     = forms.CharField(max_length=100, label="原始密码",widget=forms.PasswordInput())
+    newpassword     = forms.CharField(max_length=100, label="新密码",widget=forms.PasswordInput())
+    newpassword2    = forms.CharField(max_length=100, label="重复新密码",widget=forms.PasswordInput())
     
-    class Meta:
-        model=MyUser
-        fields = ('unitsn',)
-
     def clean(self):
         return self.cleaned_data
 
     def clean_oldpassword(self):
-        unitsn      = self.cleaned_data['unitsn']
+        username      = self.cleaned_data['username']
         oldpassword   = self.cleaned_data['oldpassword']
         if oldpassword == "":
             raise forms.ValidationError("请输入原始密码!")
-        if not authenticate(username=unitsn, password=oldpassword):
+        if not authenticate(username=username, password=oldpassword):
             raise forms.ValidationError("原始密码不正确!")
 
     def clean_newpassword2(self):

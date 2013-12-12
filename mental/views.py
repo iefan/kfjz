@@ -28,14 +28,14 @@ def myuser_login(request, *args, **kwargs):
 @login_required(login_url="/login/")
 def changepassword(request):
     user = request.user
-    form = ChangePasswordForm()
-    # form = ChangePasswordForm(initial={"unitsn", user.unitsn})
-    print form
+    form = ChangePasswordForm(initial={'username':user.unitsn})
     if request.method == "POST":
-        newpassword == request.POST['newpassword']
-        user.set_password(newpassword)
-        user.save()
-        return HttpResponseRedirect("/login/")
+        form = ChangePasswordForm(request.POST)
+        if form.is_valid():
+            newpassword = request.POST['newpassword']
+            user.set_password(newpassword)
+            user.save()
+            return HttpResponseRedirect("/login/")
     return render_to_response('changepassword.html', {'form':form,}, context_instance=RequestContext(request))
 
 def index(request):

@@ -147,6 +147,17 @@
     padding: 0;
     font-weight: lighter!important;
 }
+.formpassword{
+    margin-top: 60px;
+}
+.formpassword h2{
+    margin: 10px,10px,10px,10px;
+    text-align: center;
+}
+.formpassword table{
+    width:400px;
+}
+
 /*.hospital{
     width: 600px;
     margin: auto;
