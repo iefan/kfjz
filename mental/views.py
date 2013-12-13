@@ -86,9 +86,9 @@ def mentalselect(request, curname="", curppid="", curcounty=""):
 
     #=====================new page=================
     try:
-        curPage = int(rq.GET.get('curPage', '1'))
-        allPage = int(rq.GET.get('allPage','1'))
-        pageType = str(rq.GET.get('pageType', ''))
+        curPage = int(request.GET.get('curPage', '1'))
+        allPage = int(request.GET.get('allPage','1'))
+        pageType = str(request.GET.get('pageType', ''))
     except ValueError:
         curPage = 1
         allPage = 1
@@ -100,16 +100,16 @@ def mentalselect(request, curname="", curppid="", curcounty=""):
     elif pageType == 'pageUp':
         curPage -= 1
 
-    startPos = (curPage - 1) * ONE_PAGE_OF_DATA
-    endPos = startPos + ONE_PAGE_OF_DATA
+    startPos = (curPage - 1) * MYPAGES
+    endPos = startPos + MYPAGES
     cur_re = MentalModel.objects.filter(name__icontains=curname, ppid__icontains=curppid, county__icontains=curcounty)[startPos:endPos]
     # posts = BlogPost.objects.all()[startPos:endPos]
 
     if curPage == 1 and allPage == 1: #标记1
-        cur_re = MentalModel.objects.count(name__icontains=curname, ppid__icontains=curppid, county__icontains=curcounty)[startPos:endPos]
+        allPostCounts = MentalModel.objects.filter(name__icontains=curname, ppid__icontains=curppid, county__icontains=curcounty).count()
         # allPostCounts = BlogPost.objects.count()
-        allPage = allPostCounts / ONE_PAGE_OF_DATA
-        remainPost = allPostCounts % ONE_PAGE_OF_DATA
+        allPage = allPostCounts / MYPAGES
+        remainPost = allPostCounts % MYPAGES
         if remainPost > 0:
             allPage += 1
 
@@ -120,8 +120,8 @@ def mentalselect(request, curname="", curppid="", curcounty=""):
                 curphone = ipp.phone2
             # ApprovalModel.objects.get(mental__ppid=ipp.ppid, enterfiledate="否")
             curpp.append([[ipp.name,  ipp.county, ipp.ppid, ipp.iscity, ipp.guardian, curphone], ipp.id, ipp.ppid])
-
-    return render_to_response("mentalselect.html",{"form":form, 'curpp': curlistinfo, 'curppname':curppname 'allPage':allPage, 'curPage':curPage},context_instance=RequestContext(rq))  
+    
+    return render_to_response("mentalselect.html",{"form":form, 'curpp': curpp, 'curppname':curppname, 'allPage':allPage, 'curPage':curPage},context_instance=RequestContext(request))  
     #=====================new page=================
 
     # #===========分页================

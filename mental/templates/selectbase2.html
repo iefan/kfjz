@@ -7,32 +7,26 @@
 
 <div class="pure-g-r ">
   <div class="pure-u-1 selecttable">
-    <h2 align="center">{% block tabletitle %}{% endblock %}<span id="tablenum">&nbsp;&nbsp;[共&nbsp;{{curpp.paginator.count}}&nbsp;个]</span></h2>
+    <h2 align="center">{% block tabletitle %}{% endblock %}<span id="tablenum">&nbsp;&nbsp;[共&nbsp;{{allPage}}&nbsp;个]</span></h2>
     {% block ordertable %}{% endblock %}
     
     <div class="pure-u-1-2 pagination1 ">
      <ul class="pure-paginator">
-        <!-- 如果当前是第一页，就不显示【上一页】链接 -->  
-        {% ifnotequal curPage 1 %}  
-            <a href="?curPage={{ curPage }}&&allPage={{ allPage }}&&pageType=pageUp">  
-                上一页  
-            </a>  
-        {% endifnotequal %}   
+       <!-- 如果当前是第一页，就不显示【上一页】链接 -->     
+       {% ifnotequal curPage 1 %}
+       <a href="?curPage={{ curPage }}&&allPage={{ allPage }}&&pageType=pageUp">上一页</a>
+       {% endifnotequal %}   
   
-        第{{ curPage }}/{{ allPage }}页   
-  
-         <!-- 如果当前是最后一页，就不显示【下一页】链接 -->  
-        {% ifnotequal curPage allPage %}  
-            <a href="?curPage={{ curPage }}&&allPage={{ allPage }}&&pageType=pageDown">  
-                下一页  
-            </a>  
-        {% endifnotequal %} 
-    </ul>
+        第{{ curPage }}/{{ allPage }}页
+       <!-- 如果当前是最后一页，就不显示【下一页】链接 -->     
+       {% ifnotequal curPage allPage %}
+       <a href="?curPage={{ curPage }}&&allPage={{ allPage }}&&pageType=pageDown">下一页</a>
+       {% endifnotequal %}
+     </ul>
     </div>
     <div class="pure-u-1-2 pagination2 ">
     <form action="." method="get" class="pure-form" style="display:inline">
       <fieldset>
-        <span id="allpages">|共 <a href="?page={{ curpp.paginator.num_pages }}">{{ curpp.paginator.num_pages }}</a> 页|</span>
         <span>到第</span>
         <input name="page" type="text" size="2">
         <span>页</span>
