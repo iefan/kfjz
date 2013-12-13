@@ -84,7 +84,35 @@ def mentalselect(request, curname="", curppid="", curcounty=""):
         curcounty = request.POST['county']
     form = SelectMentalForm(initial={'name':curname, 'ppid':curppid, 'county':curcounty,}) #页面查询窗体
 
-    cur_re = MentalModel.objects.filter(name__icontains=curname, ppid__icontains=curppid, county__icontains=curcounty)
+    #=====================new page=================
+    try:
+        curPage = int(rq.GET.get('curPage', '1'))
+        allPage = int(rq.GET.get('allPage','1'))
+        pageType = str(rq.GET.get('pageType', ''))
+    except ValueError:
+        curPage = 1
+        allPage = 1
+        pageType = ''
+
+    #判断点击了【下一页】还是【上一页】
+    if pageType == 'pageDown':
+        curPage += 1
+    elif pageType == 'pageUp':
+        curPage -= 1
+
+    startPos = (curPage - 1) * ONE_PAGE_OF_DATA
+    endPos = startPos + ONE_PAGE_OF_DATA
+    cur_re = MentalModel.objects.filter(name__icontains=curname, ppid__icontains=curppid, county__icontains=curcounty)[startPos:endPos]
+    # posts = BlogPost.objects.all()[startPos:endPos]
+
+    if curPage == 1 and allPage == 1: #标记1
+        cur_re = MentalModel.objects.count(name__icontains=curname, ppid__icontains=curppid, county__icontains=curcounty)[startPos:endPos]
+        # allPostCounts = BlogPost.objects.count()
+        allPage = allPostCounts / ONE_PAGE_OF_DATA
+        remainPost = allPostCounts % ONE_PAGE_OF_DATA
+        if remainPost > 0:
+            allPage += 1
+
     if len(cur_re) != 0:
         for ipp in cur_re:
             curphone = ipp.phone
@@ -93,19 +121,22 @@ def mentalselect(request, curname="", curppid="", curcounty=""):
             # ApprovalModel.objects.get(mental__ppid=ipp.ppid, enterfiledate="否")
             curpp.append([[ipp.name,  ipp.county, ipp.ppid, ipp.iscity, ipp.guardian, curphone], ipp.id, ipp.ppid])
 
-    #===========分页================
-    paginator = Paginator(curpp, MYPAGES) # Show 3 contacts per page
-    page = request.GET.get('page')
-    try:
-        curlistinfo = paginator.page(page)
-    except PageNotAnInteger:
-        curlistinfo = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        curlistinfo = paginator.page(paginator.num_pages)
-    #===========分页================
+    return render_to_response("mentalselect.html",{"form":form, 'curpp': curlistinfo, 'curppname':curppname 'allPage':allPage, 'curPage':curPage},context_instance=RequestContext(rq))  
+    #=====================new page=================
 
-    return render_to_response('mentalselect.html', {"form":form, 'curpp': curlistinfo, 'curppname':curppname}, context_instance=RequestContext(request))
+    # #===========分页================
+    # paginator = Paginator(curpp, MYPAGES) # Show 3 contacts per page
+    # page = request.GET.get('page')
+    # try:
+    #     curlistinfo = paginator.page(page)
+    # except PageNotAnInteger:
+    #     curlistinfo = paginator.page(1)
+    # except EmptyPage:
+    #     # If page is out of range (e.g. 9999), deliver last page of results.
+    #     curlistinfo = paginator.page(paginator.num_pages)
+    # #===========分页================
+
+    # return render_to_response('mentalselect.html', {"form":form, 'curpp': curlistinfo, 'curppname':curppname}, context_instance=RequestContext(request))
 
 @login_required(login_url="/login/")
 def mentalmodify(request, curid="0"):
