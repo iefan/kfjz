@@ -1,4 +1,4 @@
-{% extends "selectbase.html" %}
+{% extends "selectbase2.html" %}
 {% block title %}已经出院待结算人员信息列表{% endblock %}
 {% block admincssjs %}{% endblock %}
 
@@ -24,7 +24,7 @@
   </thead>
   {% for ipp, curmodid, curid in curpp %}
   <tr>
-    <td>{{forloop.counter0|add:curpp.start_index}}</td>
+    <td>{{ forloop.counter|add:startPos}}</td>
     {% for item in ipp %}
     {% if not item %}
     <td>&nbsp;</td>

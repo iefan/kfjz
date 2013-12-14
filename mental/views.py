@@ -87,32 +87,37 @@ def mentalselect(request, curname="", curppid="", curcounty=""):
     #=====================new page=================
     try:
         curPage = int(request.GET.get('curPage', '1'))
-        allPage = int(request.GET.get('allPage','1'))
+        allPostCounts = int(request.GET.get('allPostCounts',''))
         pageType = str(request.GET.get('pageType', ''))
     except ValueError:
         curPage = 1
-        allPage = 1
+        allPostCounts = ""
         pageType = ''
 
+    if curPage < 1:
+        curPage = 1
     #判断点击了【下一页】还是【上一页】
     if pageType == 'pageDown':
         curPage += 1
     elif pageType == 'pageUp':
         curPage -= 1
 
-    startPos = (curPage - 1) * MYPAGES
+    startPos = (curPage-1) * MYPAGES
     endPos = startPos + MYPAGES
     cur_re = MentalModel.objects.filter(name__icontains=curname, ppid__icontains=curppid, county__icontains=curcounty)[startPos:endPos]
     # posts = BlogPost.objects.all()[startPos:endPos]
 
-    if curPage == 1 and allPage == 1: #标记1
+    if allPostCounts == "": #标记1
         allPostCounts = MentalModel.objects.filter(name__icontains=curname, ppid__icontains=curppid, county__icontains=curcounty).count()
-        # allPostCounts = BlogPost.objects.count()
-        allPage = allPostCounts / MYPAGES
-        remainPost = allPostCounts % MYPAGES
-        if remainPost > 0:
-            allPage += 1
+    if allPostCounts == 0:
+        curPage = 0
+        allPage = 0
+    # allPostCounts = BlogPost.objects.count()
+    allPage = allPostCounts / MYPAGES
+    if (allPostCounts % MYPAGES) > 0:
+        allPage += 1
 
+    # print allPostCounts, "-----------", allPage, curPage, "+++++++++++++++++++++++++"
     if len(cur_re) != 0:
         for ipp in cur_re:
             curphone = ipp.phone
@@ -121,22 +126,7 @@ def mentalselect(request, curname="", curppid="", curcounty=""):
             # ApprovalModel.objects.get(mental__ppid=ipp.ppid, enterfiledate="否")
             curpp.append([[ipp.name,  ipp.county, ipp.ppid, ipp.iscity, ipp.guardian, curphone], ipp.id, ipp.ppid])
     
-    return render_to_response("mentalselect.html",{"form":form, 'curpp': curpp, 'curppname':curppname, 'allPage':allPage, 'curPage':curPage},context_instance=RequestContext(request))  
-    #=====================new page=================
-
-    # #===========分页================
-    # paginator = Paginator(curpp, MYPAGES) # Show 3 contacts per page
-    # page = request.GET.get('page')
-    # try:
-    #     curlistinfo = paginator.page(page)
-    # except PageNotAnInteger:
-    #     curlistinfo = paginator.page(1)
-    # except EmptyPage:
-    #     # If page is out of range (e.g. 9999), deliver last page of results.
-    #     curlistinfo = paginator.page(paginator.num_pages)
-    # #===========分页================
-
-    # return render_to_response('mentalselect.html', {"form":form, 'curpp': curlistinfo, 'curppname':curppname}, context_instance=RequestContext(request))
+    return render_to_response("mentalselect.html",{"form":form, 'curpp': curpp, 'curppname':curppname, "startPos":startPos, "allPostCounts":allPostCounts,'allPage':allPage, 'curPage':curPage},context_instance=RequestContext(request))  
 
 @login_required(login_url="/login/")
 def mentalmodify(request, curid="0"):
@@ -185,12 +175,46 @@ def approvallistover(request, curcounty="", curover=""):
             curover = request.POST['iscalchospital']
     form = SelectApprovalOverForm(initial={'county':curcounty, "iscalchospital":curover,}) #页面查询窗体
 
+    #=====================new page=================
+    try:
+        curPage = int(request.GET.get('curPage', '1'))
+        allPostCounts = int(request.GET.get('allPostCounts',''))
+        pageType = str(request.GET.get('pageType', ''))
+    except ValueError:
+        curPage = 1
+        allPostCounts = ""
+        pageType = ''
+
+    if curPage < 1:
+        curPage = 1
+    #判断点击了【下一页】还是【上一页】
+    if pageType == 'pageDown':
+        curPage += 1
+    elif pageType == 'pageUp':
+        curPage -= 1
+
+    startPos = (curPage-1) * MYPAGES
+    endPos = startPos + MYPAGES
     #只查询已经结算的人员信息
     if curover == "":
-        cur_re = ApprovalModel.objects.filter( dateclose__isnull=False, mental__county__icontains=curcounty)
+        cur_re = ApprovalModel.objects.filter( dateclose__isnull=False, mental__county__icontains=curcounty)[startPos:endPos]
     else:
-        cur_re  = ApprovalModel.objects.filter( dateclose__isnull=False,enterfiledate__isnull = bool(int(curover)), mental__county__icontains=curcounty)
+        cur_re  = ApprovalModel.objects.filter( dateclose__isnull=False,enterfiledate__isnull = bool(int(curover)), mental__county__icontains=curcounty)[startPos:endPos]
 
+    if allPostCounts == "": #标记1
+        if curover == "":
+            allPostCounts = ApprovalModel.objects.filter( dateclose__isnull=False, mental__county__icontains=curcounty).count()
+        else:
+            allPostCounts = ApprovalModel.objects.filter( dateclose__isnull=False,enterfiledate__isnull = bool(int(curover)), mental__county__icontains=curcounty).count()
+
+    if allPostCounts == 0:
+        curPage = 0
+        allPage = 0
+    # allPostCounts = BlogPost.objects.count()
+    allPage = allPostCounts / MYPAGES
+    if (allPostCounts % MYPAGES) > 0:
+        allPage += 1
+    
     if len(cur_re) != 0:
         for ipp in cur_re:
             if not ipp.enterfiledate: #没有核结
@@ -198,19 +222,7 @@ def approvallistover(request, curcounty="", curover=""):
             else: #已经核结                
                 curpp.append([[ipp.mental.name,  ipp.mental.county, ipp.mental.ppid, ipp.mental.iscity, ipp.hospital, ipp.dateclose], "", ipp.enterfiledate])
    
-     #===========分页================
-    paginator = Paginator(curpp, MYPAGES) # Show 3 contacts per page
-    page = request.GET.get('page')
-    try:
-        curlistinfo = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        curlistinfo = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        curlistinfo = paginator.page(paginator.num_pages)
-    #===========分页================
-    return render_to_response('approvallistover.html', {"form":form,'curpp': curlistinfo, 'curppname':curppname}, context_instance=RequestContext(request))
+    return render_to_response("approvallistover.html",{"form":form, 'curpp': curpp, 'curppname':curppname, "startPos":startPos, "allPostCounts":allPostCounts,'allPage':allPage, 'curPage':curPage},context_instance=RequestContext(request))  
 
 @login_required(login_url="/login/")
 def approvalover(request, curid="0"):
@@ -263,9 +275,39 @@ def approvallist(request, curcounty="", curapproval=""):
             curapproval = request.POST['isapproval']
     form = SelectApprovalListForm(initial={'county':curcounty, "isapproval":curapproval,}) #页面查询窗体
 
+    #=====================new page=================
+    try:
+        curPage = int(request.GET.get('curPage', '1'))
+        allPostCounts = int(request.GET.get('allPostCounts',''))
+        pageType = str(request.GET.get('pageType', ''))
+    except ValueError:
+        curPage = 1
+        allPostCounts = ""
+        pageType = ''
+
+    if curPage < 1:
+        curPage = 1
+    #判断点击了【下一页】还是【上一页】
+    if pageType == 'pageDown':
+        curPage += 1
+    elif pageType == 'pageUp':
+        curPage -= 1
+
+    startPos = (curPage-1) * MYPAGES
+    endPos = startPos + MYPAGES
     # 只显示未归档人员
-    cur_re = ApprovalModel.objects.filter(enterfiledate__isnull=True, mental__county__icontains=curcounty, isapproval__icontains=curapproval,)
-   
+    cur_re = ApprovalModel.objects.filter(enterfiledate__isnull=True, mental__county__icontains=curcounty, isapproval__icontains=curapproval,)[startPos:endPos]
+
+    if allPostCounts == "": #标记1
+        allPostCounts = ApprovalModel.objects.filter(enterfiledate__isnull=True, mental__county__icontains=curcounty, isapproval__icontains=curapproval,).count()
+    if allPostCounts == 0:
+        curPage = 0
+        allPage = 0
+    # allPostCounts = BlogPost.objects.count()
+    allPage = allPostCounts / MYPAGES
+    if (allPostCounts % MYPAGES) > 0:
+        allPage += 1
+        
     if len(cur_re) != 0:
         for ipp in cur_re:
             curphone = ipp.mental.phone
@@ -282,19 +324,7 @@ def approvallist(request, curcounty="", curapproval=""):
                     tmpitem = "over"
                 curpp.append([[ipp.mental.name,  ipp.mental.county, ipp.approvalsn, ipp.mental.iscity, ipp.mental.guardian, curphone], tmpitem, '--'])
 
-    #===========分页================
-    paginator = Paginator(curpp, MYPAGES) # Show 3 contacts per page
-    page = request.GET.get('page')
-    try:
-        curlistinfo = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        curlistinfo = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        curlistinfo = paginator.page(paginator.num_pages)
-    #===========分页================
-    return render_to_response('approvallist.html', {"form":form,'curpp': curlistinfo, 'curppname':curppname}, context_instance=RequestContext(request))
+    return render_to_response("approvallist.html",{"form":form, 'curpp': curpp, 'curppname':curppname, "startPos":startPos, "allPostCounts":allPostCounts,'allPage':allPage, 'curPage':curPage},context_instance=RequestContext(request))  
 
 @login_required(login_url="/login/")
 def approvalinput(request, curppid=""):
@@ -437,7 +467,39 @@ def applylist(request, curname="", curppid=""):
             curppid = request.POST['ppid']
     form = SelectApplyForm(initial={'name':curname, "ppid":curppid,}) #页面查询窗体
 
-    cur_re = MentalModel.objects.filter(name__icontains=curname, ppid__icontains=curppid, county__icontains=curcounty)
+    #=====================new page=================
+    try:
+        curPage = int(request.GET.get('curPage', '1'))
+        allPostCounts = int(request.GET.get('allPostCounts',''))
+        pageType = str(request.GET.get('pageType', ''))
+    except ValueError:
+        curPage = 1
+        allPostCounts = ""
+        pageType = ''
+
+    if curPage < 1:
+        curPage = 1
+    #判断点击了【下一页】还是【上一页】
+    if pageType == 'pageDown':
+        curPage += 1
+    elif pageType == 'pageUp':
+        curPage -= 1
+
+    startPos = (curPage-1) * MYPAGES
+    endPos = startPos + MYPAGES
+    cur_re = MentalModel.objects.filter(name__icontains=curname, ppid__icontains=curppid, county__icontains=curcounty)[startPos:endPos]
+    # posts = BlogPost.objects.all()[startPos:endPos]
+
+    if allPostCounts == "": #标记1
+        allPostCounts = MentalModel.objects.filter(name__icontains=curname, ppid__icontains=curppid, county__icontains=curcounty).count()
+    if allPostCounts == 0:
+        curPage = 0
+        allPage = 0
+    # allPostCounts = BlogPost.objects.count()
+    allPage = allPostCounts / MYPAGES
+    if (allPostCounts % MYPAGES) > 0:
+        allPage += 1
+        
     if len(cur_re) != 0:
         for ipp in cur_re:
             curphone = ipp.phone
@@ -460,24 +522,7 @@ def applylist(request, curname="", curppid=""):
                         curpp.append([[ipp.name,  ipp.county, ipp.ppid, ipp.iscity, ipp.guardian, curphone], "", '--', ipptmp.isapproval])
                         break;
 
-                # curpp.append([[ipp.name,  ipp.county, ipp.ppid, ipp.iscity, ipp.guardian, ipp.phone], "", ipp.ppid, ""])
-                # curpp.append([[ipp.name,  ipp.county, ipp.ppid, ipp.iscity, ipp.guardian, ipp.phone], ipp.id, '--', overpp.isapproval])
-
-
-     #===========分页================
-    paginator = Paginator(curpp, MYPAGES) # Show 3 contacts per page
-    page = request.GET.get('page')
-    try:
-        curlistinfo = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        curlistinfo = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        curlistinfo = paginator.page(paginator.num_pages)
-    #===========分页================
-    return render_to_response('applylist.html', {"form":form,'curpp': curlistinfo, 'curppname':curppname}, context_instance=RequestContext(request))
-    # return mentalselect(request, curname="", curppid="", curcounty=county)
+    return render_to_response("applylist.html",{"form":form, 'curpp': curpp, 'curppname':curppname, "startPos":startPos, "allPostCounts":allPostCounts,'allPage':allPage, 'curPage':curPage},context_instance=RequestContext(request))  
 
 @login_required(login_url="/login/")
 def applymodify(request, curppid="0"):
@@ -529,11 +574,43 @@ def hospitallist(request, curcounty="", curinhospital=""):
             curinhospital = request.POST['inhospital']
     form = SelectHospitalInForm(initial={'county':curcounty, "inhospital":curinhospital,}) #页面查询窗体
 
-    # 不显示归档人员和已经出院人员
+    #=====================new page=================
+    try:
+        curPage = int(request.GET.get('curPage', '1'))
+        allPostCounts = int(request.GET.get('allPostCounts',''))
+        pageType = str(request.GET.get('pageType', ''))
+    except ValueError:
+        curPage = 1
+        allPostCounts = ""
+        pageType = ''
+
+    if curPage < 1:
+        curPage = 1
+    #判断点击了【下一页】还是【上一页】
+    if pageType == 'pageDown':
+        curPage += 1
+    elif pageType == 'pageUp':
+        curPage -= 1
+
+    startPos = (curPage-1) * MYPAGES
+    endPos = startPos + MYPAGES
     if curinhospital == "":
-        cur_re = ApprovalModel.objects.filter(enterfiledate__isnull=True, outdate__isnull=True, mental__county__icontains=curcounty)
+        cur_re = ApprovalModel.objects.filter(enterfiledate__isnull=True, outdate__isnull=True, mental__county__icontains=curcounty)[startPos:endPos]
     else:
-        cur_re  = ApprovalModel.objects.filter(enterfiledate__isnull=True, outdate__isnull=True, indate__isnull = bool(int(curinhospital)), mental__county__icontains=curcounty)
+        cur_re  = ApprovalModel.objects.filter(enterfiledate__isnull=True, outdate__isnull=True, indate__isnull = bool(int(curinhospital)), mental__county__icontains=curcounty)[startPos:endPos]
+
+    if allPostCounts == "": #标记1
+        if curinhospital == "":
+            allPostCounts = ApprovalModel.objects.filter(enterfiledate__isnull=True, outdate__isnull=True, mental__county__icontains=curcounty).count()
+        else:
+            allPostCounts  = ApprovalModel.objects.filter(enterfiledate__isnull=True, outdate__isnull=True, indate__isnull = bool(int(curinhospital)), mental__county__icontains=curcounty).count()
+    if allPostCounts == 0:
+        curPage = 0
+        allPage = 0
+    # allPostCounts = BlogPost.objects.count()
+    allPage = allPostCounts / MYPAGES
+    if (allPostCounts % MYPAGES) > 0:
+        allPage += 1
 
     if len(cur_re) != 0:
         for ipp in cur_re:
@@ -548,20 +625,7 @@ def hospitallist(request, curcounty="", curinhospital=""):
                     else:
                         curpp.append([[ipp.mental.name, ipp.mental.county, ipp.notifystart, ipp.notifyend, ipp.period, ipp.approvaldate], 'over', "", ])
 
-
-    #===========分页================
-    paginator = Paginator(curpp, MYPAGES) # Show 3 contacts per page
-    page = request.GET.get('page')
-    try:
-        curlistinfo = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        curlistinfo = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        curlistinfo = paginator.page(paginator.num_pages)
-    #===========分页================
-    return render_to_response('hospitallist.html', {"form":form, 'curpp': curlistinfo, 'curppname':curppname}, context_instance=RequestContext(request))
+    return render_to_response("hospitallist.html",{"form":form, 'curpp': curpp, 'curppname':curppname, "startPos":startPos, "allPostCounts":allPostCounts,'allPage':allPage, 'curPage':curPage},context_instance=RequestContext(request))  
 
 @login_required(login_url="/login/")
 def inhospital(request, curid="1"):
@@ -623,35 +687,53 @@ def hospitallistout(request, curcounty="", curouthospital=""):
             curouthospital = request.POST['outhospital']
     form = SelectHospitalOutForm(initial={'county':curcounty, "outhospital":curouthospital,}) #页面查询窗体
 
-    #查询已经入院人员，不显示归档人员
-    if curouthospital == "": 
-        cur_re = ApprovalModel.objects.filter(enterfiledate__isnull=True, indate__isnull=False, mental__county__icontains=curcounty)
+     #=====================new page=================
+    try:
+        curPage = int(request.GET.get('curPage', '1'))
+        allPostCounts = int(request.GET.get('allPostCounts',''))
+        pageType = str(request.GET.get('pageType', ''))
+    except ValueError:
+        curPage = 1
+        allPostCounts = ""
+        pageType = ''
+
+    if curPage < 1:
+        curPage = 1
+    #判断点击了【下一页】还是【上一页】
+    if pageType == 'pageDown':
+        curPage += 1
+    elif pageType == 'pageUp':
+        curPage -= 1
+
+    startPos = (curPage-1) * MYPAGES
+    endPos = startPos + MYPAGES
+    if curouthospital == "":
+        cur_re = ApprovalModel.objects.filter(enterfiledate__isnull=True, indate__isnull=False, mental__county__icontains=curcounty)[startPos:endPos]
     else:
-        cur_re  = ApprovalModel.objects.filter(enterfiledate__isnull=True, indate__isnull=False, outdate__isnull = bool(int(curouthospital)), mental__county__icontains=curcounty)
+        cur_re  = ApprovalModel.objects.filter(enterfiledate__isnull=True, indate__isnull=False, outdate__isnull = bool(int(curouthospital)), mental__county__icontains=curcounty)[startPos:endPos]
+
+    if allPostCounts == "": #标记1
+        if curouthospital == "":
+            allPostCounts = ApprovalModel.objects.filter(enterfiledate__isnull=True, indate__isnull=False, mental__county__icontains=curcounty).count()
+        else:
+            allPostCounts  = ApprovalModel.objects.filter(enterfiledate__isnull=True, indate__isnull=False, outdate__isnull = bool(int(curouthospital)), mental__county__icontains=curcounty).count()
+    if allPostCounts == 0:
+        curPage = 0
+        allPage = 0
+    # allPostCounts = BlogPost.objects.count()
+    allPage = allPostCounts / MYPAGES
+    if (allPostCounts % MYPAGES) > 0:
+        allPage += 1
 
     if len(cur_re) != 0:
         for ipp in cur_re:
-            # print ipp.indate, ipp.approvalsn, '=================='
             if ipp.approvalsn:
-                # print ipp.indate, ipp.approvalsn
                 if not ipp.outdate:
                     curpp.append([[ipp.mental.name, ipp.mental.county, ipp.period, ipp.indate], ipp.id, "",])
                 else:
                     curpp.append([[ipp.mental.name, ipp.mental.county, ipp.period, ipp.indate], 'over', ipp.outdate, ])
-
-    #===========分页================
-    paginator = Paginator(curpp, MYPAGES) # Show 3 contacts per page
-    page = request.GET.get('page')
-    try:
-        curlistinfo = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        curlistinfo = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        curlistinfo = paginator.page(paginator.num_pages)
-    #===========分页================
-    return render_to_response('hospitallistout.html', {"form":form, 'curpp': curlistinfo, 'curppname':curppname},context_instance=RequestContext(request))
+    
+    return render_to_response("hospitallistout.html",{"form":form, 'curpp': curpp, 'curppname':curppname, "startPos":startPos, "allPostCounts":allPostCounts,'allPage':allPage, 'curPage':curPage},context_instance=RequestContext(request))  
 
 @login_required(login_url="/login/")
 def outhospital(request, curid="1"):
@@ -712,10 +794,43 @@ def hospitallistcalc(request, curcounty="", curcalchospital=""):
             curcalchospital = request.POST['calchospital']
     form = SelectHospitalCalcForm(initial={"county":curcounty, "calchospital":curcalchospital,})
 
-    if curcalchospital == "": #查询已经出院
-        cur_re = ApprovalModel.objects.filter( outdate__isnull=False, mental__county__icontains=curcounty)
+     #=====================new page=================
+    try:
+        curPage = int(request.GET.get('curPage', '1'))
+        allPostCounts = int(request.GET.get('allPostCounts',''))
+        pageType = str(request.GET.get('pageType', ''))
+    except ValueError:
+        curPage = 1
+        allPostCounts = ""
+        pageType = ''
+
+    if curPage < 1:
+        curPage = 1
+    #判断点击了【下一页】还是【上一页】
+    if pageType == 'pageDown':
+        curPage += 1
+    elif pageType == 'pageUp':
+        curPage -= 1
+
+    startPos = (curPage-1) * MYPAGES
+    endPos = startPos + MYPAGES
+    if curcalchospital == "":
+        cur_re = ApprovalModel.objects.filter( outdate__isnull=False, mental__county__icontains=curcounty)[startPos:endPos]
     else:
-        cur_re  = ApprovalModel.objects.filter(outdate__isnull=False, dateclose__isnull = bool(int(curcalchospital)), mental__county__icontains=curcounty)
+        cur_re  = ApprovalModel.objects.filter(outdate__isnull=False, dateclose__isnull = bool(int(curcalchospital)), mental__county__icontains=curcounty)[startPos:endPos]
+
+    if allPostCounts == "": #标记1
+        if curcalchospital == "":
+            allPostCounts = ApprovalModel.objects.filter( outdate__isnull=False, mental__county__icontains=curcounty).count()
+        else:
+            allPostCounts  = ApprovalModel.objects.filter(outdate__isnull=False, dateclose__isnull = bool(int(curcalchospital)), mental__county__icontains=curcounty).count()
+    if allPostCounts == 0:
+        curPage = 0
+        allPage = 0
+    # allPostCounts = BlogPost.objects.count()
+    allPage = allPostCounts / MYPAGES
+    if (allPostCounts % MYPAGES) > 0:
+        allPage += 1
 
     if len(cur_re) != 0:
         for ipp in cur_re:
@@ -729,19 +844,7 @@ def hospitallistcalc(request, curcounty="", curcalchospital=""):
                     else:
                         curpp.append([[ipp.mental.name, ipp.mental.county, ipp.period, ipp.outdate, ipp.moneytotal,], '', "over", ])
 
-    #===========分页================
-    paginator = Paginator(curpp, MYPAGES) # Show 3 contacts per page
-    page = request.GET.get('page')
-    try:
-        curlistinfo = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        curlistinfo = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        curlistinfo = paginator.page(paginator.num_pages)
-    #===========分页================
-    return render_to_response('hospitallistcalc.html', {"form":form, 'curpp': curlistinfo, 'curppname':curppname}, context_instance=RequestContext(request))
+    return render_to_response("hospitallistcalc.html",{"form":form, 'curpp': curpp, 'curppname':curppname, "startPos":startPos, "allPostCounts":allPostCounts,'allPage':allPage, 'curPage':curPage},context_instance=RequestContext(request))  
 
 @login_required(login_url="/login/")
 def calchospital(request, curid="1"):

@@ -24,7 +24,8 @@
   </thead>
   {% for ipp, curid in curpp %}
   <tr>
-    <td>{% widthratio forloop.counter0 1 curPage %}</td>
+    <td>{{ forloop.counter|add:startPos}}</td>
+    <!-- <td>{% widthratio forloop.counter0 1 curPage %}</td> -->
     {% for item in ipp %}
     {% if not item %}
     <td>&nbsp;</td>
