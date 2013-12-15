@@ -10,7 +10,7 @@ from forms import MentalForm, MentalForm2, ApprovalForm, ApprovalForm2, ApplyFor
 from forms import SelectMentalForm, SelectApprovalListForm, SelectApprovalOverForm, SelectApplyForm, SelectHospitalInForm, SelectHospitalOutForm, SelectHospitalCalcForm
 from forms import ChangePasswordForm
 from models import MentalModel, ApprovalModel
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger #增加分页功能
+# from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger #增加分页功能
 from decimal import getcontext, Decimal as D, ROUND_UP
 getcontext().prec = 28
 getcontext().rounding = ROUND_UP
@@ -39,7 +39,7 @@ def changepassword(request):
     return render_to_response('changepassword.html', {'form':form,}, context_instance=RequestContext(request))
 
 def index(request):
-    return render_to_response("index.html")
+    return render_to_response("index.html",context_instance=RequestContext(request))
 
 @login_required(login_url="/login/")
 def about(request):
