@@ -148,6 +148,7 @@ def mentalmodify(request, curid="0"):
     jscal_min = int(today.isoformat().replace('-', ''))
     jscal_max = int((today + datetime.timedelta(30)).isoformat().replace('-', ''))
 
+    curpp.operatorname = request.user.operatorname
     form = MentalForm2(instance=curpp)
     if request.method == "POST":
         form = MentalForm2(request.POST, instance=curpp) # this can modify the current form
@@ -395,6 +396,7 @@ def approvalmodify(request, curid="0"):
     jscal_min = int(today.isoformat().replace('-', ''))
     jscal_max = int((today + datetime.timedelta(30)).isoformat().replace('-', ''))
     
+    curpp.approvalman = request.username.operatorname
     form = ApprovalForm2(instance=curpp)
     if request.method == "POST":
         if request.POST['period'] == u"急性":
@@ -547,6 +549,7 @@ def applymodify(request, curppid="0"):
     jscal_min = int(today.isoformat().replace('-', ''))
     jscal_max = int((today + datetime.timedelta(30)).isoformat().replace('-', ''))
 
+    curpp.applyman = request.user.operatorname
     form = ApplyForm(instance=curpp)
     if request.method == "POST":
         form = ApplyForm(request.POST, instance=curpp) # this can modify the current form
@@ -966,6 +969,7 @@ def calmodifychospital(request, curid="1"):
         curpp.moneyfrom = D(1000).quantize(D('.01')) #民政补助费用
 
     curpp.dateclose = today
+    curpp.datecloseman = request.user.operatorname
     form = CalcHospitalForm(instance=curpp)  
     # print form
     if request.method == "POST":

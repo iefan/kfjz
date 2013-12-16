@@ -18,7 +18,7 @@ class MentalModel(models.Model):
     phone           = models.CharField(max_length=20, verbose_name="固定电话",blank=True, null=True,)
     phone2          = models.CharField(max_length=20, verbose_name="手机",blank=True, null=True,)
     regtime         = models.DateField(verbose_name="建档时间",blank=True, null=True,)
-    operatorname    = models.CharField(max_length=30, verbose_name='录入人员', blank=True, null=True,)
+    operatorname    = models.CharField(max_length=30, verbose_name='操作人员', blank=True, null=True,)
 
     class Meta:
         ordering = ['county',]
