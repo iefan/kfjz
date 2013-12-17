@@ -5,7 +5,12 @@ from  string import zfill as z
 import MySQLdb
 import xlrd, datetime
 
+# from models import MentalModel, ApprovalModel
+
 conn=MySQLdb.connect(host="127.0.0.1", user="root",passwd="stclbgs",db="kfjz", use_unicode=1, charset='utf8')
+
+def outxls_mental():
+    pass
 
 def readxlsex():
     path = r"/home/stcl/workdb/kfex2013.xls"
@@ -165,7 +170,7 @@ def readxlsex_approval():
 # moneyselfscale,moneyself,moneyinsurance,insurance,moneyhospital,moneyfood,moneyfrom,dateclose,datecloseman,daysfoodlimit,savelevel,foodlevel,startlevel,
 if __name__ == '__main__':
     # readxlsex()
-    readxlsex_approval()
+    outxls_mental()
 #    DBCTLib()
 #    testdb()
 # 

@@ -1,9 +1,14 @@
 #coding=utf8
+from xlrd import open_workbook
+from xlutils.copy import copy
+import xlwt
+from resources import setOutCell
+
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.core.exceptions import MultipleObjectsReturned
 # from django.db.models import Q
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required  
 import datetime
 from forms import MentalForm, MentalForm2, ApprovalForm, ApprovalForm2, ApplyForm, InHospitalForm, OutHospitalForm, CalcHospitalForm, ApprovalOverForm
@@ -396,7 +401,7 @@ def approvalmodify(request, curid="0"):
     jscal_min = int(today.isoformat().replace('-', ''))
     jscal_max = int((today + datetime.timedelta(30)).isoformat().replace('-', ''))
     
-    curpp.approvalman = request.username.operatorname
+    curpp.approvalman = request.user.operatorname
     form = ApprovalForm2(instance=curpp)
     if request.method == "POST":
         if request.POST['period'] == u"急性":
@@ -838,7 +843,7 @@ def hospitallistcalc(request, curcounty="", curcalchospital=""):
     if len(cur_re) != 0:
         for ipp in cur_re:
             if ipp.approvalsn:
-                print ipp.dateclose
+                # print ipp.dateclose
                 if not ipp.dateclose: #对没有结算的人员显示结算按钮，以便进行结算
                     curpp.append([[ipp.mental.name, ipp.mental.county, ipp.period, ipp.outdate, ipp.moneytotal,],  "",ipp.id,])
                 else:
@@ -978,3 +983,56 @@ def calmodifychospital(request, curid="1"):
             form.save()
             return HttpResponseRedirect('/hospitallistcalc/') # Redirect
     return render_to_response('hospitalcalcmodify.html', {"form":form, "nomodifyinfo":nomodifyinfo,"jscal_min":jscal_min, "jscal_max":jscal_max}, context_instance=RequestContext(request))
+
+def outexcel(request):
+    allmental = MentalModel.objects.all()
+
+    rb = open_workbook('jcxxk.xls', formatting_info=True)
+    rs = rb.sheet_by_index(0) #通过sheet_by_index()获取的sheet没有write()方法
+    wb = copy(rb)
+    
+    ws = wb.get_sheet(0) #通过get_sheet()获取的sheet有write()方法
+
+    # wb = xlwt.Workbook()
+    # ws = wb.add_sheet(u"基础信息库", cell_overwrite_ok=True)
+
+    # style = xlwt.XFStyle()
+    # font = xlwt.Font()
+    # font.name = u"宋体"
+    # font.size = 16
+    # # column = xlwt.Columns()
+    # # column.autofit()
+    # style.font = font
+    # # style.column = column
+
+    # lsthead = [u"姓名", u"性别", u"区县", u"身份证号", u"残疾类别", u"办证时间", u"经济状况", u"户口类别", \
+    #     u"住址", u"监护人", u"监护关系", u"固定电话", u"手机", u"建档时间", u"操作人员"]
+    # for indx, ihead in enumerate(lsthead):
+    #     ws.write(0, indx, ihead, style)
+    row = 2    
+    for ipp in allmental:
+        setOutCell(ws, 0, row, row-1)
+        setOutCell(ws, 1, row, ipp.name)
+        setOutCell(ws, 2, row, ipp.sex)
+        setOutCell(ws, 3, row, ipp.county)
+        setOutCell(ws, 4, row, ipp.ppid)
+        setOutCell(ws, 5, row, ipp.dislevel)
+        setOutCell(ws, 6, row, ipp.certtime)
+        setOutCell(ws, 7, row, ipp.economic)
+        setOutCell(ws, 8, row, ipp.iscity)
+        setOutCell(ws, 9, row, ipp.address)
+        setOutCell(ws, 10, row, ipp.guardian)
+        setOutCell(ws, 11, row, ipp.guardrelation)
+        setOutCell(ws, 12, row, ipp.phone)
+        setOutCell(ws, 13, row, ipp.phone2)
+        setOutCell(ws, 14, row, ipp.regtime.isoformat())
+        setOutCell(ws, 15, row, ipp.operatorname)
+        # ws.write(row, 0, row-1         )
+      
+        row += 1
+    savexlspath = "tmp.xls"
+    response = HttpResponse(mimetype="application/ms-excel")
+    response['Content-Disposition'] = 'attachment; filename=%s' % savexlspath
+    wb.save(response)
+
+    return response

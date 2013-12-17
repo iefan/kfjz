@@ -45,6 +45,7 @@ urlpatterns = patterns('',
     url(r'^calchospital/(\d+)/$', 'mental.views.calchospital'),
     url(r'^calmodifychospital/(\d+)/$', 'mental.views.calmodifychospital'),
 
+    url(r'^outexcel/$', 'mental.views.outexcel'),
 
     # Examples:
     # url(r'^$', 'kfjz.views.home', name='home'),
