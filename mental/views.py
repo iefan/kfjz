@@ -13,7 +13,7 @@ from django.contrib.auth.decorators import login_required
 import datetime
 from forms import MentalForm, MentalForm2, ApprovalForm, ApprovalForm2, ApplyForm, InHospitalForm, OutHospitalForm, CalcHospitalForm, ApprovalOverForm
 from forms import SelectMentalForm, SelectApprovalListForm, SelectApprovalOverForm, SelectApplyForm, SelectHospitalInForm, SelectHospitalOutForm, SelectHospitalCalcForm
-from forms import ChangePasswordForm
+from forms import ChangePasswordForm, OutputXlsMentalForm
 from models import MentalModel, ApprovalModel
 # from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger #增加分页功能
 from decimal import getcontext, Decimal as D, ROUND_UP
@@ -984,14 +984,54 @@ def calmodifychospital(request, curid="1"):
             return HttpResponseRedirect('/hospitallistcalc/') # Redirect
     return render_to_response('hospitalcalcmodify.html', {"form":form, "nomodifyinfo":nomodifyinfo,"jscal_min":jscal_min, "jscal_max":jscal_max}, context_instance=RequestContext(request))
 
-def outexcel(request):
-    allmental = MentalModel.objects.all()
+@login_required(login_url="/login/")
+def mentaloutputxls(request):
+    '''基础信息库导出视图'''
+    lstauth = [0,1]
+    if int(request.user.unitgroup) not in lstauth:
+        return render_to_response('noauth.html')
 
+    curcounty   = ""
+    cureconomic = ""
+    curdislevel = ""
+    curiscity   = ""
+    if request.method == 'POST':
+        curcounty   = request.POST['county']
+        cureconomic = request.POST['economic']
+        curdislevel = request.POST['dislevel']
+        curiscity   = request.POST['iscity']
+    request.session['m_county']     = curcounty  
+    request.session['m_economic']   = cureconomic
+    request.session['m_dislevel']   = curdislevel
+    request.session['m_iscity']     = curiscity  
+    
+    if request.method == 'POST':
+        cur_re = MentalModel.objects.filter(county__icontains=curcounty, economic__icontains=cureconomic, dislevel__icontains=curdislevel, iscity__icontains=curiscity, )
+        return outexcel(request, cur_re)
+    
+    form = OutputXlsMentalForm(initial={"county":curcounty, "economic":cureconomic, "dislevel":curdislevel, "iscity":curiscity,})
+    curppnums = MentalModel.objects.filter(county__icontains=curcounty, economic__icontains=cureconomic, dislevel__icontains=curdislevel, iscity__icontains=curiscity, ).count()
+    
+    return render_to_response("mentaloutputxls.html",{"form":form, 'curppnums': curppnums, },context_instance=RequestContext(request))  
+
+def refresh(request):
+    print 'refresh'
+    curcounty   = request.session.get('m_county', "")
+    cureconomic = request.session.get('m_economic', "")
+    curdislevel = request.session.get('m_dislevel', "")
+    curiscity   = request.session.get('m_iscity', "")
+    curppnums = MentalModel.objects.filter(county__icontains=curcounty, economic__icontains=cureconomic, dislevel__icontains=curdislevel, iscity__icontains=curiscity, ).count()
+    
+    return render_to_response("outxls_dispnum.html", { 'curppnums' : curppnums })
+
+def outexcel(request, allmental=[]):
+    #===============need use=================
     rb = open_workbook('jcxxk.xls', formatting_info=True)
     rs = rb.sheet_by_index(0) #通过sheet_by_index()获取的sheet没有write()方法
     wb = copy(rb)
     
     ws = wb.get_sheet(0) #通过get_sheet()获取的sheet有write()方法
+    #===============need use=================
 
     # wb = xlwt.Workbook()
     # ws = wb.add_sheet(u"基础信息库", cell_overwrite_ok=True)
@@ -1030,7 +1070,7 @@ def outexcel(request):
         # ws.write(row, 0, row-1         )
       
         row += 1
-    savexlspath = "tmp.xls"
+    savexlspath = "jcxxk" + datetime.date.today().isoformat()+".xls"
     response = HttpResponse(mimetype="application/ms-excel")
     response['Content-Disposition'] = 'attachment; filename=%s' % savexlspath
     wb.save(response)

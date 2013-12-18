@@ -341,3 +341,24 @@ class SelectHospitalCalcForm(forms.Form):
     
     def clean(self):
         return self.cleaned_data
+
+class OutputXlsMentalForm(forms.ModelForm):
+    '''基础库导出筛选条件表单'''
+    lstcounty = list(jzr.COUNTY_CHOICES)
+    lstcounty.insert(0, ("", "--"))
+    county = forms.ChoiceField(choices = tuple(lstcounty), label="区县名称",)
+    lsteconomic = list(jzr.ECON_CHOICES)
+    lsteconomic.insert(0, ("", "--"))
+    economic = forms.ChoiceField(choices = tuple(lsteconomic), label="经济状况",)
+    lstdislevel = list(jzr.DISLEVEL_CHOICES)
+    lstdislevel.insert(0, ("", "--"))
+    dislevel = forms.ChoiceField(choices = tuple(lstdislevel), label="残疾类别",)
+    lstiscity = list(jzr.CITY_CHOICE)
+    lstiscity.insert(0, ("", "--"))
+    iscity = forms.ChoiceField(choices = tuple(lstiscity), label="户口类别",)
+    class Meta:
+        model = MentalModel
+        fields = ('county','economic', 'dislevel',  'iscity', )
+
+    def clean(self):
+        return self.cleaned_data
