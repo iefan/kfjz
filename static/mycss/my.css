@@ -157,6 +157,8 @@
 .formpassword table{
     width:400px;
 }
+#dispnum{margin-top:-10px;color:blue;font-weight:bold;}
+#dispnumbig{color:red;font-weight:bold;font-size: 20px;margin:0 20px 0 20px;}
 
 /*.hospital{
     width: 600px;

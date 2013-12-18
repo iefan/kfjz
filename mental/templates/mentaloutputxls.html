@@ -5,14 +5,21 @@
 {% block titleinfo %}导出查询至EXCEL表格{% endblock %}
 
 {% block submitbtn %}
-<button type="submit" class="pure-button pure-button-primary" align="center">查询并导出</button>
+<button type="submit" class="pure-button pure-button-primary" align="center">导出至excel表格</button>
 {% endblock %}
 
 {% block jsajax %}
 <script type="text/javascript">
 $(document).ready(function(){
-  $("#id_county").change(function(){
-  $('#id_county').load('refresh');
+  $("select").change(function(){
+  	var funrefresh = '/refresh/'
+  	var county = $("#id_county").val()
+  	var economic = $("#id_economic").val()
+	var dislevel = $("#id_dislevel").val()
+	var iscity   = $("#id_iscity").val()
+  	var funrefresh = funrefresh.concat(county, "|", economic, "|", dislevel, "|", iscity, '/')
+  	// alert(funrefresh)
+  $('#dispnum').load(funrefresh);
   });
 });
 </script>

@@ -1,7 +1,7 @@
 #coding=utf8
 from xlrd import open_workbook
 from xlutils.copy import copy
-import xlwt
+# import xlwt
 from resources import setOutCell
 
 from django.shortcuts import render_to_response
@@ -991,21 +991,12 @@ def mentaloutputxls(request):
     if int(request.user.unitgroup) not in lstauth:
         return render_to_response('noauth.html')
 
-    curcounty   = ""
-    cureconomic = ""
-    curdislevel = ""
-    curiscity   = ""
+    curcounty , cureconomic, curdislevel, curiscity = "|||".split("|")
     if request.method == 'POST':
         curcounty   = request.POST['county']
         cureconomic = request.POST['economic']
         curdislevel = request.POST['dislevel']
         curiscity   = request.POST['iscity']
-    request.session['m_county']     = curcounty  
-    request.session['m_economic']   = cureconomic
-    request.session['m_dislevel']   = curdislevel
-    request.session['m_iscity']     = curiscity  
-    
-    if request.method == 'POST':
         cur_re = MentalModel.objects.filter(county__icontains=curcounty, economic__icontains=cureconomic, dislevel__icontains=curdislevel, iscity__icontains=curiscity, )
         return outexcel(request, cur_re)
     
@@ -1014,20 +1005,16 @@ def mentaloutputxls(request):
     
     return render_to_response("mentaloutputxls.html",{"form":form, 'curppnums': curppnums, },context_instance=RequestContext(request))  
 
-def refresh(request):
-    print 'refresh'
-    curcounty   = request.session.get('m_county', "")
-    cureconomic = request.session.get('m_economic', "")
-    curdislevel = request.session.get('m_dislevel', "")
-    curiscity   = request.session.get('m_iscity', "")
+def refresh(request, strselect="|||"):
+    # print strselect.split("|")
+    curcounty , cureconomic, curdislevel, curiscity = strselect.split("|")
     curppnums = MentalModel.objects.filter(county__icontains=curcounty, economic__icontains=cureconomic, dislevel__icontains=curdislevel, iscity__icontains=curiscity, ).count()
-    
     return render_to_response("outxls_dispnum.html", { 'curppnums' : curppnums })
 
 def outexcel(request, allmental=[]):
     #===============need use=================
     rb = open_workbook('jcxxk.xls', formatting_info=True)
-    rs = rb.sheet_by_index(0) #通过sheet_by_index()获取的sheet没有write()方法
+    # rs = rb.sheet_by_index(0) #通过sheet_by_index()获取的sheet没有write()方法
     wb = copy(rb)
     
     ws = wb.get_sheet(0) #通过get_sheet()获取的sheet有write()方法
